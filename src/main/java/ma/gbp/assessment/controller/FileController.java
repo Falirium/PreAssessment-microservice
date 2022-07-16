@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.stream.Collector;
@@ -24,6 +27,7 @@ import ma.gbp.assessment.service.FileStorageService;
 
 @Controller
 @RequestMapping (path = "/preassessment/api/v1")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class FileController {
     
     @Autowired
@@ -36,12 +40,13 @@ public class FileController {
         String message ="";
 
         try {
-            fileStorageService.store(file);
-            message =" Téléchargement du fichier " + file.getOriginalFilename() + " est réussi";
+            FileDB savedFile = fileStorageService.store(file);
+            // message =" Téléchargement du fichier " + file.getOriginalFilename() + " est réussi";
+            message = savedFile.getId();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
             //TODO: handle exception
-            message = " Impossible de télécharger le fichier " + file.getOriginalFilename();
+            message = " Impossible de télécharger le fichier \"" + file.getOriginalFilename() + " \"";
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
     }
@@ -69,5 +74,12 @@ public class FileController {
                 .body(fileDB.getData()); 
     }
 
-    
+    @GetMapping("/2json/{id}")
+    public ResponseEntity<JsonNode> getJsonText(@PathVariable String id) {
+        FileDB fileDB = fileStorageService.getFile(id);
+
+        JsonNode json =  fileStorageService.getJsonOf(fileDB.getData());
+
+        return ResponseEntity.status(HttpStatus.OK).body(json);
+    }
 }
