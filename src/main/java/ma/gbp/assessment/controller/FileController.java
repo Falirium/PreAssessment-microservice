@@ -26,7 +26,7 @@ import ma.gbp.assessment.message.ResponseFile;
 import ma.gbp.assessment.service.FileStorageService;
 
 @Controller
-@RequestMapping (path = "/preassessment/api/v1")
+@RequestMapping (path = "/preassessment/api/v1/file")
 @CrossOrigin(origins = "http://127.0.0.1:5500")
 public class FileController {
     
@@ -51,7 +51,7 @@ public class FileController {
         }
     }
 
-    @GetMapping("/files")
+    @GetMapping("/")
     public ResponseEntity<List<ResponseFile> > getListFiles() {
         List<ResponseFile> files = fileStorageService.getAllFiles().map(dbFile -> {
             String fileDownloadUri = ServletUriComponentsBuilder
@@ -64,7 +64,7 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.OK).body(files);
     }
 
-    @GetMapping("/files/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable String id) {
         FileDB fileDB = fileStorageService.getFile(id);
 
