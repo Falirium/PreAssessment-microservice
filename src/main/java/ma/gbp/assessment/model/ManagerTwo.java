@@ -21,7 +21,7 @@ public class ManagerTwo extends Employee{
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long idManagerTwo;
+    private Long idManagerTwo;
 
     
 }

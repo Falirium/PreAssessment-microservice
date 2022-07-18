@@ -20,7 +20,7 @@ public class ManagerOne extends Employee {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long idManagerOne;
+    private Long idManagerOne;
 
     
 }

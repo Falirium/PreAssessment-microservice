@@ -11,6 +11,7 @@ import ma.gbp.assessment.model.Category;
 import ma.gbp.assessment.service.CategoryService;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -42,6 +43,11 @@ public class CategoryController {
     @GetMapping(value = "/") 
     public ResponseEntity<List<Category>> getCategories() {
         return  ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllCategories()) ;
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Category> getCategory (@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategory(id));
     }
 
 

@@ -22,4 +22,7 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
     
+    public Category getCategory(Long id) {
+        return categoryRepository.findById(id).get();
+    }
 }
