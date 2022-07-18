@@ -14,14 +14,14 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name="manager2")
+@Table(name="collaborateur")
 @NoArgsConstructor
-
-public class ManagerTwo extends Employee{
+public class Collaborateur extends Employee{
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long idManagerTwo;
+    private long id;
 
     
+
 }
