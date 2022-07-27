@@ -71,7 +71,12 @@ public class ExcelToJsonConverter {
                         if (j == 0) {
                             // reading sheet header's name
                             for (int k = 0; k < row.getLastCellNum(); k++) {
-                                headers.add(row.getCell(k).getStringCellValue());
+                                if (row.getCell(k) == null) {
+                                    // headers.add("null");
+                                } else {
+                                    headers.add(row.getCell(k).getStringCellValue());
+                                }
+                               
                             }
                         } else {
                             // reading work sheet data
@@ -98,16 +103,17 @@ public class ExcelToJsonConverter {
                                         case NUMERIC:
     //                                    Check for Date column
                                             if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                                                DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");  
+                                                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");  
                                                 rowData.put(headerName, dateFormat.format(cell.getDateCellValue()));
+                                                System.out.println(dateFormat.format(cell.getDateCellValue()));
                                             } else {
                                                 rowData.put(headerName, cell.getNumericCellValue());
                                             }
                                             
                                             break;
-                                        case BLANK:
-                                            rowData.put(headerName, "");
-                                            break;
+                                        // case BLANK:
+                                        //     rowData.put(headerName, "");
+                                        //     break;
                                         default:
                                             rowData.put(headerName, cell.getStringCellValue());
                                             break;
@@ -150,7 +156,7 @@ public class ExcelToJsonConverter {
 
     public File bytesToFile (byte[] bytes) {
         
-        File file = new File("/src/main/resources/static/excel.xlsx");
+        File file = new File("excel.xlsx");
         // Try block to check for exceptions
         try {
  

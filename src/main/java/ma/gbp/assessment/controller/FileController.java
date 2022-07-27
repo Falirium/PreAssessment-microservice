@@ -35,6 +35,7 @@ public class FileController {
 
 
     @PostMapping("/upload")
+    @CrossOrigin(origins = "http://127.0.0.1:5500")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
 
         String message ="";

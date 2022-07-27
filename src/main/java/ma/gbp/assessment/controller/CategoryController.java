@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ma.gbp.assessment.model.Category;
 import ma.gbp.assessment.service.CategoryService;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(path = "/preassessment/api/v1/category")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class CategoryController {
     
     @Autowired

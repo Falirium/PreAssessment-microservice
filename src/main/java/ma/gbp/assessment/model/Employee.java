@@ -1,6 +1,9 @@
 package ma.gbp.assessment.model;
 
+import java.util.List;
+
 import javax.persistence.Embeddable;
+import javax.persistence.ManyToMany;
 import javax.persistence.MappedSuperclass;
 
 import org.springframework.stereotype.Component;
@@ -17,8 +20,10 @@ public class Employee {
     
     private String firstName;
     private String lastName;
-    private String matriculle;
+    private String matricule;
     private String topDirection;
     private String direction;
     private String role;
+
+    
 }

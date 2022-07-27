@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import ma.gbp.assessment.model.Collaborateur;
 import ma.gbp.assessment.model.ManagerOne;
 import ma.gbp.assessment.model.ManagerTwo;
 import ma.gbp.assessment.service.EmployeeService;
@@ -46,5 +47,19 @@ public class EmployeeController {
 
         return ResponseEntity.status(HttpStatus.OK).body(savedManagersTwo) ;
     }
+
+    @PostMapping("/collaborateur")
+    public ResponseEntity<List<Collaborateur>> saveCollaborateur(@RequestBody List<Collaborateur> collaborateurs) {
+        List<Collaborateur> savedCollaborateurs = new ArrayList<Collaborateur>();
+
+        for(Collaborateur manager : collaborateurs) {
+            savedCollaborateurs.add(employeeService.savCollaborateur(manager));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(savedCollaborateurs) ;
+    }
+
+
+    
     
 }

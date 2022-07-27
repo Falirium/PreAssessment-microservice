@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -27,6 +28,9 @@ public class FileDB {
     private String type;
     @Lob
     private byte[] data;
+
+    @OneToOne(mappedBy = "excelFile")
+    private Assessment ofAssessment;
 
     public FileDB(String name, String type, byte[] data) {
         this.name = name;
