@@ -36,7 +36,7 @@ public class FileController {
 
     @PostMapping("/upload")
     @CrossOrigin(origins = "http://127.0.0.1:5500")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file) {
 
         String message ="";
 
@@ -44,7 +44,7 @@ public class FileController {
             FileDB savedFile = fileStorageService.store(file);
             // message =" Téléchargement du fichier " + file.getOriginalFilename() + " est réussi";
             message = savedFile.getId();
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+            return ResponseEntity.status(HttpStatus.OK).body(savedFile);
         } catch (Exception e) {
             //TODO: handle exception
             message = " Impossible de télécharger le fichier \"" + file.getOriginalFilename() + " \"";
