@@ -12,6 +12,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Target;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +29,7 @@ public class Collaborateur extends Employee{
     private long id;
 
     @ManyToMany(mappedBy = "listOfCollaborateurs")
+    @JsonProperty(access = Access.WRITE_ONLY)
     private List<Assessment> listOfAssessments;
 
 }

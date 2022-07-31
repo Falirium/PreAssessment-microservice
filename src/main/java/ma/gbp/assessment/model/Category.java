@@ -15,6 +15,8 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 
@@ -43,6 +45,7 @@ public class Category {
 
 
     @ManyToMany(mappedBy = "listOfCategories")
+    @JsonProperty(access = Access.WRITE_ONLY)
     private List<Assessment> listOfAssessments;
     
 }

@@ -9,6 +9,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +33,7 @@ public class FileDB {
     private byte[] data;
 
     @OneToOne(mappedBy = "excelFile")
+    @JsonProperty(access = Access.WRITE_ONLY)
     private Assessment ofAssessment;
 
     public FileDB(String name, String type, byte[] data) {
