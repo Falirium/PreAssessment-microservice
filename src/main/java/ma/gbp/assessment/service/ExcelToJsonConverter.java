@@ -105,7 +105,7 @@ public class ExcelToJsonConverter {
                                             if (HSSFDateUtil.isCellDateFormatted(cell)) {
                                                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");  
                                                 rowData.put(headerName, dateFormat.format(cell.getDateCellValue()));
-                                                System.out.println(dateFormat.format(cell.getDateCellValue()));
+                                                //System.out.println(dateFormat.format(cell.getDateCellValue()));
                                             } else {
                                                 rowData.put(headerName, cell.getNumericCellValue());
                                             }
@@ -169,8 +169,7 @@ public class ExcelToJsonConverter {
  
             // Display message onconsole for successful
             // execution
-            System.out.println("Successfully"
-                               + " byte inserted");
+            //System.out.println("Successfully" + " byte inserted");
  
             // Close the file connections
             os.close();
