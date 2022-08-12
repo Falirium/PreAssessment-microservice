@@ -38,6 +38,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String typeAssessment;
     
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
