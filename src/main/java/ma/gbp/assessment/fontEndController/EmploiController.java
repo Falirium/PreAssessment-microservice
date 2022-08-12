@@ -13,4 +13,9 @@ public class EmploiController {
     public String addEmploi() {
         return "add-emploi";
     }
+
+    @GetMapping(path = "/competence/add")
+    public String addCompetence() {
+        return "add-competence";
+    }
 }

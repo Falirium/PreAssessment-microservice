@@ -10,7 +10,7 @@ let resArray = [];
 let exigencesArray = [];
 let marqueursArray = [];
 let competencesArray = [];
-let glossaireArray = [];
+
 
 
 let lastEditedInputs = {
@@ -26,7 +26,7 @@ const btnAddResponsabilite = document.querySelector("#btn-add-res");
 const btnAddExigence = document.querySelector("#btn-add-exigence");
 const btnAddMarqueur = document.querySelector("#btn-add-marqueur");
 const btnAddCompetence = document.querySelector("#btn-add-competence");
-const btnAddGlossaire = document.querySelector("#btn-add-glossaire");
+
 const btnDeleteNiveau = document.querySelector("#btn-delete-niveau");
 const btnAddNiveau = document.querySelector("#btn-add-niveau");
 
@@ -154,37 +154,7 @@ btnAddCompetence.addEventListener("click", (e) => {
     parseCompetenceToTable(competencesArray, firstNiveau);
 })
 
-btnAddGlossaire.addEventListener("click", (e) => {
-    let nomCompGlossaire = document.querySelector("#input-nom-competence-glossaire");
-    let niveauCompGlassaire = Array.from(document.querySelectorAll("#input-niveau-competence-glossaire"));
-    let defCompGlaossaire = Array.from(document.querySelectorAll("#input-def-competence-glossaire"));
 
-    let competenceGlassaireJson = {
-        "name": nomCompGlossaire.value,
-        "niveaux": []
-    }
-
-
-
-    for (var i = 0; i < niveauCompGlassaire.length; i++) {
-        let nivaeuJson = {
-            "niveau": niveauCompGlassaire[i].value,
-            "description": defCompGlaossaire[i].value
-        }
-
-        competenceGlassaireJson["niveaux"].push(nivaeuJson);
-    }
-
-    glossaireArray.push(competenceGlassaireJson);
-
-    // INITIALIZE THE INPUTS
-    nomCompGlossaire.value = "";
-    defCompGlaossaire.forEach((definition) => {
-        definition.value = "";
-    })
-
-    parseGlossaireToTable(glossaireArray, firstNiveau);
-})
 
 btnAddNiveau.addEventListener("click", (e) => {
 
@@ -998,13 +968,13 @@ function addNewNiveauHTML(niveauCounter) {
     return `
             <div class="col-md-12 col-xl-12 niveau-container">
             <div class="card">
-                
                 <div class="card-header ">
-                        <h4 class="card-title col-sm-6" id="niveau-header">Niveaux de séniorité : ` + niveauCounter + `</h4>
-                        <div class="btn-list col-sm-6 d-flex flex-row-reverse ">
-                            <button type="button" class="btn btn-sm btn-icon btn-danger" id="btn-delete-niveau"><i class="fe fe-trash"></i></button>
-                        </div>
+                    <h4 class="card-title col-sm-6" id="niveau-header">Niveaux de séniorité : 1</h4>
+                    <div class="btn-list col-sm-6 d-flex flex-row-reverse ">
+                        <button type="button" class="btn btn-sm btn-icon btn-danger" id="btn-delete-niveau"><i
+                                class="fe fe-trash"></i></button>
                     </div>
+                </div>
                 <div class="card-body">
                     <form id="emploi-form">
 
@@ -1107,86 +1077,7 @@ function addNewNiveauHTML(niveauCounter) {
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="input-glossaire-emploi" class="form-label">Glossaire des compétences
-                            </label>
-                            <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
-                                <thead id="glossaire-table-header">
-                                    <tr>
-                                        <th class="w-auto">Nom</th>
-                                        <th class="w-7">Niveau</th>
-                                        <th class="w-40">Définition</th>
-                                        <th class="w-15">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="glossaire-table-body">
-
-                                </tbody>
-                            </table>
-                            <div class="form-group form-row">
-                                <div class="col-sm-12">
-                                    <label for="" class="form-label"></label>
-                                    <input type="text" id="input-nom-competence-glossaire" class="form-control"
-                                        placeholder="Ex : Réactivité afin d’écourter ...">
-                                </div>
-
-                                <div class="col-sm-2">
-                                    <label for="" class="form-label"></label>
-                                    <input type="text" name="" class="form-control"
-                                        id="input-niveau-competence-glossaire" readonly="" value="E">
-                                </div>
-                                <div class="col-sm-10">
-                                    <label for="" class="form-label"></label>
-                                    <textarea class="form-control" name="def-competence-glossaire"
-                                        id="input-def-competence-glossaire" placeholder=""></textarea>
-                                </div>
-
-                                <div class="col-sm-2">
-                                    <label for="" class="form-label"></label>
-                                    <input type="text" name="" class="form-control"
-                                        id="input-niveau-competence-glossaire" readonly="" value="M">
-                                </div>
-                                <div class="col-sm-10">
-                                    <label for="" class="form-label"></label>
-                                    <textarea class="form-control" name="def-competence-glossaire"
-                                        id="input-def-competence-glossaire" placeholder=""></textarea>
-                                </div>
-
-
-                                <div class="col-sm-2">
-                                    <label for="" class="form-label"></label>
-                                    <input type="text" name="" class="form-control"
-                                        id="input-niveau-competence-glossaire" readonly="" value="A">
-                                </div>
-                                <div class="col-sm-10">
-                                    <label for="" class="form-label"></label>
-                                    <textarea class="form-control" name="def-competence-glossaire"
-                                        id="input-def-competence-glossaire" placeholder=""></textarea>
-                                </div>
-
-
-                                <div class="col-sm-2">
-                                    <label for="" class="form-label"></label>
-                                    <input type="text" name="" class="form-control"
-                                        id="input-niveau-competence-glossaire" readonly="" value="X">
-                                </div>
-                                <div class="col-sm-10">
-                                    <label for="" class="form-label"></label>
-                                    <textarea class="form-control" name="def-competence-glossaire"
-                                        id="input-def-competence-glossaire" placeholder=""></textarea>
-                                </div>
-
-                            </div>
-                            <div class="mt-3 text-center">
-
-                                <button id="btn-add-glossaire" type="button"
-                                    class="btn btn-icon me-2 bradius btn-success-light"> <i
-                                        class="fe fe-plus"></i></button>
-
-                            </div>
-                        </div>
-
-                        <a  class="btn btn-primary mt-4 mb-0 " id="btn-add-niveau" role="button"
+                        <a class="btn btn-primary mt-4 mb-0 " id="btn-add-niveau" role="button"
                             aria-pressed="true">Ajouter un autre niveau</a>
 
                     </form>
