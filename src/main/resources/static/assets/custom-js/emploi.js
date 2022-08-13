@@ -1042,127 +1042,133 @@ function addListenersToNewNiveau(container) {
 
 function addNewNiveauHTML(niveauCounter) {
     return `
-            <div class="col-md-12 col-xl-12 niveau-container">
-            <div class="card">
-                <div class="card-header ">
-                    <h4 class="card-title col-sm-6" id="niveau-header">Niveaux de séniorité : `+ niveauCounter + `</h4>
-                    <div class="btn-list col-sm-6 d-flex flex-row-reverse ">
-                        <button type="button" class="btn btn-sm btn-icon btn-danger mx-2" id="btn-delete-niveau"><i
+    <div class="col-md-12 col-xl-12 niveau-container">
+    <div class="card">
+        <div class="card-header ">
+            <h4 class="card-title col-sm-6" id="niveau-header">Niveaux de séniorité : ` + niveauCounter + `</h4>
+            <div class="btn-list col-sm-6 d-flex flex-row-reverse ">
+
+                <button type="button" class="btn btn-sm btn-icon btn-danger mx-2" id="btn-delete-niveau"><i
                         class="fe fe-trash"></i></button>
-                        <button type="button" class="btn btn-sm btn-icon btn-primary mx-2" id="btn-edit-niveau"><i
-                                class="fe fe-edit-3"></i></button> 
-                    </div>
-                </div>
-                <div class="card-body">
-                    <form id="emploi-form">
-
-                        <div class="form-group">
-                            <label for="input-exigence-emploi" class="form-label">Exigences spécifiques de
-                                l’emploi</label>
-                            <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
-                                <thead id="exigence-table-header">
-                                    <tr>
-                                        <th class="w-auto">Valeur</th>
-                                        <th class="w-25">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="exigence-table-body">
-
-                                </tbody>
-                            </table>
-                            <label for="" class="form-label"></label>
-                            <input type="text" id="input-exigence-emploi" class="form-control">
-                            <div class="mt-3 text-center">
-
-                                <button id="btn-add-exigence" type="button"
-                                    class="btn btn-icon me-2 bradius btn-success-light"> <i
-                                        class="fe fe-plus"></i></button>
-
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="input-marqueur-emploi" class="form-label">Marqueurs de séniorité</label>
-                            <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
-                                <thead id="marqueur-table-header">
-                                    <tr>
-                                        <th class="w-auto">Valeur</th>
-                                        <th class="w-25">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="marqueur-table-body">
-
-                                </tbody>
-                            </table>
-                            <label for="" class="form-label"></label>
-                            <input type="text" id="input-marqueur-emploi" class="form-control">
-                            <div class="mt-3 text-center">
-
-                                <button id="btn-add-marqueur" type="button"
-                                    class="btn btn-icon me-2 bradius btn-success-light"> <i
-                                        class="fe fe-plus"></i></button>
-
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="input-marqueur-emploi" class="form-label">Compétences requises</label>
-                            <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
-                                <thead id="competence-table-header">
-                                    <tr>
-                                        <th class="">Nom</th>
-                                        <th class="25">catégorie</th>
-                                        <th class="w-10">Niveau requis</th>
-                                        <th class="w-15">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="competence-table-body">
-
-                                </tbody>
-                            </table>
-                            <div class="form-group form-row">
-                                <div class="col-sm-5">
-                                    <label for="" class="form-label"></label>
-                                    <input type="text" id="input-nom-competence" class="form-control"
-                                        placeholder="Ex : Réactivité afin d’écourter ...">
-                                </div>
-                                <div class="col-sm-5">
-                                    <label for="" class="form-label"></label>
-                                    <select name="categorie-competence" id="input-categorie-competence"
-                                        class="form-select form-control">
-                                        <option value="DC">Domaines de connaissance </option>
-                                        <option value="SF">Savoir-faire </option>
-                                        <option value="SE">Savoir-être </option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-2">
-                                    <label for="" class="form-label"></label>
-                                    <select name="niveau-competence" id="input-niveau-competence"
-                                        class="form-select form-control">
-                                        <option value="E">E </option>
-                                        <option value="M">M </option>
-                                        <option value="A">A </option>
-                                        <option value="X">X </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mt-3 text-center">
-
-                                <button id="btn-add-competence" type="button"
-                                    class="btn btn-icon me-2 bradius btn-success-light"> <i
-                                        class="fe fe-plus"></i></button>
-
-                            </div>
-                        </div>
-
-                        <a class="btn btn-primary mt-4 mb-0 " id="btn-add-niveau" role="button"
-                            aria-pressed="true">Ajouter un autre niveau</a>
-
-                    </form>
-                </div>
+                <button type="button" class="btn btn-sm btn-icon btn-primary mx-2" id="btn-edit-niveau"><i
+                        class="fe fe-edit-3"></i></button>
             </div>
         </div>
-    
+        <div class="card-body">
+            <form id="emploi-form">
+
+                <div class="form-group">
+                    <label for="input-exigence-emploi" class="form-label">Exigences spécifiques de
+                        l’emploi</label>
+                    <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
+                        <thead id="exigence-table-header">
+                            <tr>
+                                <th class="w-auto">Valeur</th>
+                                <th class="w-25">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exigence-table-body">
+
+                        </tbody>
+                    </table>
+                    <label for="" class="form-label"></label>
+                    <input type="text" id="input-exigence-emploi" class="form-control">
+                    <div class="mt-3 text-center">
+
+                        <button id="btn-add-exigence" type="button"
+                            class="btn btn-icon me-2 bradius btn-success-light"> <i
+                                class="fe fe-plus"></i></button>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-marqueur-emploi" class="form-label">Marqueurs de séniorité</label>
+                    <div class="table-responsive mt-2">
+                        <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
+                            <thead id="marqueur-table-header">
+                                <tr>
+                                    <th class="w-auto">Valeur</th>
+                                    <th class="w-25">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marqueur-table-body">
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <label for="" class="form-label"></label>
+                    <input type="text" id="input-marqueur-emploi" class="form-control">
+                    <div class="mt-3 text-center">
+
+                        <button id="btn-add-marqueur" type="button"
+                            class="btn btn-icon me-2 bradius btn-success-light"> <i
+                                class="fe fe-plus"></i></button>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-marqueur-emploi" class="form-label">Compétences requises</label>
+                    <div class="table-responsive mt-2">
+                        <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
+                            <thead id="competence-table-header">
+                                <tr>
+                                    <th class="">Nom</th>
+                                    <th class="25">catégorie</th>
+                                    <th class="w-10">Niveau requis</th>
+                                    <th class="w-15">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="competence-table-body">
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <div class="col-sm-5">
+                            <label for="" class="form-label"></label>
+                            <input type="text" id="input-nom-competence" class="form-control"
+                                placeholder="Ex : Réactivité afin d’écourter ...">
+                        </div>
+                        <div class="col-sm-5">
+                            <label for="" class="form-label"></label>
+                            <select name="categorie-competence" id="input-categorie-competence"
+                                class="form-select form-control">
+                                <option value="DC">Domaines de connaissance </option>
+                                <option value="SF">Savoir-faire </option>
+                                <option value="SE">Savoir-être </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <label for="" class="form-label"></label>
+                            <select name="niveau-competence" id="input-niveau-competence"
+                                class="form-select form-control">
+                                <option value="E">E </option>
+                                <option value="M">M </option>
+                                <option value="A">A </option>
+                                <option value="X">X </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center">
+
+                        <button id="btn-add-competence" type="button"
+                            class="btn btn-icon me-2 bradius btn-success-light"> <i
+                                class="fe fe-plus"></i></button>
+
+                    </div>
+                </div>
+
+                <a class="btn btn-primary mt-4 mb-0 " id="btn-add-niveau" role="button"
+                    aria-pressed="true">Ajouter un autre niveau</a>
+
+            </form>
+        </div>
+    </div>
+</div>
     
     `;
 }
