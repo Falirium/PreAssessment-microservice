@@ -31,6 +31,8 @@ const btnAddCompetence = document.querySelector("#btn-add-competence");
 const btnDeleteNiveau = document.querySelector("#btn-delete-niveau");
 const btnAddNiveau = document.querySelector("#btn-add-niveau");
 
+const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
+
 let niveauCounter = 1;
 
 let focusedNiveauContainer = document.querySelector(".niveau-container");
@@ -69,6 +71,34 @@ btnAddResponsabilite.addEventListener('click', (e) => {
 
 
     parseResToTable(responsabilitesArray);
+})
+
+btnConfirmDeleteNiveau.addEventListener("click", (e) => {
+
+    // console.log("HERE WE GO");
+    // console.log(currentNiveauIndex);;
+
+    if (currentNiveauIndex === 0) {
+
+    } else {
+
+    // DELETE THE NIVEAU ENTRIE FROM NIVEAUX-ARRAY
+    // console.log(Array.from(document.querySelectorAll(".niveau-container")).indexOf(container));
+    niveauxArray.splice(currentNiveauIndex,1);
+    
+
+
+    // DELETE THE NIVEAU CONTAINER
+    let currentNiveauContainerArray = Array.from(document.querySelectorAll(".niveau-container"));
+    let currentNiveauContainer = currentNiveauContainerArray[currentNiveauIndex];
+    // console.log(currentNiveauContainer);
+    currentNiveauContainer.remove();
+
+    niveauCounter--;
+
+
+    }
+    
 })
 
 
@@ -790,9 +820,12 @@ function addListenersToNewNiveau(container) {
     const btnAddCompetence = container.querySelector("#btn-add-competence");
 
     const btnDeleteNiveau = container.querySelector("#btn-delete-niveau");
+    
     const btnEditNiveau = container.querySelector("#btn-edit-niveau");
     const btnAddNiveau = container.querySelector("#btn-add-niveau");
 
+    
+    
     btnEditNiveau.addEventListener("click", (e) => {
 
         // WHEN THE SPAN ELEMENT IS FIRED
@@ -809,12 +842,12 @@ function addListenersToNewNiveau(container) {
 
         // GET NIVEAU INDEX
         let clickedNiveauIndex = Array.from(document.querySelectorAll(".niveau-container")).indexOf(container);
-         
+
         console.log(currentNiveauIndex, clickedNiveauIndex);
 
 
         // SAVE ARRAYS TO NIVEAUX-ARRAY
-        if (typeof(niveauxArray[currentNiveauIndex]) === 'undefined') { // SAVE THIS AS NEW ENTRY TO NIVEAUX ARRAY
+        if (typeof (niveauxArray[currentNiveauIndex]) === 'undefined') { // SAVE THIS AS NEW ENTRY TO NIVEAUX ARRAY
 
             let niveauJson = {
                 "level": niveauCounter,
@@ -836,7 +869,7 @@ function addListenersToNewNiveau(container) {
         marqueursArray = niveauxArray[clickedNiveauIndex].marqueurs;
         competencesArray = niveauxArray[clickedNiveauIndex]["compétences"];
 
-       
+
         // CLEAR DISABLED-READONLY FROM INPUTS
         clearDisableFromInputsFor(container);
 
@@ -845,40 +878,37 @@ function addListenersToNewNiveau(container) {
         disableInputsFor(previousNiveau);
 
 
-         // CHANGE CURRENT TO CLICKED
-         currentNiveauIndex = clickedNiveauIndex; 
-
-
-
-        // console.log(clickedNiveauIndex, currentNiveauIndex);
-
-
-        // if (niveauxArray.length) { // ARRAY SHOULD HAVE AT LEAST ONE NIVEAU COMPLETED
-
-        //     if (clickedNiveauIndex !== niveauxArray.length) { // WHEN CLICK ON THE LAST NIVEAU 
-
-        //         niveauxArray[currentNiveauIndex].exigences = exigencesArray;
-        //         niveauxArray[currentNiveauIndex].marqueurs = marqueursArray;
-        //         niveauxArray[currentNiveauIndex]["compétences"] = competencesArray;
-
-        //         currentNiveauIndex = clickedNiveauIndex;
-
-        //         // GET THE VALUES OF THE TRIGGERED NIVEAU FROM NIVEAUXARRAY
-        //         exigencesArray = niveauxArray[clickedNiveauIndex].exigences;
-        //         marqueursArray = niveauxArray[clickedNiveauIndex].marqueurs;
-        //         competencesArray = niveauxArray[clickedNiveauIndex]["compétences"];
-        //     }
-
-
-
-        // }
-
+        // CHANGE CURRENT TO CLICKED
+        currentNiveauIndex = clickedNiveauIndex;
 
 
 
     }
 
         , true)
+
+    btnDeleteNiveau.addEventListener("click", (e) => {
+
+        // WHEN THE SPAN ELEMENT IS FIRED
+        let btnElement;
+        if (e.target.tagName === "I") {
+            btnElement = e.target.parentElement;
+        } else {
+            btnElement = e.target;
+        }
+
+        // GET NIVEAU INDEX
+        let clickedNiveauIndex = Array.from(document.querySelectorAll(".niveau-container")).indexOf(container);
+
+        currentNiveauIndex = clickedNiveauIndex;
+
+        // A WINDOW IS SHOWN TO CONFIRM THE DELETE
+        var myModal = new bootstrap.Modal(document.getElementById('modaldemo5'));
+        myModal.show();
+
+    })
+
+    
 
     btnAddExigence.addEventListener('click', (e) => {
 
@@ -1005,36 +1035,7 @@ function addListenersToNewNiveau(container) {
 
     })
 
-    btnDeleteNiveau.addEventListener("click", (e) => {
-        // DELETE ITS PART FROM NIVEAU ARRAY
-        let allDeleteBtns = container.querySelectorAll("#btn-delete-niveau");
-        console.log("here " + niveauCounter)
-
-        let btnElement;
-        if (e.target.tagName === "I") {
-            btnElement = e.target.parentElement;
-        } else {
-            btnElement = e.target;
-        }
-
-        let clickedNiveauIndex = [...allDeleteBtns].indexOf(btnElement);
-
-        niveauxArray.splice(clickedNiveauIndex, 1);
-
-
-        // DELETE HTML
-        if (clickedNiveauIndex === 0) {
-
-        } else {
-            let allNiveaux = documet.querySelectorAll(".niveau-container");
-
-            allNiveaux[clickedNiveauIndex].remove();
-
-        }
-
-        // UPDATE COUNTER
-        niveauCounter--;
-    })
+    
 
 
 }
