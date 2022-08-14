@@ -22,6 +22,13 @@ let lastEditedInputs = {
 }
 var currentNiveauIndex = 0;
 
+const inputEmploiName = document.querySelector("#input-name-emploi");
+const inputEmploiFiliere = document.querySelector("#input-filiere-emploi");
+const inputEmploiSousFiliere = document.querySelector("#input-sousFiliere-emploi");
+const inputEmploiDateMaj = document.querySelector("#input-date-emploi");
+const inputEmploiVocation = document.querySelector("#input-vocation-emploi");
+
+
 
 const btnAddResponsabilite = document.querySelector("#btn-add-res");
 const btnAddExigence = document.querySelector("#btn-add-exigence");
@@ -38,6 +45,7 @@ let niveauCounter = 1;
 let focusedNiveauContainer = document.querySelector(".niveau-container");
 
 addListenersToNewNiveau(focusedNiveauContainer);
+
 
 
 
@@ -82,26 +90,57 @@ btnConfirmDeleteNiveau.addEventListener("click", (e) => {
 
     } else {
 
-    // DELETE THE NIVEAU ENTRIE FROM NIVEAUX-ARRAY
-    // console.log(Array.from(document.querySelectorAll(".niveau-container")).indexOf(container));
-    niveauxArray.splice(currentNiveauIndex,1);
-    
+        // DELETE THE NIVEAU ENTRIE FROM NIVEAUX-ARRAY
+        // console.log(Array.from(document.querySelectorAll(".niveau-container")).indexOf(container));
+        niveauxArray.splice(currentNiveauIndex, 1);
 
 
-    // DELETE THE NIVEAU CONTAINER
-    let currentNiveauContainerArray = Array.from(document.querySelectorAll(".niveau-container"));
-    let currentNiveauContainer = currentNiveauContainerArray[currentNiveauIndex];
-    // console.log(currentNiveauContainer);
-    currentNiveauContainer.remove();
 
-    niveauCounter--;
+        // DELETE THE NIVEAU CONTAINER
+        let currentNiveauContainerArray = Array.from(document.querySelectorAll(".niveau-container"));
+        let currentNiveauContainer = currentNiveauContainerArray[currentNiveauIndex];
+        // console.log(currentNiveauContainer);
+        currentNiveauContainer.remove();
+
+        niveauCounter--;
 
 
     }
-    
+
 })
 
+$(".base-emploi-info").change(function (index) {
+   
+    this.classList.remove("is-invalid");
+    
+    switch (this.id) {
+        case "input-name-emploi":
+            emploiJSON["intitulé"] = this.value;
+            break;
+        case "input-filiere-emploi":
+            emploiJSON["filière"] = this.value;
+            break;
+        case "input-sousFiliere-emploi":
+            emploiJSON["sous-filière"] = this.value;
+            break;
+        case "input-date-emploi":
+            emploiJSON["date Maj"] = this.value;
+            break;
+        case "input-vocation-emploi":
+            emploiJSON["vocation"] = this.value;
+            break;
+    }
+    //console.log(emploiJSON);
+})
 
+$("#btn-emploi-save").click(function() {
+    if (checkInputsConstraints()) {
+        emploiJSON["responsabilités"] = responsabilitesArray;
+        emploiJSON["niveaux"] = niveauxArray;
+    }
+
+    console.log(emploiJSON);
+})
 
 // btnAddExigence.addEventListener('click', (e) => {
 
@@ -820,12 +859,16 @@ function addListenersToNewNiveau(container) {
     const btnAddCompetence = container.querySelector("#btn-add-competence");
 
     const btnDeleteNiveau = container.querySelector("#btn-delete-niveau");
-    
+
     const btnEditNiveau = container.querySelector("#btn-edit-niveau");
     const btnAddNiveau = container.querySelector("#btn-add-niveau");
 
-    
-    
+    $(".btn-add").change(function() {
+        this.classList.remove("is-invalid");
+    })
+
+
+
     btnEditNiveau.addEventListener("click", (e) => {
 
         // WHEN THE SPAN ELEMENT IS FIRED
@@ -908,7 +951,7 @@ function addListenersToNewNiveau(container) {
 
     })
 
-    
+
 
     btnAddExigence.addEventListener('click', (e) => {
 
@@ -1035,7 +1078,7 @@ function addListenersToNewNiveau(container) {
 
     })
 
-    
+
 
 
 }
@@ -1043,132 +1086,141 @@ function addListenersToNewNiveau(container) {
 function addNewNiveauHTML(niveauCounter) {
     return `
     <div class="col-md-12 col-xl-12 niveau-container">
-    <div class="card">
-        <div class="card-header ">
-            <h4 class="card-title col-sm-6" id="niveau-header">Niveaux de séniorité : ` + niveauCounter + `</h4>
-            <div class="btn-list col-sm-6 d-flex flex-row-reverse ">
+                <div class="card">
+                    <div class="card-header ">
+                        <h4 class="card-title col-sm-6" id="niveau-header">Niveaux de séniorité : ` + niveauCounter + `</h4>
+                        <div class="btn-list col-sm-6 d-flex flex-row-reverse ">
 
-                <button type="button" class="btn btn-sm btn-icon btn-danger mx-2" id="btn-delete-niveau"><i
-                        class="fe fe-trash"></i></button>
-                <button type="button" class="btn btn-sm btn-icon btn-primary mx-2" id="btn-edit-niveau"><i
-                        class="fe fe-edit-3"></i></button>
+                            <button type="button" class="btn btn-sm btn-icon btn-danger mx-2" id="btn-delete-niveau"><i
+                                    class="fe fe-trash"></i></button>
+                            <button type="button" class="btn btn-sm btn-icon btn-primary mx-2" id="btn-edit-niveau"><i
+                                    class="fe fe-edit-3"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form id="emploi-form">
+
+                            <div class="form-group">
+                                <label for="input-exigence-emploi" class="form-label">Exigences spécifiques de
+                                    l’emploi</label>
+                                <table class="table border  table-bordered my-3 ">
+                                    <thead id="exigence-table-header">
+                                        <tr>
+                                            <th class="w-auto">Valeur</th>
+                                            <th class="w-15">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="exigence-table-body"></tbody>
+                                </table>
+                                <label for="" class="form-label"></label>
+                                <input type="text" id="input-exigence-emploi" class="form-control">
+                                <div class="invalid-feedback">
+                                    Ce champ ne doit pas être vide.
+                                </div>
+                                <div class="mt-3 text-center">
+
+                                    <button id="btn-add-exigence" type="button"
+                                        class="btn btn-icon me-2 bradius btn-success-light"> <i
+                                            class="fe fe-plus"></i></button>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="input-marqueur-emploi" class="form-label">Marqueurs de séniorité</label>
+                                <div class="table-responsive mt-2">
+                                    <table class="table border  table-bordered my-3 ">
+                                        <thead id="marqueur-table-header">
+                                            <tr>
+                                                <th class="w-auto">Valeur</th>
+                                                <th class="w-15">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="marqueur-table-body"></tbody>
+                                    </table>
+                                </div>
+
+                                <label for="" class="form-label"></label>
+                                <input type="text" id="input-marqueur-emploi" class="form-control">
+                                <div class="invalid-feedback">
+                                    Ce champ ne doit pas être vide.
+                                </div>
+                                <div class="mt-3 text-center">
+
+                                    <button id="btn-add-marqueur" type="button"
+                                        class="btn btn-icon me-2 bradius btn-success-light"> <i
+                                            class="fe fe-plus"></i></button>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="input-marqueur-emploi" class="form-label">Compétences requises</label>
+                                <div class="table-responsive mt-2">
+                                    <table class="table border  table-bordered my-3 ">
+                                        <thead id="competence-table-header">
+                                            <tr>
+                                                <th class="w-auto">Nom</th>
+                                                <th class="w-auto">catégorie</th>
+                                                <th class="w-auto">Niveau requis</th>
+                                                <th class="w-auto">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="competence-table-body"></tbody>
+                                    </table>
+                                </div>
+
+                                <div class="form-group form-row">
+                                    <div class="col-sm-5">
+                                        <label for="" class="form-label"></label>
+                                        <input type="text" id="input-nom-competence" class="form-control"
+                                            placeholder="Ex : Réactivité afin d’écourter ...">
+                                            <div class="invalid-feedback">
+                                                Ce champ ne doit pas être vide.
+                                            </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <label for="" class="form-label"></label>
+                                        <select name="categorie-competence" id="input-categorie-competence"
+                                            class="form-select form-control">
+                                            <option value="Domaines de connaissance">Domaines de connaissance </option>
+                                            <option value="Savoir-faire">Savoir-faire </option>
+                                            <option value="Savoir-être">Savoir-être </option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Ce champ ne doit pas être vide.
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label for="" class="form-label"></label>
+                                        <select name="niveau-competence" id="input-niveau-competence"
+                                            class="form-select form-control">
+                                            <option value="E">E </option>
+                                            <option value="M">M </option>
+                                            <option value="A">A </option>
+                                            <option value="X">X </option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Ce champ ne doit pas être vide.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 text-center">
+
+                                    <button id="btn-add-competence" type="button"
+                                        class="btn btn-icon me-2 bradius btn-success-light"> <i
+                                            class="fe fe-plus"></i></button>
+
+                                </div>
+                            </div>
+
+                            <a class="btn btn-primary mt-4 mb-0 " id="btn-add-niveau" role="button"
+                                aria-pressed="true">Ajouter un autre niveau</a>
+
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="card-body">
-            <form id="emploi-form">
-
-                <div class="form-group">
-                    <label for="input-exigence-emploi" class="form-label">Exigences spécifiques de
-                        l’emploi</label>
-                    <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
-                        <thead id="exigence-table-header">
-                            <tr>
-                                <th class="w-auto">Valeur</th>
-                                <th class="w-25">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="exigence-table-body">
-
-                        </tbody>
-                    </table>
-                    <label for="" class="form-label"></label>
-                    <input type="text" id="input-exigence-emploi" class="form-control">
-                    <div class="mt-3 text-center">
-
-                        <button id="btn-add-exigence" type="button"
-                            class="btn btn-icon me-2 bradius btn-success-light"> <i
-                                class="fe fe-plus"></i></button>
-
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="input-marqueur-emploi" class="form-label">Marqueurs de séniorité</label>
-                    <div class="table-responsive mt-2">
-                        <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
-                            <thead id="marqueur-table-header">
-                                <tr>
-                                    <th class="w-auto">Valeur</th>
-                                    <th class="w-25">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="marqueur-table-body">
-
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <label for="" class="form-label"></label>
-                    <input type="text" id="input-marqueur-emploi" class="form-control">
-                    <div class="mt-3 text-center">
-
-                        <button id="btn-add-marqueur" type="button"
-                            class="btn btn-icon me-2 bradius btn-success-light"> <i
-                                class="fe fe-plus"></i></button>
-
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="input-marqueur-emploi" class="form-label">Compétences requises</label>
-                    <div class="table-responsive mt-2">
-                        <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
-                            <thead id="competence-table-header">
-                                <tr>
-                                    <th class="">Nom</th>
-                                    <th class="25">catégorie</th>
-                                    <th class="w-10">Niveau requis</th>
-                                    <th class="w-15">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="competence-table-body">
-
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="form-group form-row">
-                        <div class="col-sm-5">
-                            <label for="" class="form-label"></label>
-                            <input type="text" id="input-nom-competence" class="form-control"
-                                placeholder="Ex : Réactivité afin d’écourter ...">
-                        </div>
-                        <div class="col-sm-5">
-                            <label for="" class="form-label"></label>
-                            <select name="categorie-competence" id="input-categorie-competence"
-                                class="form-select form-control">
-                                <option value="DC">Domaines de connaissance </option>
-                                <option value="SF">Savoir-faire </option>
-                                <option value="SE">Savoir-être </option>
-                            </select>
-                        </div>
-                        <div class="col-sm-2">
-                            <label for="" class="form-label"></label>
-                            <select name="niveau-competence" id="input-niveau-competence"
-                                class="form-select form-control">
-                                <option value="E">E </option>
-                                <option value="M">M </option>
-                                <option value="A">A </option>
-                                <option value="X">X </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mt-3 text-center">
-
-                        <button id="btn-add-competence" type="button"
-                            class="btn btn-icon me-2 bradius btn-success-light"> <i
-                                class="fe fe-plus"></i></button>
-
-                    </div>
-                </div>
-
-                <a class="btn btn-primary mt-4 mb-0 " id="btn-add-niveau" role="button"
-                    aria-pressed="true">Ajouter un autre niveau</a>
-
-            </form>
-        </div>
-    </div>
-</div>
     
     `;
 }
@@ -1251,5 +1303,73 @@ function clearDisableFromInputsFor(niveauContainer) {
     })
 }
 
+
+function checkInputsConstraints() {
+
+    // CHECK INFORMATIONS DE BASE
+    let baseInputs = checkBaseInformation();
+
+    // console.log(checkBaseInformation());
+
+    // CHECK THE LAST NIVEAU IF IT IS FILLED (MAYBE A NIVEAU DOES NOT HAVE ONE THE DESCRIBED FIELDS)
+    let lastNiveauInputs = checkLastNiveauInputs();
+
+    return baseInputs && lastNiveauInputs ;
+
+    
+
+    
+}
+
+function checkBaseInformation() {
+    
+    let invalidFields = $(".base-emploi-info").filter(function() {
+                            if (this.value === '') {
+                                return true;
+                            }
+                            
+                        });
+    console.log(invalidFields.length);
+    if (invalidFields.length === 0) {
+        return true;
+    } else {
+        invalidFields.addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkLastNiveauInputs() {
+
+    let allTableBodies = $(".niveau-container").last().find("tbody");
+    
+
+    let emptyTableBodies = $(".niveau-container").last().find("tbody").filter(function() {
+        if (this.innerHTML === "") {
+            return true;
+        }
+    });
+
+    console.log(Array.from(allTableBodies).length, Array.from(emptyTableBodies).length);
+
+    if (Array.from(allTableBodies).length === Array.from(emptyTableBodies).length) {
+
+        // ADD IS-INVALID TO INPUTS FIELDS
+        $(".niveau-container").last().find("input").addClass("is-invalid"); 
+        $(".niveau-container").last().find("select").addClass("is-invalid");
+
+        console.log($(".niveau-container").last().find("input"))
+
+        return true;
+
+    } else {
+        return false;
+    }
+
+
+
+    
+    return emptyTableBodies;
+
+}
 
 
