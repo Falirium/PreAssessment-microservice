@@ -33,25 +33,30 @@
                     </div>
                     <div class="card-body">
                         <div class="btn-list btn-list-icon mb-4">
-                            <button type="button" class="btn btn-success"><i
+                            <button type="button" id="btn-add-file" class="btn btn-success" data-bs-toggle="modal"
+                                data-bs-target="#input-modal" data-bs-whatever="@mdo"><i
                                     class="fe fe-upload me-2"></i>Télécharger</button>
                         </div>
                         <div class="form-group">
                             <label for="input-glossaire-emploi" class="form-label">Glossaire des compétences
                             </label>
-                            <table class="table border text-nowrap text-md-nowrap table-bordered my-3 ">
-                                <thead id="glossaire-table-header">
-                                    <tr>
-                                        <th class="w-auto">Nom</th>
-                                        <th class="w-7">Niveau</th>
-                                        <th class="w-40">Définition</th>
-                                        <th class="w-15">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="glossaire-table-body">
+                            <div class="table-responsive">
+                                <table class="table border table-bordered my-3 " id="responsive-datatable">
+                                    <thead id="glossaire-table-header">
+                                        <tr>
+                                            <th class="w-auto">Nom</th>
+                                            <th class="w-auto">Niveau</th>
+                                            <th class="w-auto">Définition</th>
+                                            <th class="w-auto">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="glossaire-table-body">
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
                             <div class="form-group form-row">
                                 <div class="col-sm-12">
                                     <label for="" class="form-label"></label>
@@ -120,8 +125,38 @@
 
         </div>
         <!-- ROW-1 END -->
+
+        <!-- INPUT MODAL -->
+        <div class="modal fade" id="input-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content modal-content-demo">
+                    <div class="modal-header">
+                        <h6 class="modal-title">Télecharger une matrice de compétence</h6>
+                        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="input-file" class="col-form-label">Importez le fichier Excel qui
+                                    contient la matrice des compétences</label>
+                                <input class="form-control" id="input-file" type="file" accept=".xlsx">
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn ripple btn-success" type="button">Enregistrer</button>
+                        <button class="btn ripple btn-danger" data-bs-dismiss="modal" type="button">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- CONTAINER CLOSED -->
+
+
 
 
 
@@ -131,15 +166,21 @@
         <!-- BACK-TO-TOP -->
         <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
 
-        <!-- JQUERY JS -->
+        <!-- JQUERY JS
         <script th:src="@{/assets/js/jquery.min.js}"></script>
+        <script th:src="@{/assets/js/jquery-ui.min.js}"></script> -->
 
         <!-- BOOTSTRAP JS -->
         <script th:src="@{/assets/plugins/bootstrap/js/popper.min.js}"></script>
         <script th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script>
 
+
+
         <!-- GLAOSSAIRE -->
         <script th:src="@{/assets/custom-js/glossaire.js}"></script>
+
+        <!-- EXCELJS -->
+        <script th:src="@{/assets/plugins/exceljs/exceljs.min.js}"></script>
 
         <!-- INPUT MASK JS-->
         <script th:src="@{/assets/plugins/input-mask/jquery.mask.min.js}"></script>
@@ -158,7 +199,7 @@
         <script th:src="@{/assets/plugins/select2/select2.full.min.js}"></script>
 
         <!-- DATA TABLE JS-->
-        <script th:src="@{/assets/plugins/datatable/js/jquery.dataTables.min.js}"></script>
+        <!-- <script th:src="@{/assets/plugins/datatable/js/jquery.dataTables.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/js/dataTables.bootstrap5.js}"></script>
         <script th:src="@{/assets/plugins/datatable/js/dataTables.buttons.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/js/buttons.bootstrap5.min.js}"></script>
@@ -170,7 +211,7 @@
         <script th:src="@{/assets/plugins/datatable/js/buttons.colVis.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/dataTables.responsive.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/responsive.bootstrap5.min.js}"></script>
-        <script th:src="@{/assets/js/table-data.js}"></script>
+        <script th:src="@{/assets/js/table-data.js}"></script> -->
 
         <!-- SIDEBAR JS -->
         <script th:src="@{/assets/plugins/sidebar/sidebar.js}"></script>
@@ -180,9 +221,9 @@
         <script th:src="@{/assets/plugins/p-scroll/pscroll.js}"></script>
         <script th:src="@{/assets/plugins/p-scroll/pscroll-1.js}"></script>
 
-        <!-- INTERNAL Edit-Table JS
-    <script th:src="@{/assets/plugins/edit-table/bst-edittable.js}"></script>
-    <script th:src="@{/assets/plugins/edit-table/edit-table.js}"></script> -->
+        <!-- INTERNAL Edit-Table JS -->
+        <script th:src="@{/assets/plugins/edit-table/bst-edittable.js}"></script>
+        <script th:src="@{/assets/plugins/edit-table/edit-table.js}"></script>
 
         <!-- Color Theme js -->
         <script th:src="@{/assets/js/themeColors.js}"></script>
@@ -190,13 +231,11 @@
         <!-- Sticky js -->
         <script th:src="@{/assets/js/sticky.js}"></script>
 
+        
         <!-- CUSTOM JS -->
         <script th:src="@{/assets/js/custom.js}"></script>
+
+
     </th:block>
 
     <!-- END SCRIPT -->
-
-
-
-
-
