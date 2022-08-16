@@ -30,18 +30,22 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Ajouter des compétences</h4>
+                        <div class="text-end col-sm-6 d-flex flex-row-reverse">
+                            <a id="btn-emploi-save" class="btn btn-primary mx-1" role="button"
+                                aria-pressed="true">Sauvegarder</a>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="btn-list btn-list-icon mb-4">
                             <button type="button" id="btn-add-file" class="btn btn-success" data-bs-toggle="modal"
-                                data-bs-target="#input-modal" data-bs-whatever="@mdo"><i
+                                data-bs-target="" data-bs-whatever="@mdo"><i
                                     class="fe fe-upload me-2"></i>Télécharger</button>
                         </div>
                         <div class="form-group">
                             <label for="input-glossaire-emploi" class="form-label">Glossaire des compétences
                             </label>
                             <div class="table-responsive">
-                                <table class="table border table-bordered my-3 " id="">
+                                <table class="table border table-bordered my-3 " id="basic-datatable">
                                     <thead id="glossaire-table-header">
                                         <tr>
                                             <th class="w-auto">Nom</th>
@@ -50,9 +54,7 @@
                                             <th class="w-auto">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="glossaire-table-body">
-
-                                    </tbody>
+                                    <tbody id="glossaire-table-body"></tbody>
                                 </table>
                             </div>
 
@@ -170,6 +172,26 @@
                 </div>
             </div>
         </div>
+
+        <!-- MODAL WARNING MESSAGE -->
+        <div class="modal fade" id="warning">
+            <div class="modal-dialog modal-dialog-centered text-center" role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="modal-body text-center p-4 pb-5">
+                        <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                                aria-hidden="true">&times;</span></button>
+                        <i class="fe fe-alert-circle fs-70 text-warning lh-1 my-5 d-inline-block"></i>
+                        <h4 class="text-warning">Avertissement: Vous ne pouvez pas ajouter une nouvelle liste de
+                            compétences sans sauvegarder la liste sur la table !</h4>
+                        <p class="mg-b-20 mg-x-20">Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.</p>
+                        <button aria-label="Close" id="confirm-save-niveau" class="btn btn-warning pd-x-25"
+                            data-bs-dismiss="modal">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
     <!-- CONTAINER CLOSED -->
 
@@ -216,7 +238,7 @@
         <script th:src="@{/assets/plugins/select2/select2.full.min.js}"></script>
 
         <!-- DATA TABLE JS-->
-        <script th:src="@{/assets/plugins/datatable/js/jquery.dataTables.min.js}"></script>
+        <!-- <script th:src="@{/assets/plugins/datatable/js/jquery.dataTables.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/js/dataTables.bootstrap5.js}"></script>
         <script th:src="@{/assets/plugins/datatable/js/dataTables.buttons.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/js/buttons.bootstrap5.min.js}"></script>
@@ -228,7 +250,7 @@
         <script th:src="@{/assets/plugins/datatable/js/buttons.colVis.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/dataTables.responsive.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/responsive.bootstrap5.min.js}"></script>
-        <script th:src="@{/assets/js/table-data.js}"></script>
+        <script th:src="@{/assets/js/table-data.js}"></script> -->
 
         <!-- SIDEBAR JS -->
         <script th:src="@{/assets/plugins/sidebar/sidebar.js}"></script>
