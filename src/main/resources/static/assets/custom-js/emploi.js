@@ -1,55 +1,55 @@
 
+
+
+// MAIN ARRAYS
+let emploiJSON = [];
+let niveauxArray = []
+
+// MIDLLE ARRAYS
+let responsabilitesArray = [];
+let resArray = [];
+let exigencesArray = [];
+let marqueursArray = [];
+let competencesArray = [];
+
+
+
+let lastEditedInputs = {
+    "exigence": -1,
+    "marqueur": -1,
+    "competence": -1,
+    "glossaire": -1,
+    "responsabilites": [-1, -1]
+}
+var currentNiveauIndex = 0;
+
+const inputEmploiName = document.querySelector("#input-name-emploi");
+const inputEmploiFiliere = document.querySelector("#input-filiere-emploi");
+const inputEmploiSousFiliere = document.querySelector("#input-sousFiliere-emploi");
+const inputEmploiDateMaj = document.querySelector("#input-date-emploi");
+const inputEmploiVocation = document.querySelector("#input-vocation-emploi");
+
+
+
+const btnAddResponsabilite = document.querySelector("#btn-add-res");
+const btnAddExigence = document.querySelector("#btn-add-exigence");
+const btnAddMarqueur = document.querySelector("#btn-add-marqueur");
+const btnAddCompetence = document.querySelector("#btn-add-competence");
+
+const btnDeleteNiveau = document.querySelector("#btn-delete-niveau");
+const btnAddNiveau = document.querySelector("#btn-add-niveau");
+
+const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
+
+let niveauCounter = 1;
+
+let focusedNiveauContainer = document.querySelector(".niveau-container");
+
+addListenersToNewNiveau(focusedNiveauContainer);
+
+
+
 $(function () {
-
-    // MAIN ARRAYS
-    let emploiJSON = [];
-    let niveauxArray = []
-
-    // MIDLLE ARRAYS
-    let responsabilitesArray = [];
-    let resArray = [];
-    let exigencesArray = [];
-    let marqueursArray = [];
-    let competencesArray = [];
-
-
-
-    let lastEditedInputs = {
-        "exigence": -1,
-        "marqueur": -1,
-        "competence": -1,
-        "glossaire": -1,
-        "responsabilites": [-1, -1]
-    }
-    var currentNiveauIndex = 0;
-
-    const inputEmploiName = document.querySelector("#input-name-emploi");
-    const inputEmploiFiliere = document.querySelector("#input-filiere-emploi");
-    const inputEmploiSousFiliere = document.querySelector("#input-sousFiliere-emploi");
-    const inputEmploiDateMaj = document.querySelector("#input-date-emploi");
-    const inputEmploiVocation = document.querySelector("#input-vocation-emploi");
-
-
-
-    const btnAddResponsabilite = document.querySelector("#btn-add-res");
-    const btnAddExigence = document.querySelector("#btn-add-exigence");
-    const btnAddMarqueur = document.querySelector("#btn-add-marqueur");
-    const btnAddCompetence = document.querySelector("#btn-add-competence");
-
-    const btnDeleteNiveau = document.querySelector("#btn-delete-niveau");
-    const btnAddNiveau = document.querySelector("#btn-add-niveau");
-
-    const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
-
-    let niveauCounter = 1;
-
-    let focusedNiveauContainer = document.querySelector(".niveau-container");
-
-    addListenersToNewNiveau(focusedNiveauContainer);
-
-
-
-
     btnAddResponsabilite.addEventListener('click', (e) => {
         let inputCatRes = document.querySelector("#input-categorie-responsabilites");
         let inputResValeur = document.querySelector("#input-valeur-responsabilites");
@@ -143,185 +143,188 @@ $(function () {
         console.log(emploiJSON);
     })
 
-    // btnAddExigence.addEventListener('click', (e) => {
 
-    //     let exigenceInput = document.querySelector("#input-exigence-emploi");
+});
 
-    //     let exigenceJson = {
-    //         "valeur": exigenceInput.value
-    //     }
-    //     // CHECK IF THE VALUE ALREADY EXISTS
-    //     if (lastEditedInputs.exigence !== -1) {
-    //         let index = lastEditedInputs.exigence;
-    //         exigencesArray[index] = exigenceJson;
+// btnAddExigence.addEventListener('click', (e) => {
 
-    //         //INITIALIZE THE INDEX
-    //         lastEditedInputs.exigence = -1;
+//     let exigenceInput = document.querySelector("#input-exigence-emploi");
 
-    //     } else {
-    //         exigencesArray.push(exigenceJson);
-    //     }
+//     let exigenceJson = {
+//         "valeur": exigenceInput.value
+//     }
+//     // CHECK IF THE VALUE ALREADY EXISTS
+//     if (lastEditedInputs.exigence !== -1) {
+//         let index = lastEditedInputs.exigence;
+//         exigencesArray[index] = exigenceJson;
 
+//         //INITIALIZE THE INDEX
+//         lastEditedInputs.exigence = -1;
 
-    //     exigenceInput.value = "";
-
-    //     parseExigenceToTable(exigencesArray, focusedNiveauContainer);
+//     } else {
+//         exigencesArray.push(exigenceJson);
+//     }
 
 
-    // })
+//     exigenceInput.value = "";
 
-    // btnAddMarqueur.addEventListener("click", (e) => {
-
-    //     let marqueurInput = document.querySelector("#input-marqueur-emploi");
-
-    //     let marqueurJson = {
-    //         "valeur": marqueurInput.value
-    //     }
-
-    //     // CHECK IF THE VALUE ALREADY EXISTS
-    //     if (lastEditedInputs.marqueur !== -1) {
-    //         let index = lastEditedInputs.marqueur;
-    //         marqueursArray[index] = marqueurJson;
-
-    //         //INITIALIZE THE INDEX
-    //         lastEditedInputs.marqueur = -1;
-
-    //     } else {
-    //         marqueursArray.push(marqueurJson);
-    //     }
+//     parseExigenceToTable(exigencesArray, focusedNiveauContainer);
 
 
-    //     marqueurInput.value = "";
+// })
 
-    //     parseMarqueurToTable(marqueursArray, focusedNiveauContainer);
+// btnAddMarqueur.addEventListener("click", (e) => {
 
-    // })
+//     let marqueurInput = document.querySelector("#input-marqueur-emploi");
 
-    // btnAddCompetence.addEventListener("click", (e) => {
+//     let marqueurJson = {
+//         "valeur": marqueurInput.value
+//     }
 
-    //     let nameInput = document.querySelector("#input-nom-competence");
-    //     let categoryInput = document.querySelector("#input-categorie-competence");
-    //     let niveauInput = document.querySelector("#input-niveau-competence");
+//     // CHECK IF THE VALUE ALREADY EXISTS
+//     if (lastEditedInputs.marqueur !== -1) {
+//         let index = lastEditedInputs.marqueur;
+//         marqueursArray[index] = marqueurJson;
 
-    //     let competenceJson = {
-    //         "name": nameInput.value,
-    //         "categorie": categoryInput.options[categoryInput.selectedIndex].value,
-    //         "niveau": niveauInput.options[niveauInput.selectedIndex].value
-    //     }
+//         //INITIALIZE THE INDEX
+//         lastEditedInputs.marqueur = -1;
 
-    //     if (lastEditedInputs.competence !== -1) {
-    //         let index = lastEditedInputs.competence;
-
-    //         competencesArray[index] = competenceJson;
-
-    //         //INITIALIZE THE INDEX
-    //         lastEditedInputs.competence = -1;
+//     } else {
+//         marqueursArray.push(marqueurJson);
+//     }
 
 
-    //     } else {
-    //         competencesArray.push(competenceJson);
-    //     }
+//     marqueurInput.value = "";
+
+//     parseMarqueurToTable(marqueursArray, focusedNiveauContainer);
+
+// })
+
+// btnAddCompetence.addEventListener("click", (e) => {
+
+//     let nameInput = document.querySelector("#input-nom-competence");
+//     let categoryInput = document.querySelector("#input-categorie-competence");
+//     let niveauInput = document.querySelector("#input-niveau-competence");
+
+//     let competenceJson = {
+//         "name": nameInput.value,
+//         "categorie": categoryInput.options[categoryInput.selectedIndex].value,
+//         "niveau": niveauInput.options[niveauInput.selectedIndex].value
+//     }
+
+//     if (lastEditedInputs.competence !== -1) {
+//         let index = lastEditedInputs.competence;
+
+//         competencesArray[index] = competenceJson;
+
+//         //INITIALIZE THE INDEX
+//         lastEditedInputs.competence = -1;
 
 
-    //     // Initilize the inputs
-    //     nameInput.value = "";
-
-    //     parseCompetenceToTable(competencesArray, focusedNiveauContainer);
-    // })
+//     } else {
+//         competencesArray.push(competenceJson);
+//     }
 
 
+//     // Initilize the inputs
+//     nameInput.value = "";
 
-    // btnAddNiveau.addEventListener("click", (e) => {
-
-    //     let niveauJson = {
-    //         "level": niveauCounter,
-    //         "exigences": exigencesArray,
-    //         "marqueurs": marqueursArray,
-    //         "compétences": competencesArray
-    //     };
-
-    //     niveauxArray.push(niveauJson);
-
-    //     console.log(niveauxArray);
-
-    //     // INITIALIZE ARRAYS
-    //     exigencesArray = [];
-    //     marqueursArray = [];
-    //     competencesArray = [];
+//     parseCompetenceToTable(competencesArray, focusedNiveauContainer);
+// })
 
 
-    //     let niveauContainer = document.querySelector(".niveau-container");
-    //     let parent = niveauContainer.parentElement;
 
-    //     let newNiveau = document.createElement("div");
-    //     parent.appendChild(newNiveau);
-    //     niveauCounter++;
-    //     newNiveau.outerHTML = addNewNiveauHTML(niveauCounter);
+// btnAddNiveau.addEventListener("click", (e) => {
 
-    //     let lastNiveau = lastNiveauContainer();
-    //     focusedNiveauContainer = lastNiveauContainer();
-    //     addListenersToNewNiveau(lastNiveau);
+//     let niveauJson = {
+//         "level": niveauCounter,
+//         "exigences": exigencesArray,
+//         "marqueurs": marqueursArray,
+//         "compétences": competencesArray
+//     };
 
-    // })
+//     niveauxArray.push(niveauJson);
 
-    // btnDeleteNiveau.addEventListener("click", (e) => {
+//     console.log(niveauxArray);
 
-    //     // DELETE ITS PART FROM NIVEAU ARRAY
-    //     let allDeleteBtns = document.querySelectorAll("#btn-delete-niveau");
-    //     let btnElement;
-    //     if (e.target.tagName === "I") {
-    //         btnElement = e.target.parentElement;
-    //     } else {
-    //         btnElement = e.target;
-    //     }
-
-    //     let clickedNiveauIndex = [...allDeleteBtns].indexOf(btnElement);
-
-    //     niveauxArray.splice(clickedNiveauIndex, 1);
+//     // INITIALIZE ARRAYS
+//     exigencesArray = [];
+//     marqueursArray = [];
+//     competencesArray = [];
 
 
-    //     // DELETE HTML
-    //     if (clickedNiveauIndex === 0) {
+//     let niveauContainer = document.querySelector(".niveau-container");
+//     let parent = niveauContainer.parentElement;
 
-    //     } else {
-    //         let allNiveaux = documet.querySelectorAll(".niveau-container");
+//     let newNiveau = document.createElement("div");
+//     parent.appendChild(newNiveau);
+//     niveauCounter++;
+//     newNiveau.outerHTML = addNewNiveauHTML(niveauCounter);
 
-    //         allNiveaux[clickedNiveauIndex].remove();
+//     let lastNiveau = lastNiveauContainer();
+//     focusedNiveauContainer = lastNiveauContainer();
+//     addListenersToNewNiveau(lastNiveau);
 
-    //     }
+// })
 
-    //     // UPDATE COUNTER
-    //     niveauCounter--;
-    // })
+// btnDeleteNiveau.addEventListener("click", (e) => {
+
+//     // DELETE ITS PART FROM NIVEAU ARRAY
+//     let allDeleteBtns = document.querySelectorAll("#btn-delete-niveau");
+//     let btnElement;
+//     if (e.target.tagName === "I") {
+//         btnElement = e.target.parentElement;
+//     } else {
+//         btnElement = e.target;
+//     }
+
+//     let clickedNiveauIndex = [...allDeleteBtns].indexOf(btnElement);
+
+//     niveauxArray.splice(clickedNiveauIndex, 1);
 
 
-    function parseResToTable(responsabilitesArray) {
+//     // DELETE HTML
+//     if (clickedNiveauIndex === 0) {
 
-        let tableBody = document.querySelector("#responsabilites-table-body");
+//     } else {
+//         let allNiveaux = documet.querySelectorAll(".niveau-container");
 
-        // Initilize the table body
+//         allNiveaux[clickedNiveauIndex].remove();
 
-        tableBody.innerHTML = ``;
-        // console.log(responsabilitesArray);
-        for (var i = 0; i < responsabilitesArray.length; i++) {
+//     }
 
-            let valuesLength = responsabilitesArray[i]["valeur"].length;
-            console.log(responsabilitesArray);
+//     // UPDATE COUNTER
+//     niveauCounter--;
+// })
 
-            for (var j = 0; j < valuesLength; j++) {
-                let tr = tableBody.insertRow(-1);
 
-                if (j === 0) {
-                    let categorieCell = tr.insertCell(-1);
-                    categorieCell.setAttribute("rowspan", valuesLength);
-                    categorieCell.innerHTML = responsabilitesArray[i].categorie;
+function parseResToTable(responsabilitesArray) {
 
-                    let valueCell = tr.insertCell(-1);
-                    valueCell.innerHTML = responsabilitesArray[i]["valeur"][j];
-                    // console.log(responsabilitesArray[i]["valeur"][j]);
+    let tableBody = document.querySelector("#responsabilites-table-body");
 
-                    let actionCell = tr.insertCell(-1);
-                    actionCell.innerHTML = `
+    // Initilize the table body
+
+    tableBody.innerHTML = ``;
+    // console.log(responsabilitesArray);
+    for (var i = 0; i < responsabilitesArray.length; i++) {
+
+        let valuesLength = responsabilitesArray[i]["valeur"].length;
+        console.log(responsabilitesArray);
+
+        for (var j = 0; j < valuesLength; j++) {
+            let tr = tableBody.insertRow(-1);
+
+            if (j === 0) {
+                let categorieCell = tr.insertCell(-1);
+                categorieCell.setAttribute("rowspan", valuesLength);
+                categorieCell.innerHTML = responsabilitesArray[i].categorie;
+
+                let valueCell = tr.insertCell(-1);
+                valueCell.innerHTML = responsabilitesArray[i]["valeur"][j];
+                // console.log(responsabilitesArray[i]["valeur"][j]);
+
+                let actionCell = tr.insertCell(-1);
+                actionCell.innerHTML = `
                     <div class="g-2">
                         <a id="res-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
                             data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
@@ -331,12 +334,12 @@ $(function () {
                     </div> 
                 `;
 
-                } else {
-                    let valueCell = tr.insertCell(-1);
-                    valueCell.innerHTML = responsabilitesArray[i]["valeur"][j];
+            } else {
+                let valueCell = tr.insertCell(-1);
+                valueCell.innerHTML = responsabilitesArray[i]["valeur"][j];
 
-                    let actionCell = tr.insertCell(-1);
-                    actionCell.innerHTML = `
+                let actionCell = tr.insertCell(-1);
+                actionCell.innerHTML = `
                     <div class="g-2">
                         <a id="res-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
                             data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
@@ -345,160 +348,160 @@ $(function () {
                                 class="fe fe-trash-2 fs-14"></span></a>
                     </div> 
                 `;
-                }
-
             }
-
 
         }
 
 
-        let allDeleteCatBtns = tableBody.querySelectorAll("#res-table-btn-delete");
-        let allEditCatBtns = tableBody.querySelectorAll("#res-table-btn-edit");
-
-
-        Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-            deleteBtn.addEventListener("click", (e) => {
-
-                // WHEN THE SPAN ELEMENT IS FIRED
-
-                let aElement;
-                if (e.target.tagName === "SPAN") {
-                    aElement = e.target.parentElement;
-                } else {
-                    aElement = e.target;
-                }
-
-                let categoriesLength = [];
-                console.log(categoriesLength);
-
-                responsabilitesArray.forEach((categorie, index) => {
-                    categoriesLength.push(categorie["valeur"].length);
-                })
-
-                let btnIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-                // DETERMINE CATEGORIE INDEX BASED ON THE NUMBER OF VALUES ON EACH CATEGORY
-                let cateIndex;
-                let resIndex;
-                if (btnIndex < categoriesLength[0]) {
-                    cateIndex = 0;
-                    resIndex = btnIndex;
-                } else if (btnIndex < categoriesLength[0] + categoriesLength[1]) {
-                    cateIndex = 1;
-                    resIndex = btnIndex - (categoriesLength[0]);
-
-                } else if (btnIndex < categoriesLength[0] + categoriesLength[1] + categoriesLength[2]) {
-                    cateIndex = 2;
-                    resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1]);
-
-                } else {
-                    cateIndex = 3;
-                    resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1] + categoriesLength[2]);
-                }
-
-
-
-
-                // console.log(btnIndex, cateIndex, resIndex);
-
-                // console.log(competenceIndex);
-                responsabilitesArray[cateIndex]["valeur"].splice(resIndex, 1);
-
-                parseResToTable(responsabilitesArray);
-
-            })
-        })
-
-
-        Array.from(allEditCatBtns).forEach((editBtn) => {
-            editBtn.addEventListener("click", (e) => {
-
-                // WHEN THE SPAN ELEMENT IS FIRED
-
-                let aElement;
-                if (e.target.tagName === "SPAN") {
-                    aElement = e.target.parentElement;
-                } else {
-                    aElement = e.target;
-                }
-
-                let categoriesLength = [];
-                //console.log(categoriesLength);
-
-                responsabilitesArray.forEach((categorie, index) => {
-                    categoriesLength.push(categorie["valeur"].length);
-                })
-
-                let btnIndex = [...allEditCatBtns].indexOf(aElement);
-
-                // DETERMINE CATEGORIE INDEX BASED ON THE NUMBER OF VALUES ON EACH CATEGORY
-                let cateIndex;
-                let resIndex;
-                if (btnIndex < categoriesLength[0]) {
-                    cateIndex = 0;
-                    resIndex = btnIndex;
-                } else if (btnIndex < categoriesLength[0] + categoriesLength[1]) {
-                    cateIndex = 1;
-                    resIndex = btnIndex - (categoriesLength[0]);
-
-                } else if (btnIndex < categoriesLength[0] + categoriesLength[1] + categoriesLength[2]) {
-                    cateIndex = 2;
-                    resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1]);
-
-                } else {
-                    cateIndex = 3;
-                    resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1] + categoriesLength[2]);
-                }
-
-
-                let inputCatRes = document.querySelector("#input-categorie-responsabilites");
-                let inputResValeur = document.querySelector("#input-valeur-responsabilites");
-
-
-                inputResValeur.value = responsabilitesArray[cateIndex]["valeur"][resIndex];
-                inputCatRes.value = responsabilitesArray[cateIndex].categorie;
-
-                // DISABLE CATEGORIE INPUT
-                inputCatRes.setAttribute("disable", "");
-
-                lastEditedInputs.responsabilites = [cateIndex, resIndex];
-
-
-
-                console.log(btnIndex, cateIndex, resIndex);
-
-                // console.log(competenceIndex);
-                // responsabilitesArray[cateIndex]["valeur"].splice(resIndex, 1);
-
-                // parseResToTable(responsabilitesArray);
-
-            })
-        })
-
-
-
-
-
-
     }
 
-    function parseExigenceToTable(exigences, niveauContainer) {
-        let tableBody = niveauContainer.querySelector("#exigence-table-body");
 
-        // Initilize the table body
+    let allDeleteCatBtns = tableBody.querySelectorAll("#res-table-btn-delete");
+    let allEditCatBtns = tableBody.querySelectorAll("#res-table-btn-edit");
 
-        tableBody.innerHTML = ``;
 
-        for (var i = 0; i < exigences.length; i++) {
+    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
+        deleteBtn.addEventListener("click", (e) => {
 
-            let tr = tableBody.insertRow(-1);
+            // WHEN THE SPAN ELEMENT IS FIRED
 
-            let valueCell = tr.insertCell(-1);
-            valueCell.innerHTML = exigences[i].valeur;
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
 
-            let actionCell = tr.insertCell(-1);
-            actionCell.innerHTML = `
+            let categoriesLength = [];
+            console.log(categoriesLength);
+
+            responsabilitesArray.forEach((categorie, index) => {
+                categoriesLength.push(categorie["valeur"].length);
+            })
+
+            let btnIndex = [...allDeleteCatBtns].indexOf(aElement);
+
+            // DETERMINE CATEGORIE INDEX BASED ON THE NUMBER OF VALUES ON EACH CATEGORY
+            let cateIndex;
+            let resIndex;
+            if (btnIndex < categoriesLength[0]) {
+                cateIndex = 0;
+                resIndex = btnIndex;
+            } else if (btnIndex < categoriesLength[0] + categoriesLength[1]) {
+                cateIndex = 1;
+                resIndex = btnIndex - (categoriesLength[0]);
+
+            } else if (btnIndex < categoriesLength[0] + categoriesLength[1] + categoriesLength[2]) {
+                cateIndex = 2;
+                resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1]);
+
+            } else {
+                cateIndex = 3;
+                resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1] + categoriesLength[2]);
+            }
+
+
+
+
+            // console.log(btnIndex, cateIndex, resIndex);
+
+            // console.log(competenceIndex);
+            responsabilitesArray[cateIndex]["valeur"].splice(resIndex, 1);
+
+            parseResToTable(responsabilitesArray);
+
+        })
+    })
+
+
+    Array.from(allEditCatBtns).forEach((editBtn) => {
+        editBtn.addEventListener("click", (e) => {
+
+            // WHEN THE SPAN ELEMENT IS FIRED
+
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let categoriesLength = [];
+            //console.log(categoriesLength);
+
+            responsabilitesArray.forEach((categorie, index) => {
+                categoriesLength.push(categorie["valeur"].length);
+            })
+
+            let btnIndex = [...allEditCatBtns].indexOf(aElement);
+
+            // DETERMINE CATEGORIE INDEX BASED ON THE NUMBER OF VALUES ON EACH CATEGORY
+            let cateIndex;
+            let resIndex;
+            if (btnIndex < categoriesLength[0]) {
+                cateIndex = 0;
+                resIndex = btnIndex;
+            } else if (btnIndex < categoriesLength[0] + categoriesLength[1]) {
+                cateIndex = 1;
+                resIndex = btnIndex - (categoriesLength[0]);
+
+            } else if (btnIndex < categoriesLength[0] + categoriesLength[1] + categoriesLength[2]) {
+                cateIndex = 2;
+                resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1]);
+
+            } else {
+                cateIndex = 3;
+                resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1] + categoriesLength[2]);
+            }
+
+
+            let inputCatRes = document.querySelector("#input-categorie-responsabilites");
+            let inputResValeur = document.querySelector("#input-valeur-responsabilites");
+
+
+            inputResValeur.value = responsabilitesArray[cateIndex]["valeur"][resIndex];
+            inputCatRes.value = responsabilitesArray[cateIndex].categorie;
+
+            // DISABLE CATEGORIE INPUT
+            inputCatRes.setAttribute("disable", "");
+
+            lastEditedInputs.responsabilites = [cateIndex, resIndex];
+
+
+
+            console.log(btnIndex, cateIndex, resIndex);
+
+            // console.log(competenceIndex);
+            // responsabilitesArray[cateIndex]["valeur"].splice(resIndex, 1);
+
+            // parseResToTable(responsabilitesArray);
+
+        })
+    })
+
+
+
+
+
+
+}
+
+function parseExigenceToTable(exigences, niveauContainer) {
+    let tableBody = niveauContainer.querySelector("#exigence-table-body");
+
+    // Initilize the table body
+
+    tableBody.innerHTML = ``;
+
+    for (var i = 0; i < exigences.length; i++) {
+
+        let tr = tableBody.insertRow(-1);
+
+        let valueCell = tr.insertCell(-1);
+        valueCell.innerHTML = exigences[i].valeur;
+
+        let actionCell = tr.insertCell(-1);
+        actionCell.innerHTML = `
         <div class="g-2">
                 <a id="exi-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
                     data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
@@ -507,84 +510,84 @@ $(function () {
                         class="fe fe-trash-2 fs-14"></span></a>
             </div> 
     `;
-        }
-
-        // Click event listeners 
-        let allDeleteCatBtns = tableBody.querySelectorAll("#exi-table-btn-delete");
-        let allEditCatBtns = tableBody.querySelectorAll("#exi-table-btn-edit");
-
-
-        Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-            deleteBtn.addEventListener("click", (e) => {
-
-                // WHEN THE SPAN ELEMENT IS FIRED
-
-                let aElement;
-                if (e.target.tagName === "SPAN") {
-                    aElement = e.target.parentElement;
-                } else {
-                    aElement = e.target;
-                }
-
-                let exigenceIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-                console.log(exigenceIndex);
-                exigencesArray.splice(exigenceIndex, 1);
-
-                parseExigenceToTable(exigencesArray, focusedNiveauContainer);
-
-            })
-        })
-
-        Array.from(allEditCatBtns).forEach((editBtn) => {
-            editBtn.addEventListener("click", (e) => {
-
-                let aElement;
-                if (e.target.tagName === "SPAN") {
-                    aElement = e.target.parentElement;
-                } else {
-                    aElement = e.target;
-                }
-
-                let exigenceIndex = [...allEditCatBtns].indexOf(aElement);
-                console.log(exigenceIndex);
-
-                let exigenceInput = niveauContainer.querySelector("#input-exigence-emploi");
-
-                exigenceInput.value = exigencesArray[exigenceIndex].valeur;
-
-                // // DELETE THE VALUE FROM THE ARRAY
-                // exigencesArray.splice(exigenceIndex, 1);
-
-                // ADD INDEX TO LASTEDITED VAR
-                lastEditedInputs.exigence = exigenceIndex;
-
-
-            })
-        })
-
-
-
     }
 
-    function parseMarqueurToTable(marqueurs, niveauContainer) {
-        let tableBody = niveauContainer.querySelector("#marqueur-table-body");
+    // Click event listeners 
+    let allDeleteCatBtns = tableBody.querySelectorAll("#exi-table-btn-delete");
+    let allEditCatBtns = tableBody.querySelectorAll("#exi-table-btn-edit");
+
+
+    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
+        deleteBtn.addEventListener("click", (e) => {
+
+            // WHEN THE SPAN ELEMENT IS FIRED
+
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let exigenceIndex = [...allDeleteCatBtns].indexOf(aElement);
+
+            console.log(exigenceIndex);
+            exigencesArray.splice(exigenceIndex, 1);
+
+            parseExigenceToTable(exigencesArray, focusedNiveauContainer);
+
+        })
+    })
+
+    Array.from(allEditCatBtns).forEach((editBtn) => {
+        editBtn.addEventListener("click", (e) => {
+
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let exigenceIndex = [...allEditCatBtns].indexOf(aElement);
+            console.log(exigenceIndex);
+
+            let exigenceInput = niveauContainer.querySelector("#input-exigence-emploi");
+
+            exigenceInput.value = exigencesArray[exigenceIndex].valeur;
+
+            // // DELETE THE VALUE FROM THE ARRAY
+            // exigencesArray.splice(exigenceIndex, 1);
+
+            // ADD INDEX TO LASTEDITED VAR
+            lastEditedInputs.exigence = exigenceIndex;
+
+
+        })
+    })
 
 
 
-        // Initilize the table body
+}
 
-        tableBody.innerHTML = ``;
+function parseMarqueurToTable(marqueurs, niveauContainer) {
+    let tableBody = niveauContainer.querySelector("#marqueur-table-body");
 
-        for (var i = 0; i < marqueurs.length; i++) {
 
-            let tr = tableBody.insertRow(-1);
 
-            let valueCell = tr.insertCell(-1);
-            valueCell.innerHTML = marqueurs[i].valeur;
+    // Initilize the table body
 
-            let actionCell = tr.insertCell(-1);
-            actionCell.innerHTML = `
+    tableBody.innerHTML = ``;
+
+    for (var i = 0; i < marqueurs.length; i++) {
+
+        let tr = tableBody.insertRow(-1);
+
+        let valueCell = tr.insertCell(-1);
+        valueCell.innerHTML = marqueurs[i].valeur;
+
+        let actionCell = tr.insertCell(-1);
+        actionCell.innerHTML = `
         <div class="g-2">
                 <a id="marq-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
                     data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
@@ -593,93 +596,93 @@ $(function () {
                         class="fe fe-trash-2 fs-14"></span></a>
             </div> 
     `;
-        }
-
-        // Click event listeners 
-        let allDeleteCatBtns = tableBody.querySelectorAll("#marq-table-btn-delete");
-        let allEditCatBtns = tableBody.querySelectorAll("#marq-table-btn-edit");
-
-
-        Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-            deleteBtn.addEventListener("click", (e) => {
-
-                // WHEN THE SPAN ELEMENT IS FIRED
-
-                let aElement;
-                if (e.target.tagName === "SPAN") {
-                    aElement = e.target.parentElement;
-                } else {
-                    aElement = e.target;
-                }
-
-                let marqueurIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-                console.log(marqueurIndex);
-                marqueursArray.splice(marqueurIndex, 1);
-
-                parseMarqueurToTable(marqueursArray, niveauContainer);
-
-            })
-        })
-
-        Array.from(allEditCatBtns).forEach((editBtn) => {
-            editBtn.addEventListener("click", (e) => {
-
-                // WHEN THE SPAN ELEMENT IS FIRED
-
-                let aElement;
-                if (e.target.tagName === "SPAN") {
-                    aElement = e.target.parentElement;
-                } else {
-                    aElement = e.target;
-                }
-
-                let marqueurIndex = [...allEditCatBtns].indexOf(aElement);
-                console.log(marqueurIndex);
-
-                let marqueurInput = niveauContainer.querySelector("#input-marqueur-emploi");
-
-                marqueurInput.value = marqueursArray[marqueurIndex].valeur;
-
-                // // DELETE THE VALUE FROM THE ARRAY
-                // marqueursArray.splice(marqueurIndex, 1);
-
-                // ADD INDEX TO LASTEDITED VAR
-                lastEditedInputs.marqueur = marqueurIndex;
-
-
-
-
-            })
-        })
-
-
     }
 
-    function parseCompetenceToTable(competences, niveauContainer) {
-        let tableBody = niveauContainer.querySelector("#competence-table-body");
+    // Click event listeners 
+    let allDeleteCatBtns = tableBody.querySelectorAll("#marq-table-btn-delete");
+    let allEditCatBtns = tableBody.querySelectorAll("#marq-table-btn-edit");
 
-        console.log(niveauContainer);
 
-        // Initilize the table body
+    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
+        deleteBtn.addEventListener("click", (e) => {
 
-        tableBody.innerHTML = ``;
+            // WHEN THE SPAN ELEMENT IS FIRED
 
-        for (var i = 0; i < competences.length; i++) {
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
 
-            let tr = tableBody.insertRow(-1);
+            let marqueurIndex = [...allDeleteCatBtns].indexOf(aElement);
 
-            let nameCell = tr.insertCell(-1);
-            nameCell.innerHTML = competences[i].name;
+            console.log(marqueurIndex);
+            marqueursArray.splice(marqueurIndex, 1);
 
-            let categoryCell = tr.insertCell(-1);
-            categoryCell.innerHTML = competences[i].categorie;
+            parseMarqueurToTable(marqueursArray, niveauContainer);
 
-            let niveauCell = tr.insertCell(-1);
-            niveauCell.innerHTML = competences[i].niveau;
+        })
+    })
 
-            let actionCell = tr.insertCell(-1);
-            actionCell.innerHTML = `
+    Array.from(allEditCatBtns).forEach((editBtn) => {
+        editBtn.addEventListener("click", (e) => {
+
+            // WHEN THE SPAN ELEMENT IS FIRED
+
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let marqueurIndex = [...allEditCatBtns].indexOf(aElement);
+            console.log(marqueurIndex);
+
+            let marqueurInput = niveauContainer.querySelector("#input-marqueur-emploi");
+
+            marqueurInput.value = marqueursArray[marqueurIndex].valeur;
+
+            // // DELETE THE VALUE FROM THE ARRAY
+            // marqueursArray.splice(marqueurIndex, 1);
+
+            // ADD INDEX TO LASTEDITED VAR
+            lastEditedInputs.marqueur = marqueurIndex;
+
+
+
+
+        })
+    })
+
+
+}
+
+function parseCompetenceToTable(competences, niveauContainer) {
+    let tableBody = niveauContainer.querySelector("#competence-table-body");
+
+    console.log(niveauContainer);
+
+    // Initilize the table body
+
+    tableBody.innerHTML = ``;
+
+    for (var i = 0; i < competences.length; i++) {
+
+        let tr = tableBody.insertRow(-1);
+
+        let nameCell = tr.insertCell(-1);
+        nameCell.innerHTML = competences[i].name;
+
+        let categoryCell = tr.insertCell(-1);
+        categoryCell.innerHTML = competences[i].categorie;
+
+        let niveauCell = tr.insertCell(-1);
+        niveauCell.innerHTML = competences[i].niveau;
+
+        let actionCell = tr.insertCell(-1);
+        actionCell.innerHTML = `
         <div class="g-2">
                 <a id="comp-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
                     data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
@@ -688,108 +691,108 @@ $(function () {
                         class="fe fe-trash-2 fs-14"></span></a>
             </div> 
     `;
-        }
-
-        // Click event listeners 
-        let allDeleteCatBtns = tableBody.querySelectorAll("#comp-table-btn-delete");
-        let allEditCatBtns = tableBody.querySelectorAll("#comp-table-btn-edit");
-
-
-        Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-            deleteBtn.addEventListener("click", (e) => {
-
-                // GET THE TARGET NICEAU CONTAINER
-                let targetIndex = [...document.querySelectorAll(".niveau-container")].indexOf(niveauContainer);
-
-                // WHEN THE SPAN ELEMENT IS FIRED
-
-                let aElement;
-                if (e.target.tagName === "SPAN") {
-                    aElement = e.target.parentElement;
-                } else {
-                    aElement = e.target;
-                }
-
-                let competenceIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-                console.log(competenceIndex);
-
-                if (targetIndex !== niveauCounter) {
-
-                } else {
-                    competencesArray.splice(competenceIndex, 1);
-                }
-                competencesArray.splice(competenceIndex, 1);
-
-                parseCompetenceToTable(competencesArray, niveauContainer);
-
-            })
-        })
-
-        Array.from(allEditCatBtns).forEach((editBtn) => {
-            editBtn.addEventListener("click", (e) => {
-
-                let aElement;
-                if (e.target.tagName === "SPAN") {
-                    aElement = e.target.parentElement;
-                } else {
-                    aElement = e.target;
-                }
-
-                let competenceIndex = [...allEditCatBtns].indexOf(aElement);
-                console.log(competenceIndex);
-
-                let nameInput = niveauContainer.querySelector("#input-nom-competence");
-                let categoryInput = niveauContainer.querySelector("#input-categorie-competence");
-                let niveauInput = niveauContainer.querySelector("#input-niveau-competence");
-
-                nameInput.value = competencesArray[competenceIndex].name;
-                categoryInput.value = competencesArray[competenceIndex].category;
-                niveauInput.value = competencesArray[competenceIndex].niveau;
-
-                // // DELETE THE VALUE FROM THE ARRAY
-                // competencesArray.splice(competenceIndex, 1);
-
-                // ADD INDEX TO LASTEDITED VAR
-                lastEditedInputs.competence = competenceIndex;
-
-
-
-
-            })
-        })
-
-
-
     }
 
-    function parseGlossaireToTable(glossaire, niveauContainer) {
-        let tableBody = niveauContainer.querySelector("#glossaire-table-body");
+    // Click event listeners 
+    let allDeleteCatBtns = tableBody.querySelectorAll("#comp-table-btn-delete");
+    let allEditCatBtns = tableBody.querySelectorAll("#comp-table-btn-edit");
 
 
-        // Initilize the table body
+    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
+        deleteBtn.addEventListener("click", (e) => {
 
-        tableBody.innerHTML = ``;
-        for (var j = 0; j < glossaire.length; j++) {
+            // GET THE TARGET NICEAU CONTAINER
+            let targetIndex = [...document.querySelectorAll(".niveau-container")].indexOf(niveauContainer);
 
-            for (var i = 0; i < glossaire[j]["niveaux"].length; i++) {
+            // WHEN THE SPAN ELEMENT IS FIRED
 
-                let tr = tableBody.insertRow(-1);
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
 
-                if (i === 0) {
+            let competenceIndex = [...allDeleteCatBtns].indexOf(aElement);
 
-                    let nameCell = tr.insertCell(-1);
-                    nameCell.setAttribute("rowspan", "4");
-                    nameCell.innerHTML = glossaire[j].name;
+            console.log(competenceIndex);
 
-                    let niveauCell = tr.insertCell(-1);
-                    niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
+            if (targetIndex !== niveauCounter) {
 
-                    let defCell = tr.insertCell(-1);
-                    defCell.innerHTML = glossaire[j]["niveaux"][i].description;
-                    let actionCell = tr.insertCell(-1);
-                    actionCell.setAttribute("rowspan", "4");
-                    actionCell.innerHTML = `
+            } else {
+                competencesArray.splice(competenceIndex, 1);
+            }
+            competencesArray.splice(competenceIndex, 1);
+
+            parseCompetenceToTable(competencesArray, niveauContainer);
+
+        })
+    })
+
+    Array.from(allEditCatBtns).forEach((editBtn) => {
+        editBtn.addEventListener("click", (e) => {
+
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let competenceIndex = [...allEditCatBtns].indexOf(aElement);
+            console.log(competenceIndex);
+
+            let nameInput = niveauContainer.querySelector("#input-nom-competence");
+            let categoryInput = niveauContainer.querySelector("#input-categorie-competence");
+            let niveauInput = niveauContainer.querySelector("#input-niveau-competence");
+
+            nameInput.value = competencesArray[competenceIndex].name;
+            categoryInput.value = competencesArray[competenceIndex].category;
+            niveauInput.value = competencesArray[competenceIndex].niveau;
+
+            // // DELETE THE VALUE FROM THE ARRAY
+            // competencesArray.splice(competenceIndex, 1);
+
+            // ADD INDEX TO LASTEDITED VAR
+            lastEditedInputs.competence = competenceIndex;
+
+
+
+
+        })
+    })
+
+
+
+}
+
+function parseGlossaireToTable(glossaire, niveauContainer) {
+    let tableBody = niveauContainer.querySelector("#glossaire-table-body");
+
+
+    // Initilize the table body
+
+    tableBody.innerHTML = ``;
+    for (var j = 0; j < glossaire.length; j++) {
+
+        for (var i = 0; i < glossaire[j]["niveaux"].length; i++) {
+
+            let tr = tableBody.insertRow(-1);
+
+            if (i === 0) {
+
+                let nameCell = tr.insertCell(-1);
+                nameCell.setAttribute("rowspan", "4");
+                nameCell.innerHTML = glossaire[j].name;
+
+                let niveauCell = tr.insertCell(-1);
+                niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
+
+                let defCell = tr.insertCell(-1);
+                defCell.innerHTML = glossaire[j]["niveaux"][i].description;
+                let actionCell = tr.insertCell(-1);
+                actionCell.setAttribute("rowspan", "4");
+                actionCell.innerHTML = `
                     <div class="g-2">
                         <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
                             data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
@@ -799,249 +802,100 @@ $(function () {
                     </div> 
                 `;
 
-                } else {
-                    let niveauCell = tr.insertCell(-1);
-                    niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
+            } else {
+                let niveauCell = tr.insertCell(-1);
+                niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
 
-                    let defCell = tr.insertCell(-1);
-                    defCell.innerHTML = glossaire[j]["niveaux"][i].description;
+                let defCell = tr.insertCell(-1);
+                defCell.innerHTML = glossaire[j]["niveaux"][i].description;
 
 
-
-                }
 
             }
-
 
         }
 
 
-
-        // Click event listeners 
-        let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
-        let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
-
-        Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-            deleteBtn.addEventListener("click", (e) => {
-
-                // WHEN THE SPAN ELEMENT IS FIRED
-
-                let aElement;
-                if (e.target.tagName === "SPAN") {
-                    aElement = e.target.parentElement;
-                } else {
-                    aElement = e.target;
-                }
-
-                let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-                console.log(competenceIndex);
-                glossaireArray.splice(glossaireIndex, 1);
-
-                parseGlossaireToTable(glossaireArray, niveau);
-
-            })
-        })
-
-
-
     }
 
-    function lastNiveauContainer() {
-        let niveaux = Array.from(document.querySelectorAll(".niveau-container"));
-
-        return niveaux.at(-1);
-    }
-
-    function addListenersToNewNiveau(container) {
-
-        const btnAddExigence = container.querySelector("#btn-add-exigence");
-        const btnAddMarqueur = container.querySelector("#btn-add-marqueur");
-        const btnAddCompetence = container.querySelector("#btn-add-competence");
-
-        const btnDeleteNiveau = container.querySelector("#btn-delete-niveau");
-
-        const btnEditNiveau = container.querySelector("#btn-edit-niveau");
-        const btnAddNiveau = container.querySelector("#btn-add-niveau");
-
-        $(".btn-add").change(function () {
-            this.classList.remove("is-invalid");
-        })
 
 
+    // Click event listeners 
+    let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
+    let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
 
-        btnEditNiveau.addEventListener("click", (e) => {
+    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
+        deleteBtn.addEventListener("click", (e) => {
 
             // WHEN THE SPAN ELEMENT IS FIRED
 
-            let btnElement;
-            if (e.target.tagName === "I") {
-                btnElement = e.target.parentElement;
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
             } else {
-                btnElement = e.target;
-            }
-            //console.log(container);
-
-            // CLEAR DISABLE FROM INPUT
-
-            // GET NIVEAU INDEX
-            let clickedNiveauIndex = Array.from(document.querySelectorAll(".niveau-container")).indexOf(container);
-
-            console.log(currentNiveauIndex, clickedNiveauIndex);
-
-
-            // SAVE ARRAYS TO NIVEAUX-ARRAY
-            if (typeof (niveauxArray[currentNiveauIndex]) === 'undefined') { // SAVE THIS AS NEW ENTRY TO NIVEAUX ARRAY
-
-                let niveauJson = {
-                    "level": niveauCounter,
-                    "exigences": exigencesArray,
-                    "marqueurs": marqueursArray,
-                    "compétences": competencesArray
-                };
-
-                niveauxArray.push(niveauJson);
-
-            } else {
-                niveauxArray[currentNiveauIndex].exigences = exigencesArray;
-                niveauxArray[currentNiveauIndex].marqueurs = marqueursArray;
-                niveauxArray[currentNiveauIndex]["compétences"] = competencesArray;
+                aElement = e.target;
             }
 
-            // GET THE VALUES OF THE CLICKED NIVEAU FROM NIVEAUXARRAY
-            exigencesArray = niveauxArray[clickedNiveauIndex].exigences;
-            marqueursArray = niveauxArray[clickedNiveauIndex].marqueurs;
-            competencesArray = niveauxArray[clickedNiveauIndex]["compétences"];
+            let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
 
+            console.log(competenceIndex);
+            glossaireArray.splice(glossaireIndex, 1);
 
-            // CLEAR DISABLED-READONLY FROM INPUTS
-            clearDisableFromInputsFor(container);
+            parseGlossaireToTable(glossaireArray, niveau);
 
-            // DISABLE INPUTS-SELECTS FOR THE PREVIOUS NIVEAU CONTAINER
-            let previousNiveau = Array.from(document.querySelectorAll(".niveau-container"))[currentNiveauIndex];
-            disableInputsFor(previousNiveau);
-
-
-            // CHANGE CURRENT TO CLICKED
-            currentNiveauIndex = clickedNiveauIndex;
+        })
+    })
 
 
 
+}
+
+function lastNiveauContainer() {
+    let niveaux = Array.from(document.querySelectorAll(".niveau-container"));
+
+    return niveaux.at(-1);
+}
+
+function addListenersToNewNiveau(container) {
+
+    const btnAddExigence = container.querySelector("#btn-add-exigence");
+    const btnAddMarqueur = container.querySelector("#btn-add-marqueur");
+    const btnAddCompetence = container.querySelector("#btn-add-competence");
+
+    const btnDeleteNiveau = container.querySelector("#btn-delete-niveau");
+
+    const btnEditNiveau = container.querySelector("#btn-edit-niveau");
+    const btnAddNiveau = container.querySelector("#btn-add-niveau");
+
+    $(".btn-add").change(function () {
+        this.classList.remove("is-invalid");
+    })
+
+
+
+    btnEditNiveau.addEventListener("click", (e) => {
+
+        // WHEN THE SPAN ELEMENT IS FIRED
+
+        let btnElement;
+        if (e.target.tagName === "I") {
+            btnElement = e.target.parentElement;
+        } else {
+            btnElement = e.target;
         }
+        //console.log(container);
 
-            , true)
+        // CLEAR DISABLE FROM INPUT
 
-        btnDeleteNiveau.addEventListener("click", (e) => {
+        // GET NIVEAU INDEX
+        let clickedNiveauIndex = Array.from(document.querySelectorAll(".niveau-container")).indexOf(container);
 
-            // WHEN THE SPAN ELEMENT IS FIRED
-            let btnElement;
-            if (e.target.tagName === "I") {
-                btnElement = e.target.parentElement;
-            } else {
-                btnElement = e.target;
-            }
-
-            // GET NIVEAU INDEX
-            let clickedNiveauIndex = Array.from(document.querySelectorAll(".niveau-container")).indexOf(container);
-
-            currentNiveauIndex = clickedNiveauIndex;
-
-            // A WINDOW IS SHOWN TO CONFIRM THE DELETE
-            var myModal = new bootstrap.Modal(document.getElementById('modaldemo5'));
-            myModal.show();
-
-        })
+        console.log(currentNiveauIndex, clickedNiveauIndex);
 
 
+        // SAVE ARRAYS TO NIVEAUX-ARRAY
+        if (typeof (niveauxArray[currentNiveauIndex]) === 'undefined') { // SAVE THIS AS NEW ENTRY TO NIVEAUX ARRAY
 
-        btnAddExigence.addEventListener('click', (e) => {
-
-
-            let exigenceInput = container.querySelector("#input-exigence-emploi");
-
-            let exigenceJson = {
-                "valeur": exigenceInput.value
-            }
-            // CHECK IF THE VALUE ALREADY EXISTS
-            if (lastEditedInputs.exigence !== -1) {
-                let index = lastEditedInputs.exigence;
-                exigencesArray[index] = exigenceJson;
-
-                //INITIALIZE THE INDEX
-                lastEditedInputs.exigence = -1;
-
-            } else {
-                exigencesArray.push(exigenceJson);
-            }
-
-
-            exigenceInput.value = "";
-
-            parseExigenceToTable(exigencesArray, container);
-
-
-        })
-
-        btnAddMarqueur.addEventListener("click", (e) => {
-            let marqueurInput = container.querySelector("#input-marqueur-emploi");
-
-            let marqueurJson = {
-                "valeur": marqueurInput.value
-            }
-
-            // CHECK IF THE VALUE ALREADY EXISTS
-            if (lastEditedInputs.marqueur !== -1) {
-                let index = lastEditedInputs.marqueur;
-                marqueursArray[index] = marqueurJson;
-
-                //INITIALIZE THE INDEX
-                lastEditedInputs.marqueur = -1;
-
-            } else {
-                marqueursArray.push(marqueurJson);
-            }
-
-
-            marqueurInput.value = "";
-
-            parseMarqueurToTable(marqueursArray, container);
-
-        })
-
-        btnAddCompetence.addEventListener("click", (e) => {
-            let nameInput = container.querySelector("#input-nom-competence");
-            let categoryInput = container.querySelector("#input-categorie-competence");
-            let niveauInput = container.querySelector("#input-niveau-competence");
-
-            let competenceJson = {
-                "name": nameInput.value,
-                "categorie": categoryInput.options[categoryInput.selectedIndex].value,
-                "niveau": niveauInput.options[niveauInput.selectedIndex].value
-            }
-
-            if (lastEditedInputs.competence !== -1) {
-                let index = lastEditedInputs.competence;
-
-                competencesArray[index] = competenceJson;
-
-                //INITIALIZE THE INDEX
-                lastEditedInputs.competence = -1;
-
-
-            } else {
-                competencesArray.push(competenceJson);
-            }
-
-
-            // Initilize the inputs
-            nameInput.value = "";
-
-            parseCompetenceToTable(competencesArray, container);
-        })
-
-
-
-        btnAddNiveau.addEventListener("click", (e) => {
             let niveauJson = {
                 "level": niveauCounter,
                 "exigences": exigencesArray,
@@ -1051,41 +905,190 @@ $(function () {
 
             niveauxArray.push(niveauJson);
 
-            console.log(niveauxArray);
+        } else {
+            niveauxArray[currentNiveauIndex].exigences = exigencesArray;
+            niveauxArray[currentNiveauIndex].marqueurs = marqueursArray;
+            niveauxArray[currentNiveauIndex]["compétences"] = competencesArray;
+        }
 
-            // INITIALIZE ARRAYS
-            exigencesArray = [];
-            marqueursArray = [];
-            competencesArray = [];
-
-            // DISABLE INPUTS FOR THE PREVIOUS NIVEAU
-            disableInputsFor(container);
-
-
-            let niveauContainer = document.querySelector(".niveau-container");
-            let parent = niveauContainer.parentElement;
-
-            let newNiveau = document.createElement("div");
-            parent.appendChild(newNiveau);
-            niveauCounter++;
-            newNiveau.outerHTML = addNewNiveauHTML(niveauCounter);
+        // GET THE VALUES OF THE CLICKED NIVEAU FROM NIVEAUXARRAY
+        exigencesArray = niveauxArray[clickedNiveauIndex].exigences;
+        marqueursArray = niveauxArray[clickedNiveauIndex].marqueurs;
+        competencesArray = niveauxArray[clickedNiveauIndex]["compétences"];
 
 
-            let lastNiveau = lastNiveauContainer();
-            focusedNiveauContainer = lastNiveauContainer();
-            addListenersToNewNiveau(lastNiveau);
+        // CLEAR DISABLED-READONLY FROM INPUTS
+        clearDisableFromInputsFor(container);
 
-            currentNiveauIndex = niveauCounter - 1;
+        // DISABLE INPUTS-SELECTS FOR THE PREVIOUS NIVEAU CONTAINER
+        let previousNiveau = Array.from(document.querySelectorAll(".niveau-container"))[currentNiveauIndex];
+        disableInputsFor(previousNiveau);
 
-        })
 
+        // CHANGE CURRENT TO CLICKED
+        currentNiveauIndex = clickedNiveauIndex;
 
 
 
     }
 
-    function addNewNiveauHTML(niveauCounter) {
-        return `
+        , true)
+
+    btnDeleteNiveau.addEventListener("click", (e) => {
+
+        // WHEN THE SPAN ELEMENT IS FIRED
+        let btnElement;
+        if (e.target.tagName === "I") {
+            btnElement = e.target.parentElement;
+        } else {
+            btnElement = e.target;
+        }
+
+        // GET NIVEAU INDEX
+        let clickedNiveauIndex = Array.from(document.querySelectorAll(".niveau-container")).indexOf(container);
+
+        currentNiveauIndex = clickedNiveauIndex;
+
+        // A WINDOW IS SHOWN TO CONFIRM THE DELETE
+        var myModal = new bootstrap.Modal(document.getElementById('modaldemo5'));
+        myModal.show();
+
+    })
+
+
+
+    btnAddExigence.addEventListener('click', (e) => {
+
+
+        let exigenceInput = container.querySelector("#input-exigence-emploi");
+
+        let exigenceJson = {
+            "valeur": exigenceInput.value
+        }
+        // CHECK IF THE VALUE ALREADY EXISTS
+        if (lastEditedInputs.exigence !== -1) {
+            let index = lastEditedInputs.exigence;
+            exigencesArray[index] = exigenceJson;
+
+            //INITIALIZE THE INDEX
+            lastEditedInputs.exigence = -1;
+
+        } else {
+            exigencesArray.push(exigenceJson);
+        }
+
+
+        exigenceInput.value = "";
+
+        parseExigenceToTable(exigencesArray, container);
+
+
+    })
+
+    btnAddMarqueur.addEventListener("click", (e) => {
+        let marqueurInput = container.querySelector("#input-marqueur-emploi");
+
+        let marqueurJson = {
+            "valeur": marqueurInput.value
+        }
+
+        // CHECK IF THE VALUE ALREADY EXISTS
+        if (lastEditedInputs.marqueur !== -1) {
+            let index = lastEditedInputs.marqueur;
+            marqueursArray[index] = marqueurJson;
+
+            //INITIALIZE THE INDEX
+            lastEditedInputs.marqueur = -1;
+
+        } else {
+            marqueursArray.push(marqueurJson);
+        }
+
+
+        marqueurInput.value = "";
+
+        parseMarqueurToTable(marqueursArray, container);
+
+    })
+
+    btnAddCompetence.addEventListener("click", (e) => {
+        let nameInput = container.querySelector("#input-nom-competence");
+        let categoryInput = container.querySelector("#input-categorie-competence");
+        let niveauInput = container.querySelector("#input-niveau-competence");
+
+        let competenceJson = {
+            "name": nameInput.value,
+            "categorie": categoryInput.options[categoryInput.selectedIndex].value,
+            "niveau": niveauInput.options[niveauInput.selectedIndex].value
+        }
+
+        if (lastEditedInputs.competence !== -1) {
+            let index = lastEditedInputs.competence;
+
+            competencesArray[index] = competenceJson;
+
+            //INITIALIZE THE INDEX
+            lastEditedInputs.competence = -1;
+
+
+        } else {
+            competencesArray.push(competenceJson);
+        }
+
+
+        // Initilize the inputs
+        nameInput.value = "";
+
+        parseCompetenceToTable(competencesArray, container);
+    })
+
+
+
+    btnAddNiveau.addEventListener("click", (e) => {
+        let niveauJson = {
+            "level": niveauCounter,
+            "exigences": exigencesArray,
+            "marqueurs": marqueursArray,
+            "compétences": competencesArray
+        };
+
+        niveauxArray.push(niveauJson);
+
+        console.log(niveauxArray);
+
+        // INITIALIZE ARRAYS
+        exigencesArray = [];
+        marqueursArray = [];
+        competencesArray = [];
+
+        // DISABLE INPUTS FOR THE PREVIOUS NIVEAU
+        disableInputsFor(container);
+
+
+        let niveauContainer = document.querySelector(".niveau-container");
+        let parent = niveauContainer.parentElement;
+
+        let newNiveau = document.createElement("div");
+        parent.appendChild(newNiveau);
+        niveauCounter++;
+        newNiveau.outerHTML = addNewNiveauHTML(niveauCounter);
+
+
+        let lastNiveau = lastNiveauContainer();
+        focusedNiveauContainer = lastNiveauContainer();
+        addListenersToNewNiveau(lastNiveau);
+
+        currentNiveauIndex = niveauCounter - 1;
+
+    })
+
+
+
+
+}
+
+function addNewNiveauHTML(niveauCounter) {
+    return `
     <div class="col-md-12 col-xl-12 niveau-container">
                 <div class="card">
                     <div class="card-header ">
@@ -1224,156 +1227,155 @@ $(function () {
             </div>
     
     `;
-    }
+}
 
-    function categorizeArray(targetArray, element) {
+function categorizeArray(targetArray, element) {
 
 
-        if (targetArray.length === 0) {
+    if (targetArray.length === 0) {
+        targetArray.push({
+            "categorie": element.categorie,
+            "valeur": [
+                element.valeur
+            ]
+        })
+    } else {
+
+        //CHECK IF THE CATEGORY IS ALREADY ON CLEANARRAY OR CREATE A NEW CATEGORY ON CLEANARRAY
+        // console.log(hasSamePropertyValue(targetArray, element.categorie)[1]);
+        if (hasSamePropertyValue(targetArray, element.categorie)[1]) {
+            let categorieIndex = hasSamePropertyValue(targetArray, element.categorie)[0];
+
+            targetArray[categorieIndex].valeur.push(element.valeur);
+        } else {
             targetArray.push({
                 "categorie": element.categorie,
                 "valeur": [
                     element.valeur
                 ]
             })
-        } else {
-
-            //CHECK IF THE CATEGORY IS ALREADY ON CLEANARRAY OR CREATE A NEW CATEGORY ON CLEANARRAY
-            // console.log(hasSamePropertyValue(targetArray, element.categorie)[1]);
-            if (hasSamePropertyValue(targetArray, element.categorie)[1]) {
-                let categorieIndex = hasSamePropertyValue(targetArray, element.categorie)[0];
-
-                targetArray[categorieIndex].valeur.push(element.valeur);
-            } else {
-                targetArray.push({
-                    "categorie": element.categorie,
-                    "valeur": [
-                        element.valeur
-                    ]
-                })
-            }
-        }
-
-
-        return targetArray;
-    }
-
-    function hasSamePropertyValue(array, property) {
-        let hasIt = false;
-        let indexOfObject;
-        array.every((object, index) => {
-            hasIt = (object.categorie === property);
-
-            if (hasIt) {
-                indexOfObject = index;
-            }
-
-            return !hasIt;
-        })
-
-        return [indexOfObject, hasIt]
-    }
-
-    function saveToArray(array, element) {
-
-    }
-
-    function disableInputsFor(niveauContainer) {
-        let inputs = niveauContainer.querySelectorAll("input");
-        let selects = niveauContainer.querySelectorAll("select");
-
-        Array.from(inputs).forEach((input) => {
-            input.setAttribute("readonly", "");
-        })
-
-        Array.from(selects).forEach((select) => {
-            select.setAttribute("disabled", "");
-        })
-    }
-
-    function clearDisableFromInputsFor(niveauContainer) {
-        let inputs = niveauContainer.querySelectorAll("input");
-        let selects = niveauContainer.querySelectorAll("select");
-
-        Array.from(inputs).forEach((input) => {
-            input.removeAttribute("readonly");
-        })
-
-        Array.from(selects).forEach((select) => {
-            select.removeAttribute("disabled");
-        })
-    }
-
-
-    function checkInputsConstraints() {
-
-        // CHECK INFORMATIONS DE BASE
-        let baseInputs = checkBaseInformation();
-
-        // console.log(checkBaseInformation());
-
-        // CHECK THE LAST NIVEAU IF IT IS FILLED (MAYBE A NIVEAU DOES NOT HAVE ONE THE DESCRIBED FIELDS)
-        let lastNiveauInputs = checkLastNiveauInputs();
-
-        return baseInputs && lastNiveauInputs;
-
-
-
-
-    }
-
-    function checkBaseInformation() {
-
-        let invalidFields = $(".base-emploi-info").filter(function () {
-            if (this.value === '') {
-                return true;
-            }
-
-        });
-        console.log(invalidFields.length);
-        if (invalidFields.length === 0) {
-            return true;
-        } else {
-            invalidFields.addClass("is-invalid");
-            return false;
         }
     }
 
-    function checkLastNiveauInputs() {
 
-        let allTableBodies = $(".niveau-container").last().find("tbody");
+    return targetArray;
+}
+
+function hasSamePropertyValue(array, property) {
+    let hasIt = false;
+    let indexOfObject;
+    array.every((object, index) => {
+        hasIt = (object.categorie === property);
+
+        if (hasIt) {
+            indexOfObject = index;
+        }
+
+        return !hasIt;
+    })
+
+    return [indexOfObject, hasIt]
+}
+
+function saveToArray(array, element) {
+
+}
+
+function disableInputsFor(niveauContainer) {
+    let inputs = niveauContainer.querySelectorAll("input");
+    let selects = niveauContainer.querySelectorAll("select");
+
+    Array.from(inputs).forEach((input) => {
+        input.setAttribute("readonly", "");
+    })
+
+    Array.from(selects).forEach((select) => {
+        select.setAttribute("disabled", "");
+    })
+}
+
+function clearDisableFromInputsFor(niveauContainer) {
+    let inputs = niveauContainer.querySelectorAll("input");
+    let selects = niveauContainer.querySelectorAll("select");
+
+    Array.from(inputs).forEach((input) => {
+        input.removeAttribute("readonly");
+    })
+
+    Array.from(selects).forEach((select) => {
+        select.removeAttribute("disabled");
+    })
+}
 
 
-        let emptyTableBodies = $(".niveau-container").last().find("tbody").filter(function () {
-            if (this.innerHTML === "") {
-                return true;
-            }
-        });
+function checkInputsConstraints() {
 
-        console.log(Array.from(allTableBodies).length, Array.from(emptyTableBodies).length);
+    // CHECK INFORMATIONS DE BASE
+    let baseInputs = checkBaseInformation();
 
-        if (Array.from(allTableBodies).length === Array.from(emptyTableBodies).length) {
+    // console.log(checkBaseInformation());
 
-            // ADD IS-INVALID TO INPUTS FIELDS
-            $(".niveau-container").last().find("input").addClass("is-invalid");
-            $(".niveau-container").last().find("select").addClass("is-invalid");
+    // CHECK THE LAST NIVEAU IF IT IS FILLED (MAYBE A NIVEAU DOES NOT HAVE ONE THE DESCRIBED FIELDS)
+    let lastNiveauInputs = checkLastNiveauInputs();
 
-            console.log($(".niveau-container").last().find("input"))
+    return baseInputs && lastNiveauInputs;
 
-            return false;
 
-        } else {
+
+
+}
+
+function checkBaseInformation() {
+
+    let invalidFields = $(".base-emploi-info").filter(function () {
+        if (this.value === '') {
             return true;
         }
 
+    });
+    console.log(invalidFields.length);
+    if (invalidFields.length === 0) {
+        return true;
+    } else {
+        invalidFields.addClass("is-invalid");
+        return false;
+    }
+}
+
+function checkLastNiveauInputs() {
+
+    let allTableBodies = $(".niveau-container").last().find("tbody");
 
 
+    let emptyTableBodies = $(".niveau-container").last().find("tbody").filter(function () {
+        if (this.innerHTML === "") {
+            return true;
+        }
+    });
 
-        return emptyTableBodies;
+    console.log(Array.from(allTableBodies).length, Array.from(emptyTableBodies).length);
 
+    if (Array.from(allTableBodies).length === Array.from(emptyTableBodies).length) {
+
+        // ADD IS-INVALID TO INPUTS FIELDS
+        $(".niveau-container").last().find("input").addClass("is-invalid");
+        $(".niveau-container").last().find("select").addClass("is-invalid");
+
+        console.log($(".niveau-container").last().find("input"))
+
+        return false;
+
+    } else {
+        return true;
     }
 
 
 
 
-});
+    return emptyTableBodies;
+
+}
+
+
+
+

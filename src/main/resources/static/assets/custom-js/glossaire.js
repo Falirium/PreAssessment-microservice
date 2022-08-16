@@ -1,41 +1,72 @@
+
+
+let fileExcel = document.querySelector("#input-file");
+let competenceArray = [];
+
+let competenceNameArray = [];
+let competenceDefArray = [];
+let competenceLevelsDefArray = [];
+
+let competenceEditIndex = -1;
+
+let counter = 1;
+
+
+const btnAddGlossaire = document.querySelector("#btn-add-glossaire");
+const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
+
 $(function () {
-    let glossaireArray = [];
-
-    let fileExcel = document.querySelector("#input-file");
-    let competenceArray = [];
-
-    let competenceNameArray = [];
-    let competenceDefArray = [];
-    let competenceLevelsDefArray = [];
-
-    let counter = 1;
-
-
-    const btnAddGlossaire = document.querySelector("#btn-add-glossaire");
-
 
     btnAddGlossaire.addEventListener("click", (e) => {
+
         let nomCompGlossaire = document.querySelector("#input-nom-competence-glossaire");
         let niveauCompGlassaire = Array.from(document.querySelectorAll("#input-niveau-competence-glossaire"));
-        let defCompGlaossaire = Array.from(document.querySelectorAll("#input-def-competence-glossaire"));
+        let defCompGlaossaire = Array.from(document.querySelectorAll(".input-level-def"));
 
-        let competenceGlassaireJson = {
-            "name": nomCompGlossaire.value,
-            "niveaux": []
-        }
+        if (competenceEditIndex !== -1) {
+
+            competenceArray[competenceEditIndex] = {
+                "name": nomCompGlossaire.value,
+                "définition": competenceArray[competenceEditIndex]["définition"],
+                "niveaux": []
+            }
+            defCompGlaossaire.forEach((def, index) => {
+                console.log(niveauCompGlassaire[index].value, def.value, index)
+                competenceArray[competenceEditIndex]["niveaux"].push({
+                    "level": niveauCompGlassaire[index].value,
+                    "définition": def.value
+                })
+            })
+
+            console.log(competenceEditIndex, competenceArray);
+
+            // INITIALIZE THE INDEX
+            competenceEditIndex = -1;
 
 
+        } else {
 
-        for (var i = 0; i < niveauCompGlassaire.length; i++) {
-            let nivaeuJson = {
-                "niveau": niveauCompGlassaire[i].value,
-                "description": defCompGlaossaire[i].value
+            let competenceGlassaireJson = {
+                "name": nomCompGlossaire.value,
+                "définition": null,
+                "niveaux": []
             }
 
-            competenceGlassaireJson["niveaux"].push(nivaeuJson);
+
+
+            for (var i = 0; i < niveauCompGlassaire.length; i++) {
+                let nivaeuJson = {
+                    "level": niveauCompGlassaire[i].value,
+                    "définition": defCompGlaossaire[i].value
+                }
+
+                competenceGlassaireJson["niveaux"].push(nivaeuJson);
+            }
+
+            competenceArray.push(competenceGlassaireJson);
+
         }
 
-        glossaireArray.push(competenceGlassaireJson);
 
         // INITIALIZE THE INPUTS
         nomCompGlossaire.value = "";
@@ -43,17 +74,49 @@ $(function () {
             definition.value = "";
         })
 
-        parseGlossaireToTable(glossaireArray);
+
+
+        console.log(competenceArray);
+        parseGlossaireToTable(competenceArray);
+    })
+
+    btnConfirmDeleteNiveau.addEventListener("click", (e) => {
+        parseGlossaireToTable(competenceArray);
+
+
+    })
+
+
+    fileExcel.addEventListener("change", (e) => {
+
+        // HIDE MODAL
+        // var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
+        // myModal.hide();
+        $("#input-modal").modal('hide');
+
+        // ADD LOADER ON THE PAGE
+        $("#btn-add-file").addClass("btn-loading");
+
+        // POPULATE GLOSSAIRE ARRAY
+        parseExcelFile2(fileExcel);
+
+
+
+
+
+
     })
 
     function parseGlossaireToTable(glossaire) {
         let tableBody = document.querySelector("#glossaire-table-body");
 
-        console.log("HEEERRE");
+
         // Initilize the table body
 
         tableBody.innerHTML = ``;
         for (var j = 0; j < glossaire.length; j++) {
+
+            // console.log(j,glossaire[j]["niveaux"]);
 
             for (var i = 0; i < glossaire[j]["niveaux"].length; i++) {
 
@@ -99,7 +162,7 @@ $(function () {
                     niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
 
                     let defCell = tr.insertCell(-1);
-                    defCell.innerHTML = glossaire[j]["niveaux"][i].definition;
+                    defCell.innerHTML = glossaire[j]["niveaux"][i]["définition"];
                     let actionCell = tr.insertCell(-1);
                     actionCell.innerHTML = `
                             <div class="g-2">
@@ -118,27 +181,10 @@ $(function () {
             }
 
 
+
+
+
         }
-
-        // ADD DATABALE LIBRARY SCRIPTS
-        loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", false);
-        loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", false);
-        loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", false);
-        loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", false);
-        loadJS("/assets/plugins/datatable/js/jszip.min.js", false);
-        loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", false);
-        loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", false);
-        loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", false);
-        loadJS("/assets/plugins/datatable/js/buttons.print.min.js", false);
-        loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", false);
-        loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", false);
-        loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", false);
-        loadJS("/assets/js/table-data.js", false);
-
-
-
-
-
 
         // Click event listeners 
         let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
@@ -158,10 +204,57 @@ $(function () {
 
                 let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
 
-                console.log(competenceIndex);
-                glossaireArray.splice(glossaireIndex, 1);
 
-                parseGlossaireToTable(glossaireArray, niveau);
+
+                let competenceIndex = Math.floor(glossaireIndex / 4);
+                let levelIndex = glossaireIndex % 4;
+                competenceArray.splice(glossaireIndex, 1);
+
+                //console.log(competenceArray[competenceIndex].name, competenceArray[competenceIndex]["niveaux"][levelIndex])
+
+                // A WINDOW IS SHOWN TO CONFIRM THE DELETE
+                var myModal = new bootstrap.Modal(document.getElementById('modaldemo5'));
+                myModal.show();
+
+
+
+
+            })
+        });
+
+        Array.from(allEditCatBtns).forEach((editBtn) => {
+            editBtn.addEventListener("click", (e) => {
+
+                // WHEN THE SPAN ELEMENT IS FIRED
+
+                let aElement;
+                if (e.target.tagName === "SPAN") {
+                    aElement = e.target.parentElement;
+                } else {
+                    aElement = e.target;
+                }
+
+                let glossaireIndex = [...allEditCatBtns].indexOf(aElement);
+
+
+
+                let competenceIndex = Math.floor(glossaireIndex / 4);
+                let levelIndex = glossaireIndex % 4;
+                // console.log(competenceArray[competenceIndex]["niveaux"][0]["définition"]);
+
+                $("#input-nom-competence-glossaire").val(competenceArray[competenceIndex].name);
+
+                $("#input-def-competence-e").val(competenceArray[competenceIndex]["niveaux"][0]["définition"]);
+                $("#input-def-competence-m").val(competenceArray[competenceIndex]["niveaux"][1]["définition"]);
+                $("#input-def-competence-a").val(competenceArray[competenceIndex]["niveaux"][2]["définition"]);
+                $("#input-def-competence-x").val(competenceArray[competenceIndex]["niveaux"][3]["définition"]);
+
+
+                competenceEditIndex = competenceIndex;
+
+
+
+                // parseGlossaireToTable(competenceArray, niveau);
 
             })
         })
@@ -169,27 +262,6 @@ $(function () {
 
 
     }
-
-
-    fileExcel.addEventListener("change", (e) => {
-
-        // HIDE MODAL
-        // var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
-        // myModal.hide();
-        $("#input-modal").modal('hide');
-
-        // ADD LOADER ON THE PAGE
-        $("#btn-add-file").addClass("btn-loading");
-
-        // POPULATE GLOSSAIRE ARRAY
-        parseExcelFile2(fileExcel);
-
-
-
-
-
-
-    })
 
     async function parseExcelFile2(inputElement) {
         var files = inputElement.files || [];
@@ -264,11 +336,11 @@ $(function () {
                             levelDef = arr[1].replace(/(\r\n|\n|\r|:)/gm, "").trim() + levelDef.replace(/(\r\n|\n|\r|:)/gm, "").trim();
                         }
 
-                        console.log(level, levelDef, row);
+
 
                         competenceLevelsDefArray.push({
                             "level": level,
-                            "definition": levelDef
+                            "définition": levelDef
                         });
                     }
                 });
@@ -282,12 +354,29 @@ $(function () {
 
             })
                 .then(function () {
-                    glossaireArray = competenceArray;
+
                     // //HIDE LOADER
                     $("#btn-add-file").removeClass("btn-loading");
 
                     // DISPLAY THE TABLE
-                    parseGlossaireToTable(glossaireArray);
+                    parseGlossaireToTable(competenceArray);
+                })
+                .then(function () {
+
+                    // ADD DATABALE LIBRARY SCRIPTS
+                    // loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", false);
+                    // loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", false);
+                    // loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", false);
+                    // loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", false);
+                    // loadJS("/assets/plugins/datatable/js/jszip.min.js", false);
+                    // loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", false);
+                    // loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", false);
+                    // loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", false);
+                    // loadJS("/assets/plugins/datatable/js/buttons.print.min.js", false);
+                    // loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", false);
+                    // loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", false);
+                    // loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", false);
+                    // loadJS("/assets/js/table-data.js", false);
                 });
         };
         reader.readAsArrayBuffer(file);
@@ -316,17 +405,20 @@ $(function () {
         scriptEle.setAttribute("type", "text/javascript");
         scriptEle.setAttribute("async", async);
 
+
         document.body.appendChild(scriptEle);
 
         // success event 
         scriptEle.addEventListener("load", () => {
-            console.log("File loaded")
+            //console.log("File loaded")
         });
         // error event
         scriptEle.addEventListener("error", (ev) => {
             console.log("Error on loading file", ev);
         });
     }
+
+
 
 
 });
