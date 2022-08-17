@@ -29,9 +29,9 @@
             <div class="col-md-12 col-xl-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Ajouter des compétences</h4>
+                        <h4 class="card-title col-sm-6">Ajouter des compétences</h4>
                         <div class="text-end col-sm-6 d-flex flex-row-reverse">
-                            <a id="btn-emploi-save" class="btn btn-primary mx-1" role="button"
+                            <a id="btn-competence-save" class="btn btn-primary mx-1" role="button"
                                 aria-pressed="true">Sauvegarder</a>
                         </div>
                     </div>
@@ -191,6 +191,22 @@
             </div>
         </div>
 
+        <!-- MODAL SUCCESS MESSAGE -->
+        <div class="modal fade" id="success">
+            <div class="modal-dialog modal-dialog-centered text-center " role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="modal-body text-center p-4 pb-5">
+                        <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                                aria-hidden="true">&times;</span></button>
+                        <i class="icon icon-check fs-70 text-success lh-1 my-5 d-inline-block"></i>
+                        <h4 class="text-success tx-semibold">Complété!</h4>
+                        <p class="mg-b-20 mg-x-20">La liste des compétences a été sauvegardée avec succès. .</p><button
+                            aria-label="Close" class="btn btn-success pd-x-25" data-bs-dismiss="modal">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </div>
     <!-- CONTAINER CLOSED -->
@@ -202,24 +218,19 @@
 
     <!-- SCRIPT -->
     <th:block layout:fragment="script">
+        
         <!-- BACK-TO-TOP -->
         <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
 
-        <!-- JQUERY JS
+        <!-- JQUERY JS -->
         <script th:src="@{/assets/js/jquery.min.js}"></script>
-        <script th:src="@{/assets/js/jquery-ui.min.js}"></script> -->
+        <script th:src="@{/assets/js/jquery-ui.min.js}"></script>
 
         <!-- BOOTSTRAP JS -->
         <script th:src="@{/assets/plugins/bootstrap/js/popper.min.js}"></script>
         <script th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script>
 
 
-
-        <!-- GLAOSSAIRE -->
-        <script th:src="@{/assets/custom-js/glossaire.js}"></script>
-
-        <!-- EXCELJS -->
-        <script th:src="@{/assets/plugins/exceljs/exceljs.min.js}"></script>
 
         <!-- INPUT MASK JS-->
         <script th:src="@{/assets/plugins/input-mask/jquery.mask.min.js}"></script>
@@ -273,6 +284,13 @@
 
         <!-- CUSTOM JS -->
         <script th:src="@{/assets/js/custom.js}"></script>
+
+
+        <!-- GLAOSSAIRE -->
+        <script th:src="@{/assets/custom-js/glossaire.js}"></script>
+
+        <!-- EXCELJS -->
+        <script th:src="@{/assets/plugins/exceljs/exceljs.min.js}"></script>
 
 
     </th:block>

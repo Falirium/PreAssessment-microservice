@@ -228,11 +228,11 @@
                                 <div class="form-group form-row">
                                     <div class="col-sm-5">
                                         <label for="" class="form-label"></label>
-                                        <input type="text" id="input-nom-competence" class="form-control"
-                                            placeholder="Ex : Réactivité afin d’écourter ...">
-                                            <div class="invalid-feedback">
-                                                Ce champ ne doit pas être vide.
-                                            </div>
+                                        <select name="competence" id="input-nom-competence" class="form-control form-select nom-competence" data-index="0"></select>
+                
+                                        <div class="invalid-feedback">
+                                            Ce champ ne doit pas être vide.
+                                        </div>
                                     </div>
                                     <div class="col-sm-5">
                                         <label for="" class="form-label"></label>
@@ -314,8 +314,7 @@
         <script th:src="@{/assets/plugins/bootstrap/js/popper.min.js}"></script>
         <script th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script>
 
-        <!-- EMPLOI -->
-        <script th:src="@{/assets/custom-js/emploi.js}"></script>
+
 
         <!-- INPUT MASK JS-->
         <script th:src="@{/assets/plugins/input-mask/jquery.mask.min.js}"></script>
@@ -333,20 +332,9 @@
         <!-- INTERNAL SELECT2 JS -->
         <script th:src="@{/assets/plugins/select2/select2.full.min.js}"></script>
 
-        <!-- DATA TABLE JS-->
-        <script th:src="@{/assets/plugins/datatable/js/jquery.dataTables.min.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/js/dataTables.bootstrap5.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/js/dataTables.buttons.min.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/js/buttons.bootstrap5.min.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/js/jszip.min.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/pdfmake/pdfmake.min.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/pdfmake/vfs_fonts.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/js/buttons.html5.min.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/js/buttons.print.min.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/js/buttons.colVis.min.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/dataTables.responsive.min.js}"></script>
-        <script th:src="@{/assets/plugins/datatable/responsive.bootstrap5.min.js}"></script>
-        <script th:src="@{/assets/js/table-data.js}"></script>
+        <!-- SELECT2 JS -->
+        <script th:src="@{/assets/plugins/select2/select2.full.min.js}"></script>
+        <script th:src="@{/assets/js/select2.js}"></script>
 
         <!-- SIDEBAR JS -->
         <script th:src="@{/assets/plugins/sidebar/sidebar.js}"></script>
@@ -368,6 +356,10 @@
 
         <!-- CUSTOM JS -->
         <script th:src="@{/assets/js/custom.js}"></script>
+
+        <!-- EMPLOI -->
+        <script th:src="@{/assets/custom-js/emploi.js}"></script>
+
     </th:block>
 
     <!-- END SCRIPT -->

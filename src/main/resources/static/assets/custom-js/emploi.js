@@ -11,6 +11,12 @@ let resArray = [];
 let exigencesArray = [];
 let marqueursArray = [];
 let competencesArray = [];
+let competenceNameArray = [];
+
+// USED TO PASS DATA TO SELECT2
+let selectionData = [];
+
+let fetchCompetencesArray = [];
 
 
 
@@ -45,11 +51,18 @@ let niveauCounter = 1;
 
 let focusedNiveauContainer = document.querySelector(".niveau-container");
 
-addListenersToNewNiveau(focusedNiveauContainer);
+getListCompetences();
+
+
+
+
+
 
 
 
 $(function () {
+
+
     btnAddResponsabilite.addEventListener('click', (e) => {
         let inputCatRes = document.querySelector("#input-categorie-responsabilites");
         let inputResValeur = document.querySelector("#input-valeur-responsabilites");
@@ -867,9 +880,21 @@ function addListenersToNewNiveau(container) {
     const btnEditNiveau = container.querySelector("#btn-edit-niveau");
     const btnAddNiveau = container.querySelector("#btn-add-niveau");
 
-    $(".btn-add").change(function () {
-        this.classList.remove("is-invalid");
-    })
+
+
+    // ADD DATA-INDEX TO SELECT ELEMENT => 
+    console.log($("#input-nom-competence").last());
+    $(".nom-competence").last().attr("data-index",currentNiveauIndex.toString());
+
+    if (currentNiveauIndex !== 0) {
+        $(".niveau-container").last().find("#input-nom-competence").select2({
+            data : selectionData
+        });
+
+    }
+
+
+
 
 
 
@@ -1012,12 +1037,14 @@ function addListenersToNewNiveau(container) {
     })
 
     btnAddCompetence.addEventListener("click", (e) => {
-        let nameInput = container.querySelector("#input-nom-competence");
+        // let nameInput = container.querySelector("#input-nom-competence");
         let categoryInput = container.querySelector("#input-categorie-competence");
         let niveauInput = container.querySelector("#input-niveau-competence");
 
+
+
         let competenceJson = {
-            "name": nameInput.value,
+            "name": $("select[data-index=" + currentNiveauIndex + "]").select2('data')[0].text,
             "categorie": categoryInput.options[categoryInput.selectedIndex].value,
             "niveau": niveauInput.options[niveauInput.selectedIndex].value
         }
@@ -1037,7 +1064,11 @@ function addListenersToNewNiveau(container) {
 
 
         // Initilize the inputs
-        nameInput.value = "";
+        // nameInput.value = "";
+
+        //console.log(competenceJson);
+
+
 
         parseCompetenceToTable(competencesArray, container);
     })
@@ -1076,9 +1107,10 @@ function addListenersToNewNiveau(container) {
 
         let lastNiveau = lastNiveauContainer();
         focusedNiveauContainer = lastNiveauContainer();
-        addListenersToNewNiveau(lastNiveau);
+        
 
         currentNiveauIndex = niveauCounter - 1;
+        addListenersToNewNiveau(lastNiveau);
 
     })
 
@@ -1177,8 +1209,7 @@ function addNewNiveauHTML(niveauCounter) {
                                 <div class="form-group form-row">
                                     <div class="col-sm-5">
                                         <label for="" class="form-label"></label>
-                                        <input type="text" id="input-nom-competence" class="form-control"
-                                            placeholder="Ex : Réactivité afin d’écourter ...">
+                                        <select name="competence" id="input-nom-competence" class="form-control form-select nom-competence"></select>
                                             <div class="invalid-feedback">
                                                 Ce champ ne doit pas être vide.
                                             </div>
@@ -1374,6 +1405,57 @@ function checkLastNiveauInputs() {
 
     return emptyTableBodies;
 
+}
+
+
+async function getListCompetences() {
+    let url = "http://localhost:8080/preassessment/api/v1/competence/competences"
+
+    fetch(url, { // Your POST endpoint
+        method: 'GET',
+        headers: {
+            // Content-Type may need to be completely **omitted**
+            // or you may need something
+
+        }
+    }).then(
+        response => response.json() // if the response is a JSON object
+    ).then(
+        success => {
+            fetchCompetencesArray = success;
+            // competenceNameArray = getNameCompetence(competencesArray);
+            console.log(fetchCompetencesArray);
+
+            addListenersToNewNiveau(focusedNiveauContainer);
+
+            selectionData = getCompetencesDataSource(fetchCompetencesArray);
+
+            $(function () {
+                $("#input-nom-competence").select2({
+                    data: selectionData
+                })
+            })
+
+
+        } // Handle the success response object
+    ).catch(
+        error => console.log(error) // Handle the error response object
+    );
+}
+
+function getCompetencesDataSource(arr) {
+    let index = 1;
+    let data = [];
+
+    arr.map((element) => {
+        data.push({
+            "id": index,
+            "text": element.name
+        });
+        index++;
+    });
+
+    return data;
 }
 
 

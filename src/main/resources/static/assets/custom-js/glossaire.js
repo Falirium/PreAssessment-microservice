@@ -15,6 +15,7 @@ let counter = 1;
 const btnAddGlossaire = document.querySelector("#btn-add-glossaire");
 const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
 const btnAddFile = document.querySelector("#btn-add-file");
+const btnSaveCompetences = document.querySelector("#btn-competence-save");
 
 btnAddFile.addEventListener("click", (e) => {
     let tbody = document.querySelector("tbody");
@@ -30,9 +31,11 @@ btnAddFile.addEventListener("click", (e) => {
 
 
 // SAVE THE LIST INTO THE DATABASE
-$("#confirm-save-niveau").click(function() {
 
+btnSaveCompetences.addEventListener("click",(e) => {
+    postListOfCompetence(competenceArray);
 })
+
 
 
 
@@ -42,8 +45,9 @@ if (sessionStorage.getItem("competences")) {
 
     console.log(competenceArray);
 
-    parseGlossaireToTable(competenceArray).then(function () {
-        // ADD DATABALE LIBRARY SCRIPTS
+    parseGlossaireToTable(competenceArray);
+
+    // ADD DATABALE LIBRARY SCRIPTS
         loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", true);
         loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", true);
         loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", true);
@@ -57,7 +61,6 @@ if (sessionStorage.getItem("competences")) {
         loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", true);
         loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", true);
         loadJS("/assets/js/table-data.js", true);
-    });
 
 }
 
@@ -71,14 +74,14 @@ btnAddGlossaire.addEventListener("click", (e) => {
 
         competenceArray[competenceEditIndex] = {
             "name": nomCompGlossaire.value,
-            "définition": competenceArray[competenceEditIndex]["définition"],
+            "definition": competenceArray[competenceEditIndex]["definition"],
             "niveaux": []
         }
         defCompGlaossaire.forEach((def, index) => {
             console.log(niveauCompGlassaire[index].value, def.value, index)
             competenceArray[competenceEditIndex]["niveaux"].push({
                 "level": niveauCompGlassaire[index].value,
-                "définition": def.value
+                "definition": def.value
             })
         })
 
@@ -98,7 +101,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
 
         let competenceGlassaireJson = {
             "name": nomCompGlossaire.value,
-            "définition": null,
+            "definition": null,
             "niveaux": []
         }
 
@@ -107,7 +110,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
         for (var i = 0; i < niveauCompGlassaire.length; i++) {
             let nivaeuJson = {
                 "level": niveauCompGlassaire[i].value,
-                "définition": defCompGlaossaire[i].value
+                "definition": defCompGlaossaire[i].value
             }
 
             competenceGlassaireJson["niveaux"].push(nivaeuJson);
@@ -221,7 +224,7 @@ function parseGlossaireToTable(glossaire) {
                 niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
 
                 let defCell = tr.insertCell(-1);
-                defCell.innerHTML = glossaire[j]["niveaux"][i]["définition"];
+                defCell.innerHTML = glossaire[j]["niveaux"][i]["definition"];
                 let actionCell = tr.insertCell(-1);
                 actionCell.innerHTML = `
                             <div class="g-2">
@@ -290,14 +293,14 @@ function parseGlossaireToTable(glossaire) {
 
             let competenceIndex = Math.floor(glossaireIndex / 4);
             let levelIndex = glossaireIndex % 4;
-            // console.log(competenceArray[competenceIndex]["niveaux"][0]["définition"]);
+            // console.log(competenceArray[competenceIndex]["niveaux"][0]["definition"]);
 
             $("#input-nom-competence-glossaire").val(competenceArray[competenceIndex].name);
 
-            $("#input-def-competence-e").val(competenceArray[competenceIndex]["niveaux"][0]["définition"]);
-            $("#input-def-competence-m").val(competenceArray[competenceIndex]["niveaux"][1]["définition"]);
-            $("#input-def-competence-a").val(competenceArray[competenceIndex]["niveaux"][2]["définition"]);
-            $("#input-def-competence-x").val(competenceArray[competenceIndex]["niveaux"][3]["définition"]);
+            $("#input-def-competence-e").val(competenceArray[competenceIndex]["niveaux"][0]["definition"]);
+            $("#input-def-competence-m").val(competenceArray[competenceIndex]["niveaux"][1]["definition"]);
+            $("#input-def-competence-a").val(competenceArray[competenceIndex]["niveaux"][2]["definition"]);
+            $("#input-def-competence-x").val(competenceArray[competenceIndex]["niveaux"][3]["definition"]);
 
 
             competenceEditIndex = competenceIndex;
@@ -390,7 +393,7 @@ async function parseExcelFile2(inputElement) {
 
                     competenceLevelsDefArray.push({
                         "level": level,
-                        "définition": levelDef
+                        "definition": levelDef
                     });
                 }
             });
@@ -436,7 +439,7 @@ function getGlossaireOfCompentence(names, defs, levels) {
     names.map((e, index) => {
         let competenceJson = {
             "name": e,
-            "définition": defs[index],
+            "definition": defs[index],
             "niveaux": []
         }
         for (var i = 0; i < 4; i++) {
@@ -468,4 +471,30 @@ function loadJS(FILE_URL, async) {
     });
 }
 
+async function postListOfCompetence() {
+    let url = "http://localhost:8080/preassessment/api/v1/competence/competences"
+
+    fetch(url, { // Your POST endpoint
+        method: 'POST',
+        headers: {
+            // Content-Type may need to be completely **omitted**
+            // or you may need something
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(competenceArray) // This is your file object
+    }).then(
+        response => response.json() // if the response is a JSON object
+    ).then(
+        success => {
+            // SHOW SUCCESS MODEL
+            var myModal = new bootstrap.Modal(document.getElementById('success'));
+            myModal.show();
+
+
+
+        } // Handle the success response object
+    ).catch(
+        error => console.log(error) // Handle the error response object
+    );
+}
 
