@@ -288,10 +288,26 @@
                         <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
                                 aria-hidden="true">&times;</span></button>
                         <i class="icon icon-close fs-70 text-danger lh-1 my-5 d-inline-block"></i>
-                        <h4 class="text-danger">Attention: vous êtes sûr de vouloir supprimer cette entrée!</h4>
-                        <p class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui", vous ne récupérerez pas ces
+                        <h4 id="modal-error-header" class="text-danger">Attention: vous êtes sûr de vouloir supprimer cette entrée!</h4>
+                        <p id="modal-error-content" class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui", vous ne récupérerez pas ces
                             informations.</p><button aria-label="Close" id="confirm-delete-niveau"
                             class="btn btn-danger pd-x-25" data-bs-dismiss="modal">Oui</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL SUCCESS MESSAGE -->
+        <div class="modal fade" id="success">
+            <div class="modal-dialog modal-dialog-centered text-center " role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="modal-body text-center p-4 pb-5">
+                        <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                                aria-hidden="true">&times;</span></button>
+                        <i class="icon icon-check fs-70 text-success lh-1 my-5 d-inline-block"></i>
+                        <h4 class="text-success tx-semibold">Complété!</h4>
+                        <p class="mg-b-20 mg-x-20">La liste des compétences a été sauvegardée avec succès. .</p><button
+                            aria-label="Close" class="btn btn-success pd-x-25" data-bs-dismiss="modal">Continue</button>
                     </div>
                 </div>
             </div>

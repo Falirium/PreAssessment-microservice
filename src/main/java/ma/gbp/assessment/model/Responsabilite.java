@@ -1,8 +1,6 @@
 package ma.gbp.assessment.model;
 
-import java.util.Date;
-
-import javax.persistence.MappedSuperclass;
+import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,10 +8,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@MappedSuperclass
-
-public class EmploiBase {
-
+public class Responsabilite {
     
+    private String categorie;
+    private List<String> valeur;
     
 }

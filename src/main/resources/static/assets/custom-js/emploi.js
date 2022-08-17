@@ -2,8 +2,12 @@
 
 
 // MAIN ARRAYS
-let emploiJSON = [];
-let niveauxArray = []
+let emploiJSON = {};
+let niveauxArray = [];
+
+// THIS ARRAY IS MEANT FOR POST REQUEST
+let niveauxEmploiArray = [];
+
 
 // MIDLLE ARRAYS
 let responsabilitesArray = [];
@@ -47,6 +51,8 @@ const btnAddNiveau = document.querySelector("#btn-add-niveau");
 
 const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
 
+
+
 let niveauCounter = 1;
 
 let focusedNiveauContainer = document.querySelector(".niveau-container");
@@ -56,108 +62,122 @@ getListCompetences();
 
 
 
+btnAddResponsabilite.addEventListener('click', (e) => {
+    let inputCatRes = document.querySelector("#input-categorie-responsabilites");
+    let inputResValeur = document.querySelector("#input-valeur-responsabilites");
+
+    let resJson = {
+        "categorie": inputCatRes.options[inputCatRes.selectedIndex].value,
+        "valeur": inputResValeur.value
+    }
+
+    if (lastEditedInputs.responsabilites[0] !== -1 && lastEditedInputs.responsabilites[1] !== -1) {
+        let catIndex = lastEditedInputs.responsabilites[0];
+        let resIndex = lastEditedInputs.responsabilites[1];
+
+        responsabilitesArray[catIndex]["valeur"][resIndex] = inputResValeur.value;
+
+        //INITIALIZE THE INDEX
+        lastEditedInputs.responsabilites = [-1, -1];
+
+    } else {
+
+        responsabilitesArray = categorizeArray(responsabilitesArray, resJson);
+    }
+    // responsabilitesArray = categorizeArray(responsabilitesArray, resJson);
+
+    // Initilize the inputs
+    inputCatRes.removeAttribute("disable");
+    inputResValeur.value = "";
+
+
+    parseResToTable(responsabilitesArray);
+})
+
+btnConfirmDeleteNiveau.addEventListener("click", (e) => {
+
+    // console.log("HERE WE GO");
+    // console.log(currentNiveauIndex);;
+
+    if (currentNiveauIndex === 0) {
+
+    } else {
+
+        // DELETE THE NIVEAU ENTRIE FROM NIVEAUX-ARRAY
+        // console.log(Array.from(document.querySelectorAll(".niveau-container")).indexOf(container));
+        niveauxArray.splice(currentNiveauIndex, 1);
 
 
 
+        // DELETE THE NIVEAU CONTAINER
+        let currentNiveauContainerArray = Array.from(document.querySelectorAll(".niveau-container"));
+        let currentNiveauContainer = currentNiveauContainerArray[currentNiveauIndex];
+        // console.log(currentNiveauContainer);
+        currentNiveauContainer.remove();
 
-$(function () {
-
-
-    btnAddResponsabilite.addEventListener('click', (e) => {
-        let inputCatRes = document.querySelector("#input-categorie-responsabilites");
-        let inputResValeur = document.querySelector("#input-valeur-responsabilites");
-
-        let resJson = {
-            "categorie": inputCatRes.options[inputCatRes.selectedIndex].value,
-            "valeur": inputResValeur.value
-        }
-
-        if (lastEditedInputs.responsabilites[0] !== -1 && lastEditedInputs.responsabilites[1] !== -1) {
-            let catIndex = lastEditedInputs.responsabilites[0];
-            let resIndex = lastEditedInputs.responsabilites[1];
-
-            responsabilitesArray[catIndex]["valeur"][resIndex] = inputResValeur.value;
-
-            //INITIALIZE THE INDEX
-            lastEditedInputs.responsabilites = [-1, -1];
-
-        } else {
-
-            responsabilitesArray = categorizeArray(responsabilitesArray, resJson);
-        }
-        // responsabilitesArray = categorizeArray(responsabilitesArray, resJson);
-
-        // Initilize the inputs
-        inputCatRes.removeAttribute("disable");
-        inputResValeur.value = "";
+        niveauCounter--;
 
 
-        parseResToTable(responsabilitesArray);
-    })
+    }
 
-    btnConfirmDeleteNiveau.addEventListener("click", (e) => {
+})
 
-        // console.log("HERE WE GO");
-        // console.log(currentNiveauIndex);;
+$(".base-emploi-info").change(function (index) {
 
-        if (currentNiveauIndex === 0) {
+    this.classList.remove("is-invalid");
 
-        } else {
+    switch (this.id) {
+        case "input-name-emploi":
+            emploiJSON["intitulé"] = this.value;
+            break;
+        case "input-filiere-emploi":
+            emploiJSON["filière"] = this.value;
+            break;
+        case "input-sousFiliere-emploi":
+            emploiJSON["sous-filière"] = this.value;
+            break;
+        case "input-date-emploi":
+            emploiJSON["date Maj"] = this.value;
+            break;
+        case "input-vocation-emploi":
+            emploiJSON["vocation"] = this.value;
+            break;
+    }
+    //console.log(emploiJSON);
+})
 
-            // DELETE THE NIVEAU ENTRIE FROM NIVEAUX-ARRAY
-            // console.log(Array.from(document.querySelectorAll(".niveau-container")).indexOf(container));
-            niveauxArray.splice(currentNiveauIndex, 1);
+$("#btn-emploi-save").click(function () {
 
+    // WHEN THE USER CLICK DIRECTLY ON SAVE WITHOUT ANY ERROR
+    if (niveauxArray.length !== $(".niveau-container").length) {
 
+        let niveauJson = {
+            "level": niveauCounter,
+            "exigences": exigencesArray,
+            "marqueurs": marqueursArray,
+            "competences": competencesArray
+        };
 
-            // DELETE THE NIVEAU CONTAINER
-            let currentNiveauContainerArray = Array.from(document.querySelectorAll(".niveau-container"));
-            let currentNiveauContainer = currentNiveauContainerArray[currentNiveauIndex];
-            // console.log(currentNiveauContainer);
-            currentNiveauContainer.remove();
+        niveauxArray.push(niveauJson);
+    }
 
-            niveauCounter--;
+    console.log(niveauxArray.length, $(".niveau-container").length);
 
-
-        }
-
-    })
-
-    $(".base-emploi-info").change(function (index) {
-
-        this.classList.remove("is-invalid");
-
-        switch (this.id) {
-            case "input-name-emploi":
-                emploiJSON["intitulé"] = this.value;
-                break;
-            case "input-filiere-emploi":
-                emploiJSON["filière"] = this.value;
-                break;
-            case "input-sousFiliere-emploi":
-                emploiJSON["sous-filière"] = this.value;
-                break;
-            case "input-date-emploi":
-                emploiJSON["date Maj"] = this.value;
-                break;
-            case "input-vocation-emploi":
-                emploiJSON["vocation"] = this.value;
-                break;
-        }
-        //console.log(emploiJSON);
-    })
-
-    $("#btn-emploi-save").click(function () {
-        if (checkInputsConstraints()) {
-            emploiJSON["responsabilités"] = responsabilitesArray;
-            emploiJSON["niveaux"] = niveauxArray;
-        }
-
-        console.log(emploiJSON);
-    })
+    if (checkInputsConstraints()) {
+        emploiJSON["responsabilités"] = responsabilitesArray;
+        emploiJSON["niveaux"] = niveauxArray;
 
 
-});
+        // POST THE RESULT TO THE DATABASE
+        postEmploi(generateNiveauxFromEmploi(emploiJSON));
+
+    }
+
+    console.log(generateNiveauxFromEmploi(emploiJSON));
+})
+
+
+
 
 // btnAddExigence.addEventListener('click', (e) => {
 
@@ -253,7 +273,7 @@ $(function () {
 //         "level": niveauCounter,
 //         "exigences": exigencesArray,
 //         "marqueurs": marqueursArray,
-//         "compétences": competencesArray
+//         "competences": competencesArray
 //     };
 
 //     niveauxArray.push(niveauJson);
@@ -692,7 +712,7 @@ function parseCompetenceToTable(competences, niveauContainer) {
         categoryCell.innerHTML = competences[i].categorie;
 
         let niveauCell = tr.insertCell(-1);
-        niveauCell.innerHTML = competences[i].niveau;
+        niveauCell.innerHTML = competences[i].niveauRequis;
 
         let actionCell = tr.insertCell(-1);
         actionCell.innerHTML = `
@@ -884,11 +904,11 @@ function addListenersToNewNiveau(container) {
 
     // ADD DATA-INDEX TO SELECT ELEMENT => 
     console.log($("#input-nom-competence").last());
-    $(".nom-competence").last().attr("data-index",currentNiveauIndex.toString());
+    $(".nom-competence").last().attr("data-index", currentNiveauIndex.toString());
 
     if (currentNiveauIndex !== 0) {
         $(".niveau-container").last().find("#input-nom-competence").select2({
-            data : selectionData
+            data: selectionData
         });
 
     }
@@ -925,7 +945,7 @@ function addListenersToNewNiveau(container) {
                 "level": niveauCounter,
                 "exigences": exigencesArray,
                 "marqueurs": marqueursArray,
-                "compétences": competencesArray
+                "competences": competencesArray
             };
 
             niveauxArray.push(niveauJson);
@@ -933,13 +953,13 @@ function addListenersToNewNiveau(container) {
         } else {
             niveauxArray[currentNiveauIndex].exigences = exigencesArray;
             niveauxArray[currentNiveauIndex].marqueurs = marqueursArray;
-            niveauxArray[currentNiveauIndex]["compétences"] = competencesArray;
+            niveauxArray[currentNiveauIndex]["competences"] = competencesArray;
         }
 
         // GET THE VALUES OF THE CLICKED NIVEAU FROM NIVEAUXARRAY
         exigencesArray = niveauxArray[clickedNiveauIndex].exigences;
         marqueursArray = niveauxArray[clickedNiveauIndex].marqueurs;
-        competencesArray = niveauxArray[clickedNiveauIndex]["compétences"];
+        competencesArray = niveauxArray[clickedNiveauIndex]["competences"];
 
 
         // CLEAR DISABLED-READONLY FROM INPUTS
@@ -1046,7 +1066,7 @@ function addListenersToNewNiveau(container) {
         let competenceJson = {
             "name": $("select[data-index=" + currentNiveauIndex + "]").select2('data')[0].text,
             "categorie": categoryInput.options[categoryInput.selectedIndex].value,
-            "niveau": niveauInput.options[niveauInput.selectedIndex].value
+            "niveauRequis": niveauInput.options[niveauInput.selectedIndex].value
         }
 
         if (lastEditedInputs.competence !== -1) {
@@ -1080,14 +1100,14 @@ function addListenersToNewNiveau(container) {
             "level": niveauCounter,
             "exigences": exigencesArray,
             "marqueurs": marqueursArray,
-            "compétences": competencesArray
+            "competences": competencesArray
         };
 
         niveauxArray.push(niveauJson);
 
         console.log(niveauxArray);
 
-        // INITIALIZE ARRAYS
+        // INITIALIZE ARRAYS FOR NEW NIVEAU
         exigencesArray = [];
         marqueursArray = [];
         competencesArray = [];
@@ -1107,7 +1127,7 @@ function addListenersToNewNiveau(container) {
 
         let lastNiveau = lastNiveauContainer();
         focusedNiveauContainer = lastNiveauContainer();
-        
+
 
         currentNiveauIndex = niveauCounter - 1;
         addListenersToNewNiveau(lastNiveau);
@@ -1442,6 +1462,40 @@ async function getListCompetences() {
         error => console.log(error) // Handle the error response object
     );
 }
+async function postEmploi(emploiArr) {
+    let url = "http://localhost:8080/preassessment/api/v1/emploi/niveau/niveaux"
+
+    fetch(url, { // Your POST endpoint
+        method: 'POST',
+        headers: {
+            // Content-Type may need to be completely **omitted**
+            // or you may need something
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(emploiArr) // This is your file object
+    }).then(
+        response => response.json() // if the response is a JSON object
+    ).then(
+        success => {
+
+            // SHOW SUCCESS MODEL
+            var myModal = new bootstrap.Modal(document.getElementById('success'));
+            myModal.show();
+
+
+        } // Handle the success response object
+    ).catch(
+        error => {
+
+            var myModal = new bootstrap.Modal(document.getElementById('modaldemo5'));
+            $("#modal-error-header").text("Erreur : le serveur refuse d'enregistrer les données");
+            $("#modal-error-content").text(error);
+            myModal.show();
+
+            console.log(error)
+        } // Handle the error response object
+    );
+}
 
 function getCompetencesDataSource(arr) {
     let index = 1;
@@ -1457,6 +1511,39 @@ function getCompetencesDataSource(arr) {
 
     return data;
 }
+
+
+function generateNiveauxFromEmploi(json) {
+    let niveauArr = []
+    json["niveaux"].map((niveau, index) => {
+        niveauArr.push({
+            "intitule": emploiJSON["intitulé"],
+            "filiere": emploiJSON["filière"],
+            "sousFiliere": emploiJSON["sous-filière"],
+            "dateMaj": emploiJSON["date Maj"],
+            "vocation": emploiJSON["vocation"],
+            "responsabilites": emploiJSON["responsabilités"],
+            "level": niveau["level"],
+            "exigences": getArrFromJsonArr(niveau["exigences"]),
+            "marqueurs": getArrFromJsonArr(niveau["marqueurs"]),
+            "competencesRequis": niveau["competences"]
+        })
+
+
+    })
+    return niveauArr;
+}
+
+function getArrFromJsonArr(jsonArr) {
+    let arr = [];
+
+    jsonArr.map((e) => {
+        arr.push(e.valeur);
+    })
+
+    return arr
+}
+
 
 
 

@@ -3,7 +3,9 @@ package ma.gbp.assessment.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,15 +26,20 @@ public class CompetenceRe {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    // Means : Domaine de competence - Savoir-faire - Savoir-etre
     private String type;
     private String name;
     private String pisteObservation;
 
-    @ManyToMany(mappedBy = "listOfCompetenceRequis")
+    // Means : E M A X
+    private String niveauRequis;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    }, mappedBy = "listOfCompetenceRequis")
     @JsonIgnore
     private Set<Niveau> niveaux = new HashSet<>();
 
-
-    
-    
 }
