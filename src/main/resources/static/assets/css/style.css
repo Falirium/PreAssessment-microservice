@@ -795,8 +795,8 @@ body {
     -webkit-text-size-adjust: none;
     -ms-touch-action: manipulation;
     touch-action: manipulation;
-    -webkit-font-feature-settings: "liga"0;
-    font-feature-settings: "liga"0;
+    -webkit-font-feature-settings: "liga" 0;
+    font-feature-settings: "liga" 0;
     overflow-y: scroll;
     position: relative;
 }

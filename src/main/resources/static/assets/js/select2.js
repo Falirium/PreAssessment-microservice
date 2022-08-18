@@ -14,11 +14,11 @@ $(function(e) {
     });
 
     // select2-search__field
-    $('.select2').on('click', () => {
-        let selectField = document.querySelectorAll('.select2-search__field')
-        selectField.forEach((element, index) => {
-            element.focus();
-        })
-    });
+    // $('.select2').on('click', () => {
+    //     let selectField = document.querySelectorAll('.select2-search__field')
+    //     selectField.forEach((element, index) => {
+    //         element.focus();
+    //     })
+    // });
 
 });

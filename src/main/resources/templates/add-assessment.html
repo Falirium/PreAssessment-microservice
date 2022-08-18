@@ -41,9 +41,10 @@
                                         placeholder="Nom du projet + date de lancement" autocomplete="">
                                 </div>
                                 <div class="form-group">
-                                    <!-- <label for="input-regions-campagne" class="form-label">Filiale / BPR ciblée <span
+                                    <label for="input-regions-campagne" class="form-label">Filiale / BPR ciblée <span
                                             class="text-red">*</span></label>
-                                    <select multiple="multiple" class="multi-select" id="input-regions-campagne">
+                                    <select multiple="multiple" class="form-control select2"
+                                        id="input-regions-campagne">
                                         <option value="bp_tanger_tetouan">B.P de Tanger-Tétouan</option>
                                         <option value="bp_rabat_kenitra">B.P de Rabat-Kénitra</option>
                                         <option value="bp_ouajda">B.P d'Oujda</option>
@@ -53,9 +54,9 @@
                                         <option value="bp_fes_meknes">B.P de Fès-Meknès</option>
                                         <option value="bp_sud">B.P du Centre-Sud</option>
 
-                                    </select> -->
+                                    </select>
 
-                                    <label for="input-name_campagne" class="form-label">Filiale / BPR ciblée <span
+                                    <!-- <label for="input-name_campagne" class="form-label">Filiale / BPR ciblée <span
                                             class="text-red">*</span></label>
 
                                     <div class="custom-controls-stacked">
@@ -100,25 +101,25 @@
                                             <span class="custom-control-label">B.P du Centre-Sud</span>
                                         </label>
 
-                                    </div>
+                                    </div> -->
                                 </div>
 
-                                    <div class="form-group assessment-property-container">
-                                        <label for="input-started-date" class="form-label">Assessment commence à <span
-                                                class="text-red">*</span></label>
-                                        <input type="date" class="form-control" id="input-started-date"
-                                            placeholder="Enter email" autocomplete="">
-                                    </div>
-                                    <div class="form-group assessment-property-container">
-                                        <label for="input-finishes-date" class="form-label">Assessment se termine à
-                                            <span class="text-red">*</span></label>
-                                        <input type="date" class="form-control" id="input-finishes-date"
-                                            placeholder="Enter email" autocomplete="username">
-                                    </div>
-
+                                <div class="form-group assessment-property-container">
+                                    <label for="input-started-date" class="form-label">Assessment commence à <span
+                                            class="text-red">*</span></label>
+                                    <input type="date" class="form-control" id="input-started-date"
+                                        placeholder="Enter email" autocomplete="">
                                 </div>
-                                <a href="#file-form" class="btn btn-primary mt-4 mb-0" role="button"
-                                    aria-pressed="true">Suivant</a>
+                                <div class="form-group assessment-property-container">
+                                    <label for="input-finishes-date" class="form-label">Assessment se termine à
+                                        <span class="text-red">*</span></label>
+                                    <input type="date" class="form-control" id="input-finishes-date"
+                                        placeholder="Enter email" autocomplete="username">
+                                </div>
+
+                            </div>
+                            <a href="#file-form" class="btn btn-primary mt-4 mb-0" role="button"
+                                aria-pressed="true">Suivant</a>
 
                         </form>
                     </div>
@@ -172,22 +173,33 @@
                                 </tr>
                             </thead>
                             <tbody id="category-table-body">
-                                
+
                             </tbody>
                         </table>
 
                         <div class="mt-4 mb-0 text-dark">
-                            Xxxxxxxxxxxxxxxxx
+                            <label for="" class="form-label mt-0">Créez vos catégories qui seront utilisées pour classer
+                                la population de cette évaluation. </label>
+
+                            <small class="fw-bold fst-italic text-danger">** Important ** Essayez d'utiliser une bonne
+                                combinaison de critères afin d'obtenir des groupes distincts.</small>
                         </div>
                         <div id="category-container">
 
                             <div class="form-group">
                                 <label for="name-categorie" class="form-label">Nom de la catégorie</label>
-                                <input type="text" class="form-control" id="name-categorie" placeholder="Eg: Cat 1, ...">
+                                <input type="text" class="form-control" id="name-categorie"
+                                    placeholder="Eg: Cat 1, ...">
                             </div>
                             <div class="form-group">
-                                <label for="name-categorie" class="form-label">Type d'assessment</label>
-                                <input type="text" class="form-control" id="type-assessment-categorie" placeholder="Eg: Dispensé">
+                                <label for="type-assessment-categorie" class="form-label">Type d'assessment</label>
+                                <!-- <input type="text" class="form-control" id="type-assessment-categorie" placeholder="Eg: Dispensé"> -->
+                                <select class="form-control select2 form-select" id="type-assessment-categorie">
+                                    <option value="dispenses">Dispensés</option>
+                                    <option value="tenue_poste">Evaluation tenue de poste</option>
+                                    <option value="savoir_faire">Evaluation savoir faire</option>
+                                </select>
+
                             </div>
 
                             <div class="criteria-container">
@@ -195,13 +207,13 @@
                                 <div class="form-group">
                                     <label for="name-categorie" class="form-label">Choisissez un critière de
                                         classification</label>
-                                    <select class="form-control form-select" data-placeholder="------ Sélectionnez une option ------"
+                                    <select class="form-control select2 form-select select-criteria"
+                                        data-placeholder="------ Sélectionnez une option ------"
                                         id="select-classification">
-
                                     </select>
                                 </div>
-                                <div class="form-row" id="value-criteria-container">
-                                    
+                                <div class="form-row input-criteria" id="value-criteria-container">
+
                                 </div>
                             </div>
 
@@ -218,6 +230,65 @@
             </div>
         </div>
         <!-- ROW-1 END -->
+
+        <!-- MODAL ALERT MESSAGE -->
+        <div class="modal fade" id="modaldemo5">
+            <div class="modal-dialog modal-dialog-centered text-center" role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="modal-body text-center p-4 pb-5">
+                        <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                                aria-hidden="true">&times;</span></button>
+                        <i class="icon icon-close fs-70 text-danger lh-1 my-5 d-inline-block"></i>
+                        <h4 id="modal-error-header" class="text-danger">Attention: vous êtes sûr de vouloir supprimer
+                            cette entrée!</h4>
+                        <p id="modal-error-content" class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui", vous
+                            ne récupérerez pas ces
+                            informations.</p><button aria-label="Close" id="confirm-delete-niveau"
+                            class="btn btn-danger pd-x-25" data-bs-dismiss="modal">Oui</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL SUCCESS MESSAGE -->
+        <div class="modal fade" id="success">
+            <div class="modal-dialog modal-dialog-centered text-center " role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="modal-body text-center p-4 pb-5">
+                        <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                                aria-hidden="true">&times;</span></button>
+                        <i class="icon icon-check fs-70 text-success lh-1 my-5 d-inline-block"></i>
+                        <h4 id="modal-success-header" class="text-success tx-semibold">Complété!</h4>
+                        <p id="modal-success-content" class="mg-b-20 mg-x-20">La liste des compétences a été sauvegardée
+                            avec succès. .</p><button aria-label="Close" class="btn btn-success pd-x-25"
+                            data-bs-dismiss="modal">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL CONFIRM -->
+        <div class="modal fade" id="confirm">
+            <div class="modal-dialog modal-dialog-centered text-center" role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="modal-body text-center p-4 pb-5">
+                        <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                                aria-hidden="true">&times;</span></button>
+                        <i class="icon icon-close fs-70 text-warning lh-1 my-5 d-inline-block"></i>
+                        <h4 id="modal-confirm-header" class="text-warning">Attention: vous êtes sûr de vouloir supprimer
+                            cette entrée!</h4>
+                        <p id="modal-confirm-content" class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui",
+                            vous
+                            ne récupérerez pas ces
+                            informations.</p>
+                        <button id="confirm-yes-btn" class="btn btn-warning pd-x-25" data-bs-dismiss="modal>Oui</button>
+                        <button aria-label="Close" class="btn btn-primary pd-x-25"
+                            data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <!-- CONTAINER CLOSED -->
 
@@ -236,8 +307,7 @@
         <script th:src="@{/assets/plugins/bootstrap/js/popper.min.js}"></script>
         <script th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script>
 
-        <!-- PREASSESSMENT -->
-        <script th:src="@{/assets/custom-js/preassessment.js}"></script>
+
         <!-- INPUT MASK JS-->
         <script th:src="@{/assets/plugins/input-mask/jquery.mask.min.js}"></script>
 
@@ -310,6 +380,10 @@
 
         <!-- CUSTOM JS -->
         <script th:src="@{/assets/js/custom.js}"></script>
+
+
+        <!-- PREASSESSMENT -->
+        <script th:src="@{/assets/custom-js/preassessment.js}"></script>
 
 
 

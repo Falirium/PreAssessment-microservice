@@ -1,4 +1,3 @@
-
 console.log("presassessment.js");
 let requestBodyAssessment = {
 
@@ -44,6 +43,8 @@ const employeeColumns = [
 
 let classificationColumns = [];
 
+let indexOfDeletedCategory = -1;
+
 
 const form = document.querySelector("assessment-form");
 let assessmentPropertyContainer = document.querySelectorAll(".assessment-property-container");
@@ -85,54 +86,65 @@ Array.from(assessmentPropertyContainer).forEach((propertyContainer) => {
 })
 
 // Special Event listener for Select2:select element 
-$('#input-regions-campagne').on("select2:select", function (e) {
-    // Do something
-    var data = e.params.data;
-    console.log(data);
-    //   requestBodyAssessment["targetedDirection"] = e.target.value;
-});
+$(function () {
+    $("#input-regions-campagne").select2();
+
+    $("#input-regions-campagne").change(function (e) {
+
+        let selected = $("#input-regions-campagne").select2('data');
+
+        console.log(getSelect2Selections(selected));
+    })
+
+})
+
 
 btnVisualize.addEventListener("click", () => {
 
     fetchEmployeesData(fileId);
 
 })
+
 btnAddCriteria.addEventListener('click', () => {
 
     addNewCriteria();
 })
+
 btnSaveCategory.addEventListener('click', () => {
-
-
 
     // SAVE CATEGORY TO THE JSON
     let newCategory = {
         "name": document.querySelector("#name-categorie").value,
-        "typeAssessment": document.querySelector("#type-assessment-categorie").value,
+        "typeAssessment": $("#type-assessment-categorie").select2('data')[0].text,
         "criterias": []
     }
 
     let criteriasContainers = document.querySelectorAll(".criteria-container");
 
-    Array.from(criteriasContainers).forEach((criteriaContainer) => {
-        let select = criteriaContainer.querySelector("#select-classification");
+    $(".criteria-container").each(function (index) {
+        let selectedValue = $(this).find("#select-classification").select2('data')[0].text;
+
 
         let criteria = {
-            "name": select.options[select.selectedIndex].value
+            "name": selectedValue
         }
 
-        if (typeOfSelection(select.value) === "number") {
+        if (typeOfSelection(selectedValue) === "number") {
 
-            criteria.min = criteriaContainer.querySelector("#min-value").value;
-            criteria.max = criteriaContainer.querySelector("#max-value").value;
+            criteria.min = $(this).find("#min-value").val();
+            criteria.max = $(this).find("#max-value").val();
 
         } else {
-            criteria.value = criteriaContainer.querySelector("#valeur-criteria").value;
+            criteria.value = $(this).find("#valeur-criteria").val();
         }
 
 
         newCategory["criterias"].push(criteria);
+
+        console.log(criteria);
     })
+
+
 
     categoriesRequestBody.push(newCategory);
 
@@ -144,30 +156,46 @@ btnSaveCategory.addEventListener('click', () => {
     // EMPTY FIELDS
     let categoryContainer = document.querySelector("#category-container");
     categoryContainer.innerHTML = `
+    <div id="category-container">
+
         <div class="form-group">
             <label for="name-categorie" class="form-label">Nom de la catégorie</label>
-            <input type="text" class="form-control" id="name-categorie" placeholder="Eg: Cat 1, ...">
+            <input type="text" class="form-control" id="name-categorie"
+                placeholder="Eg: Cat 1, ...">
         </div>
         <div class="form-group">
-            <label for="name-categorie" class="form-label">Type d'assessment</label>
-            <input type="text" class="form-control" id="type-assessment-categorie" placeholder="Eg: Dispensé">
+            <label for="type-assessment-categorie" class="form-label">Type d'assessment</label>
+            <!-- <input type="text" class="form-control" id="type-assessment-categorie" placeholder="Eg: Dispensé"> -->
+            <select class="form-control select2 form-select" id="type-assessment-categorie">
+                <option value="dispenses">Dispensés</option>
+                <option value="tenue_poste">Evaluation tenue de poste</option>
+                <option value="savoir_faire">Evaluation savoir faire</option>
+            </select>
+
         </div>
-    
+
         <div class="criteria-container">
-    
+
             <div class="form-group">
                 <label for="name-categorie" class="form-label">Choisissez un critière de
                     classification</label>
-                <select class="form-control form-select" data-placeholder="------ Sélectionnez une option ------"
+                <select class="form-control select2 form-select select-criteria"
+                    data-placeholder="------ Sélectionnez une option ------"
                     id="select-classification">
-    
                 </select>
             </div>
-            <div class="form-row" id="value-criteria-container">
-    
+            <div class="form-row input-criteria" id="value-criteria-container">
+
             </div>
         </div>
+
+    </div>
         `;
+
+    // INITILIZE SELECT2 ON THE SELECT FIELDS
+    $("#type-assessment-categorie").select2();
+    $("#select-classification").select2();
+
 
     // POPULATE CRITERIA FIEDS
     populateWithClassificationColumns();
@@ -362,11 +390,14 @@ function lastCriteriaContainer() {
     return lastCriteria;
 }
 
+
+// IT : POPULATES THE SELECT FIELDS WITH OPTIONS 
+//      + EVENT LISTENERS TO -> (CHANGE, SELECT FIELDS) AND (CLICK, DELETE CRITERIA BTN)
 function populateWithClassificationColumns() {
 
     let lastCriteria = lastCriteriaContainer();
 
-    let lastSelectField = lastCriteria.querySelector("#select-classification");
+    let lastSelectField = $(".select-criteria").last()[0];
 
     let defaultOption = new Option("");
     defaultOption.setAttribute("label", "------ Sélectionnez une option ------");
@@ -378,32 +409,32 @@ function populateWithClassificationColumns() {
     })
 
     // Add an event listener to the select
-    lastSelectField.addEventListener("change", (e) => {
-        let lastCriteriaNested = e.target.parentElement.parentElement;
-        let selectValue = e.target.value;
+    $(".select-criteria").last().change(function (e) {
+        console.log(e.currentTarget.value);
 
-        console.log(selectValue);
-
-        let valueInputCriteria = lastCriteriaNested.querySelector("#value-criteria-container");
-
-        console.log(typeOfSelection(selectValue));
-
-        if (typeOfSelection(selectValue) === "string") {
-            valueInputCriteria.outerHTML = `
-                <div class="form-row" id="value-criteria-container">
-                    <div class="form-group col-md-12 mb-0">
-                        <label for="valeur-criteria" class="form-label">Valeur du critière </label>
-                        <input type="text" class="form-control" id="valeur-criteria"
-                            placeholder=".........">
-                    </div>
-                    <div class="my-3 w-100 text-center">
-                        <button id="btn-delete-criteria" type="button" 
-                        class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
-                    </div>
+        // GET THE VALUE OF THE SELECTION
+        let selectedValue = e.currentTarget.value;
+        let input_criteria_html;
+        console.log(typeOfSelection(selectedValue), selectedValue);
+        if (typeOfSelection(selectedValue) === "string") {
+            input_criteria_html = `
+            
+                <div class="form-group col-md-12 mb-0">
+                    <label for="valeur-criteria" class="form-label">Valeur du critière </label>
+                    <input type="text" class="form-control" id="valeur-criteria"
+                        placeholder=".........">
+                </div>
+                <div class="my-3 w-100 text-center">
+                    <button id="btn-delete-criteria" type="button" 
+                    class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
+                
             `;
+            $(".input-criteria").last().html(input_criteria_html);
+
+
         } else {
-            valueInputCriteria.outerHTML = `
-                <div class="form-row" id="value-criteria-container">
+            input_criteria_html = `
+                
                     <div class="form-group col-md-6 mb-0">
                         <div class="form-group">
                             <label for="min-value" class="form-label">Min value : </label>
@@ -420,21 +451,26 @@ function populateWithClassificationColumns() {
                         <button id="btn-delete-criteria" type="button" 
                         class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
                     </div>
-                </div>
-                `;
+                
+            `;
+
+
         }
+        $(".input-criteria").last().html(input_criteria_html);
 
+        let btnDeleteCriteria = $(".criteria-container").last().find("#btn-delete-criteria")[0];
 
-        let btnDeleteCriteria = lastCriteriaNested.querySelector("#btn-delete-criteria");
-
+        //console.log(btnDeleteCriteria);
 
         btnDeleteCriteria.addEventListener("click", (e) => {
 
-            let targetBtn;
+
+            console.log("HEERREEE")
+            let deleteBtn;
             if (e.target.tagName === "I") {
-                targetBtn = e.target.parentElement;
+                deleteBtn = e.target.parentElement;
             } else {
-                targetBtn = e.target;
+                deleteBtn = e.target;
             }
 
             let allBtnsDelete = document.querySelectorAll("#btn-delete-criteria");
@@ -444,7 +480,7 @@ function populateWithClassificationColumns() {
 
             // console.log([...test].indexOf(e.target));
 
-            let indexOfSelectedCriteria = [...allBtnsDelete].indexOf(targetBtn);
+            let indexOfSelectedCriteria = [...allBtnsDelete].indexOf(deleteBtn);
 
             if (indexOfSelectedCriteria === 0) {
                 let criteriaContainer = [...allCriteriaContainer][0];
@@ -473,6 +509,9 @@ function populateWithClassificationColumns() {
 
         })
     })
+
+
+
 }
 
 function addNewCriteria() {
@@ -485,21 +524,24 @@ function addNewCriteria() {
 
 
     newCriteria.outerHTML = `
-        <div class="criteria-container">
-            <div class="form-group">
-                <label for="name-categorie" class="form-label">Choisissez un critière de
-                    classification</label>
-                <select class="form-control select2 form-select" data-placeholder="Choose one"
-                    id="select-classification">
-    
-                </select>
-            </div>
-            <div class="form-row" id="value-criteria-container">
-    
-            </div>
+    <div class="criteria-container">
+        <div class="form-group">
+            <label for="name-categorie" class="form-label">Choisissez un critière de
+                classification</label>
+            <select class="form-control select2 form-select select-criteria"
+                data-placeholder="------ Sélectionnez une option ------"
+                id="select-classification">
+            </select>
         </div>
+        <div class="form-row input-criteria" id="value-criteria-container">
+
+        </div>
+    </div>
             `
         ;
+
+    // INITIATES SELECT2 
+    $(".criteria-container").last().find("#select-classification").select2();
 
     populateWithClassificationColumns();
 
@@ -531,8 +573,7 @@ function parseToCategoryTable(categoryJson) {
                 <div class="g-3">
                     <a id="cat-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
                         data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
-                    <a id="cat-table-btn-view" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                        data-bs-original-title="View"><span class="fe fe-eye fs-14"></span></a>
+                    
                     <a id="cat-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
                         data-bs-original-title="Delete"><span
                             class="fe fe-trash-2 fs-14"></span></a>
@@ -556,12 +597,18 @@ function parseToCategoryTable(categoryJson) {
                 aElement = e.target;
             }
 
+
+
             let categoryIndex = [...allDeleteCatBtns].indexOf(aElement);
 
-            console.log(categoryIndex);
-            categoriesRequestBody.splice(categoryIndex, 1);
+            indexOfDeletedCategory = categoryIndex;
 
-            parseToCategoryTable(categoriesRequestBody);
+            showModal("confirm", "Vous allez supprimer cette catégorie !", 'Cliquez sur le bouton "Oui" pour confirmer votre choix', "category")
+
+            // console.log(categoryIndex);
+            // categoriesRequestBody.splice(categoryIndex, 1);
+
+            // parseToCategoryTable(categoriesRequestBody);
 
         })
     })
@@ -570,11 +617,33 @@ function parseToCategoryTable(categoryJson) {
         editBtn.addEventListener("click", (e) => {
             let categoryIndex = [...allEditCatBtns].indexOf(e.target);
 
+            console.log(categoryIndex);
+
+            // START POPULATE THE INPUTS
+
 
         })
     })
 
 }
+$("#confirm-yes-btn").click(function (e) {
+    switch ($(this).attr("data-action")) {
+
+        case "category":
+
+            console.log(indexOfDeletedCategory);
+            categoriesRequestBody.splice(indexOfDeletedCategory, 1);
+
+            //INITIALIZE THE INDEX
+            indexOfDeletedCategory = -1;
+
+            parseToCategoryTable(categoriesRequestBody);
+
+            break;
+    }
+})
+
+
 function removeFromCategoryTable(category) {
 
 }
@@ -629,5 +698,48 @@ function parseToCategoryContainer(category, index) {
     // for (var i = 0; i < )
 }
 
+function getSelect2Selections(arr) {
+    return arr.map((e, index) => {
+        return e.element.text;
+    })
+}
 
+function showModal(type, header, content, action) {
+
+    let modalId, modalHeaderId, modalContentId;
+
+
+    switch (type) {
+        case "success":
+            modalId = "success";
+            modalHeaderId = "#modal-success-header";
+            modalContentId = "#modal-success-content";
+            break;
+
+        case "error":
+            modalId = "modaldemo5";
+            modalHeaderId = "#modal-error-header";
+            modalContentId = "#modal-error-content";
+            break;
+
+        case "confirm":
+            modalId = "confirm";
+            modalHeaderId = "#modal-confirm-header";
+            modalContentId = "#modal-confirm-content";
+            $("#confirm-yes-btn").attr("data-action", "category");
+            break;
+    }
+
+
+    var myModal = new bootstrap.Modal(document.getElementById(modalId));
+
+    // SET HEADER
+    $(modalHeaderId).text(header);
+
+    // SET CONTENT
+    $(modalContentId).text(content)
+
+    myModal.show();
+
+}
 
