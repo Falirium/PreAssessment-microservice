@@ -44,6 +44,7 @@ const employeeColumns = [
 let classificationColumns = [];
 
 let indexOfDeletedCategory = -1;
+let indexOfEditedCategory = -1;
 
 
 const form = document.querySelector("assessment-form");
@@ -112,46 +113,65 @@ btnAddCriteria.addEventListener('click', () => {
 
 btnSaveCategory.addEventListener('click', () => {
 
-    // SAVE CATEGORY TO THE JSON
-    let newCategory = {
-        "name": document.querySelector("#name-categorie").value,
-        "typeAssessment": $("#type-assessment-categorie").select2('data')[0].text,
-        "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data')),
-        "criterias": []
+    if (indexOfEditedCategory === -1) {
+
+        // SAVE CATEGORY TO THE JSON
+        let newCategory = {
+            "name": document.querySelector("#name-categorie").value,
+            "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data')),
+            "criterias": []
+        }
+
+        let criteriasContainers = document.querySelectorAll(".criteria-container");
+
+        $(".criteria-container").each(function (index) {
+            let selectedValue = $(this).find("#select-classification").select2('data')[0].id;
+
+
+            let criteria = {
+                "name": selectedValue
+            }
+
+            if (typeOfSelection(selectedValue) === "number") {
+
+                criteria.min = $(this).find("#min-value").val();
+                criteria.max = $(this).find("#max-value").val();
+
+            } else {
+                criteria.value = $(this).find("#valeur-criteria").val();
+            }
+
+
+            newCategory["criterias"].push(criteria);
+
+            console.log(criteria);
+        })
+
+        categoriesRequestBody.push(newCategory);
+
+        // POPULATE THE TABLE
+        parseToCategoryTable(categoriesRequestBody);
+
+    } else {
+
+        categoriesRequestBody[indexOfEditedCategory] = {
+            "name": document.querySelector("#name-categorie").value,
+            "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data'))
+        }
+
+        console.log(categoriesRequestBody);
+
+        //INITIALIZE THE INDEX
+        indexOfEditedCategory = -1;
+
+        // POPULATE THE TABLE
+        parseToCategoryTable(categoriesRequestBody);
+
     }
 
-    let criteriasContainers = document.querySelectorAll(".criteria-container");
-
-    $(".criteria-container").each(function (index) {
-        let selectedValue = $(this).find("#select-classification").select2('data')[0].text;
-
-
-        let criteria = {
-            "name": selectedValue
-        }
-
-        if (typeOfSelection(selectedValue) === "number") {
-
-            criteria.min = $(this).find("#min-value").val();
-            criteria.max = $(this).find("#max-value").val();
-
-        } else {
-            criteria.value = $(this).find("#valeur-criteria").val();
-        }
-
-
-        newCategory["criterias"].push(criteria);
-
-        console.log(criteria);
-    })
 
 
 
-    categoriesRequestBody.push(newCategory);
-
-
-    // POPULATE THE TABLE
-    parseToCategoryTable(categoriesRequestBody);
 
 
     // EMPTY FIELDS
@@ -181,9 +201,6 @@ btnSaveCategory.addEventListener('click', () => {
     //         element.remove();
     //     }
     // })
-
-
-
     // USING JAVASCRIPT
     let categoryContainer = document.querySelector("#category-container");
     categoryContainer.innerHTML = `
@@ -194,16 +211,7 @@ btnSaveCategory.addEventListener('click', () => {
             <input type="text" class="form-control" id="name-categorie"
                 placeholder="Eg: Cat 1, ...">
         </div>
-        <div class="form-group">
-            <label for="type-assessment-categorie" class="form-label">Type d'assessment</label>
         
-            <select class="form-control select2 form-select" id="type-assessment-categorie">
-                <option value="dispenses">Dispensés</option>
-                <option value="tenue_poste">Evaluation tenue de poste</option>
-                <option value="savoir_faire">Evaluation savoir faire</option>
-            </select>
-
-        </div>
         <div class="form-group">
             <label for="type-assessment-categorie" class="form-label">Contenue de l'évaluation</label>
         
@@ -239,7 +247,7 @@ btnSaveCategory.addEventListener('click', () => {
         `;
 
     // INITILIZE SELECT2 ON THE SELECT FIELDS
-    $("#type-assessment-categorie").select2();
+    
     $("#evaluation-content").select2();
     $("#select-classification").select2();
 
@@ -650,7 +658,7 @@ function parseToCategoryTable(categoryJson) {
 
             indexOfDeletedCategory = categoryIndex;
 
-            showModal("confirm", "Vous allez supprimer cette catégorie !", 'Cliquez sur le bouton "Oui" pour confirmer votre choix', "category")
+            showModal("error", "Vous allez supprimer cette catégorie !", 'Cliquez sur le bouton "Oui" pour confirmer votre choix', "category")
 
             // console.log(categoryIndex);
             // categoriesRequestBody.splice(categoryIndex, 1);
@@ -662,18 +670,47 @@ function parseToCategoryTable(categoryJson) {
 
     Array.from(allEditCatBtns).forEach((editBtn) => {
         editBtn.addEventListener("click", (e) => {
-            let categoryIndex = [...allEditCatBtns].indexOf(e.target);
+
+            // WHEN THE SPAN ELEMENT IS FIRED
+
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let categoryIndex = [...allEditCatBtns].indexOf(aElement);
 
             console.log(categoryIndex);
 
+
+            console.log(categoriesRequestBody[categoryIndex].contentAssessment);
+
+
+
             // START POPULATE THE INPUTS
+            
+            let contentInput = $("#evaluation-content").select2();
+
+            $("#name-categorie").val(categoriesRequestBody[categoryIndex].name);
+            
+            contentInput.val(categoriesRequestBody[categoryIndex].contentAssessment).trigger("change");
+
+
+            indexOfEditedCategory = categoryIndex;
+            // $(".criteria-container").each(function(index , element) {
+
+            // })
+
+
 
 
         })
     })
 
 }
-$("#confirm-yes-btn").click(function (e) {
+$("#confirm-delete-category").click(function (e) {
     switch ($(this).attr("data-action")) {
 
         case "category":
@@ -738,7 +775,7 @@ function parseToCategoryContainer(category, index) {
     let categoryContainer = document.querySelector("#category-container");
 
     categoryContainer.querySelector("#name-categorie").value = category.name;
-    categoryContainer.querySelector("#type-assessment-categorie").value = category.typeAssessment;
+    
 
     let criteriasContainer = categoryContainer.querySelector("#");
 
@@ -747,7 +784,7 @@ function parseToCategoryContainer(category, index) {
 
 function getSelect2Selections(arr) {
     return arr.map((e, index) => {
-        return e.element.text;
+        return e.id;
     })
 }
 
