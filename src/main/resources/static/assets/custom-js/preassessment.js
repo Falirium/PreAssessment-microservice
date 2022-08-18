@@ -116,6 +116,7 @@ btnSaveCategory.addEventListener('click', () => {
     let newCategory = {
         "name": document.querySelector("#name-categorie").value,
         "typeAssessment": $("#type-assessment-categorie").select2('data')[0].text,
+        "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data')),
         "criterias": []
     }
 
@@ -154,6 +155,36 @@ btnSaveCategory.addEventListener('click', () => {
 
 
     // EMPTY FIELDS
+
+    // USING JQUERY
+
+    // $("#name-categorie").val(null);
+    // $("#type-assessment-categorie").val(null);
+    // $(".criteria-container").each(function (index, element) {
+    //     console.log(index, element);
+    //     if (index === 0) {
+    //         element.innerHTML = `
+    //                             <div class="form-group">
+    //                                 <label for="name-categorie" class="form-label">Choisissez un critière de
+    //                                     classification</label>
+    //                                 <select class="form-control select2 form-select select-criteria"
+    //                                     data-placeholder="------ Sélectionnez une option ------"
+    //                                     id="select-classification">
+    //                                 </select>
+    //                             </div>
+    //                             <div class="form-row input-criteria" id="value-criteria-container">
+
+    //                             </div>
+    //         `;
+
+    //     } else {
+    //         element.remove();
+    //     }
+    // })
+
+
+
+    // USING JAVASCRIPT
     let categoryContainer = document.querySelector("#category-container");
     categoryContainer.innerHTML = `
     <div id="category-container">
@@ -165,12 +196,27 @@ btnSaveCategory.addEventListener('click', () => {
         </div>
         <div class="form-group">
             <label for="type-assessment-categorie" class="form-label">Type d'assessment</label>
-            <!-- <input type="text" class="form-control" id="type-assessment-categorie" placeholder="Eg: Dispensé"> -->
+        
             <select class="form-control select2 form-select" id="type-assessment-categorie">
                 <option value="dispenses">Dispensés</option>
                 <option value="tenue_poste">Evaluation tenue de poste</option>
                 <option value="savoir_faire">Evaluation savoir faire</option>
             </select>
+
+        </div>
+        <div class="form-group">
+            <label for="type-assessment-categorie" class="form-label">Contenue de l'évaluation</label>
+        
+            <select multiple="multiple" class="form-control select2"
+                    id="evaluation-content">
+                    <option value="responsabilites">Responsabilités - Finalités</option>
+                    <option value="exigences">Exigences spécifiques de l’emploi</option>
+                    <option value="marqueurs">Marqueurs de séniorité</option>
+                    <option value="competences-dc">Compétences requises - Domaines de connaissance</option>
+                    <option value="competences-sf">Compétences requises - Savoir-faire</option>
+                    <option value="competences-se">Compétences requises - Savoir-être</option>
+                    
+                </select>
 
         </div>
 
@@ -194,6 +240,7 @@ btnSaveCategory.addEventListener('click', () => {
 
     // INITILIZE SELECT2 ON THE SELECT FIELDS
     $("#type-assessment-categorie").select2();
+    $("#evaluation-content").select2();
     $("#select-classification").select2();
 
 

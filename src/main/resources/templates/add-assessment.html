@@ -193,12 +193,27 @@
                             </div>
                             <div class="form-group">
                                 <label for="type-assessment-categorie" class="form-label">Type d'assessment</label>
-                                <!-- <input type="text" class="form-control" id="type-assessment-categorie" placeholder="Eg: Dispensé"> -->
+                               
                                 <select class="form-control select2 form-select" id="type-assessment-categorie">
                                     <option value="dispenses">Dispensés</option>
                                     <option value="tenue_poste">Evaluation tenue de poste</option>
                                     <option value="savoir_faire">Evaluation savoir faire</option>
                                 </select>
+
+                            </div>
+                            <div class="form-group">
+                                <label for="type-assessment-categorie" class="form-label">Contenue de l'évaluation</label>
+                               
+                                <select multiple="multiple" class="form-control select2"
+                                        id="evaluation-content">
+                                        <option value="responsabilites">Responsabilités - Finalités</option>
+                                        <option value="exigences">Exigences spécifiques de l’emploi</option>
+                                        <option value="marqueurs">Marqueurs de séniorité</option>
+                                        <option value="competences-dc">Compétences requises - Domaines de connaissance</option>
+                                        <option value="competences-sf">Compétences requises - Savoir-faire</option>
+                                        <option value="competences-se">Compétences requises - Savoir-être</option>
+                                        
+                                    </select>
 
                             </div>
 
@@ -281,7 +296,7 @@
                             vous
                             ne récupérerez pas ces
                             informations.</p>
-                        <button id="confirm-yes-btn" class="btn btn-warning pd-x-25" data-bs-dismiss="modal>Oui</button>
+                        <button id="confirm-yes-btn" class="btn btn-warning pd-x-25" data-bs-dismiss="modal">Oui</button>
                         <button aria-label="Close" class="btn btn-primary pd-x-25"
                             data-bs-dismiss="modal">Fermer</button>
                     </div>
