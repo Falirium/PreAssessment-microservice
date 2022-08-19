@@ -43,6 +43,8 @@ const employeeColumns = [
 
 let classificationColumns = [];
 
+let populationArr = []
+
 let indexOfDeletedCategory = -1;
 let indexOfEditedCategory = -1;
 
@@ -102,7 +104,10 @@ $(function () {
 
 btnVisualize.addEventListener("click", () => {
 
-    fetchEmployeesData(fileId);
+    //fetchEmployeesData(fileId);
+
+    // PARSE TO POPLATION TABLE
+    //parseToPopulationTable(populationArr)
 
 })
 
@@ -247,7 +252,7 @@ btnSaveCategory.addEventListener('click', () => {
         `;
 
     // INITILIZE SELECT2 ON THE SELECT FIELDS
-    
+
     $("#evaluation-content").select2();
     $("#select-classification").select2();
 
@@ -255,6 +260,7 @@ btnSaveCategory.addEventListener('click', () => {
     // POPULATE CRITERIA FIEDS
     populateWithClassificationColumns();
 })
+
 
 inputFileUploader.addEventListener('change', (e) => {
     let input = document.getElementById('assessment-excel-file');
@@ -268,23 +274,41 @@ inputFileUploader.addEventListener('change', (e) => {
 async function fetchEmployeesData(id) {
 
     let url = "http://localhost:8080/preassessment/api/v1/file/2json/" + id;
-    try {
-        let res = await fetch(url);
-        let response = await res.json();
 
-        response["Déjà dans l'emploi"] = clearWhiteRows(response["Déjà dans l'emploi"])
-        jsonFinalPreassessment = response;
+    fetch(url, {
+        method: 'GET'
+    }).then(
+        response => response.json() // if the response is a JSON object
+    ).then(
+        success => {
+            console.log(success);
+            // RETURN AN ID OF THE FILE IS SAVED TO DB
 
-        classificationColumns = getClassificationColumn(response["Déjà dans l'emploi"][0]);
-
-        parseToTable(response["Déjà dans l'emploi"]);
 
 
-        console.log(response);
 
-    } catch (error) {
-        console.log(error);
-    }
+        } // Handle the success response object
+    ).catch(
+        error => console.log(error) // Handle the error response object
+    );
+
+    // try {
+    //     let res = await fetch(url);
+    //     let response = await res.json();
+
+    //     response["Déjà dans l'emploi"] = clearWhiteRows(response["Déjà dans l'emploi"])
+    //     jsonFinalPreassessment = response;
+
+    //     classificationColumns = getClassificationColumn(response["Déjà dans l'emploi"][0]);
+
+    //     parseToTable(response["Déjà dans l'emploi"]);
+
+
+    //     console.log(response);
+
+    // } catch (error) {
+    //     console.log(error);
+    // }
 
 }
 
@@ -295,30 +319,157 @@ async function postExcelFile(file) {
     let bodyFile = new FormData();
 
     bodyFile.append("file", file);
+
     //console.log(bodyFile);
-    fetch(url, { // Your POST endpoint
-        method: 'POST',
-        headers: {
-            // Content-Type may need to be completely **omitted**
-            // or you may need something
-        },
-        body: bodyFile // This is your file object
-    }).then(
-        response => response.json() // if the response is a JSON object
-    ).then(
-        success => {
-            //textField.textContent = "ID du fichier : " + success["id"];
-            //assessment.excelFile = success;
-            btnVisualize.classList.remove("btn-loading");
-            fileId = success["id"];
+    // fetch(url, { // Your POST endpoint
+    //     method: 'POST',
+    //     headers: {
+    //         // Content-Type may need to be completely **omitted**
+    //         // or you may need something
+    //     },
+    //     body: bodyFile // This is your file object
+    // }).then(
+    //     response => response.json() // if the response is a JSON object
+    // ).then(
+    //     success => {
+    //         // REMOVE LOADING EFFECT
+    //         btnVisualize.classList.remove("btn-loading");
+
+    //         fileId = success["id"];
+
+    //         // START READING WITH EXCELJS LIBRARY
+    //         parseExcelPopulation(file).then((data) => {
+
+    //             // populationArr = data;
+
+    //             // console.log(fileId, data);
+
+    //             // // INITIALTE DATATABLE
+    //             // let dataSet = data.filter((element, index) => {
+    //             //     if (index !== 0) return true;
+    //             // });
+
+    //             console.log(data, Array.isArray(data), data[0]);
+    //             data.forEach((e) => {
+    //                 console.log(e);
+    //             })
+
+    //             // let col = generateColumnsForDatatable(data[0]);
+
+    //             // $("#tb1").DataTable({
+    //             //     data: dataSet,
+    //             //     columns: col
+    //             // });
+    //         });
 
 
 
-        } // Handle the success response object
-    ).catch(
-        error => console.log(error) // Handle the error response object
-    );
 
+
+
+
+    //     } // Handle the success response object
+    // ).catch(
+    //     error => console.log(error) // Handle the error response object
+    // );
+
+    parseExcelPopulation(file).then((data) => {
+
+        // REMOVE LOADING EFFECT
+        btnVisualize.classList.remove("btn-loading");
+
+        populationArr = data;
+
+        // console.log(fileId, data);
+
+        // INITIALTE DATATABLE
+        let dataSet = data.filter((element, index) => {
+            if (index !== 0) return true;
+        });
+
+        // console.log(data, Array.isArray(data), data[0]);
+        // data.forEach((e) => {
+        //     console.log(e);
+        // })
+
+        let col = generateColumnsForDatatable(data[0]);
+
+        $("#tb1").DataTable({
+            data: dataSet,
+            columns: col
+        });
+    });
+
+}
+
+function parseExcelPopulation(excelFile) {
+
+
+    return new Promise((resolve, reject) => {
+        // var files = inputElement.files || [];
+        // if (!files.length) return;
+        // var file = files[0];
+        var file = excelFile;
+        var excelData = [];
+
+        // console.time();
+        var reader = new FileReader();
+
+        reader.onloadend = function (event) {
+            var arrayBuffer = reader.result;
+            // var buffer = Buffer.from(arrayBuffer)
+            // debugger
+
+            var workbook = new ExcelJS.Workbook();
+            // workbook.xlsx.read(buffer)
+            workbook.xlsx.load(arrayBuffer).then(function (workbook) {
+                console.timeEnd();
+                // var result = ''
+
+                workbook.eachSheet(function (worksheet, sheetId) {
+
+                    let index = 1;
+                    while (worksheet.getRow(index).values.length !== 0) {
+                        let rowValues = worksheet.getRow(index).values;
+                        let rowArr = [];
+
+                        rowValues.forEach((cell, index) => {
+                            //console.log(cell, Object.prototype.toString.call(cell))
+
+                            // FILTER OUT THE FOLLOWING TYPES : STRING, NULBER, DATE, JSON OBJECT
+                            if (Object.prototype.toString.call(cell) === '[object Date]') {
+                                //console.log(index, cell, typeof(cell));
+                                rowArr.push(cell.toLocaleDateString())
+                                //console.log(cell.toLocaleDateString());
+                            } else if (Object.prototype.toString.call(cell) === '[object Object]') {
+                                rowArr.push(cell.result);
+                            } else {
+                                rowArr.push(cell);
+                            }
+
+                        })
+
+                        excelData.push(rowArr);
+
+                        index++;
+                    }
+
+
+                });
+
+                return excelData;
+
+
+            }).then((data) => {
+                resolve(data);
+            });
+
+
+        };
+        reader.readAsArrayBuffer(file);
+
+
+    })
 }
 
 function clearWhiteRows(jsonArray) {
@@ -338,16 +489,30 @@ function clearWhiteRows(jsonArray) {
     })
 }
 
-function getClassificationColumn(json) {
-    let classificationColumns = []
-    Object.entries(json).forEach(([key, value]) => {
-        if (!(manager1Columns.includes(key) || manager2Columns.includes(key) || employeeColumns.includes(key) || key === null)) {
-            classificationColumns.push(key);
-        }
-    })
+function getClassificationColumn(obj) {
+    let classificationColumns = [];
+    console.log("inside classification", Array.isArray(obj), obj);
+
+    if (Array.isArray(obj)) {
+        obj.forEach((col) => {
+            if (!(manager1Columns.includes(col) || manager2Columns.includes(col) || employeeColumns.includes(col) || col === null)) {
+                classificationColumns.push(col);
+            }
+        })
+    } else {
+        // FOR JSON FORMAT
+        Object.entries(obj).forEach(([key, value]) => {
+            if (!(manager1Columns.includes(key) || manager2Columns.includes(key) || employeeColumns.includes(key) || key === null)) {
+                classificationColumns.push(key);
+            }
+        })
+    }
+
+
 
     return classificationColumns;
 }
+
 
 function parseToTable(json) {
 
@@ -361,6 +526,7 @@ function parseToTable(json) {
     // Delete any content header and body
     tableHeader.innerHTML = "";
     tableBody.innerHTML = "";
+
     // EXTRACT VALUE FOR HTML HEADER. 
 
     var col = [];
@@ -398,22 +564,71 @@ function parseToTable(json) {
 
 
     // ADD DATABALE LIBRARY SCRIPTS
-    loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", false);
-    loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", false);
-    loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", false);
-    loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", false);
-    loadJS("/assets/plugins/datatable/js/jszip.min.js", false);
-    loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", false);
-    loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", false);
-    loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", false);
-    loadJS("/assets/plugins/datatable/js/buttons.print.min.js", false);
-    loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", false);
-    loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", false);
-    loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", false);
-    loadJS("/assets/js/table-data.js", false);
+    // loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", false);
+    // loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", false);
+    // loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", false);
+    // loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", false);
+    // loadJS("/assets/plugins/datatable/js/jszip.min.js", false);
+    // loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", false);
+    // loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", false);
+    // loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", false);
+    // loadJS("/assets/plugins/datatable/js/buttons.print.min.js", false);
+    // loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", false);
+    // loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", false);
+    // loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", false);
+    // loadJS("/assets/js/table-data.js", false);
+
+
+    // INITIALTE DATATABLE
+    $("#tb1").DataTable();
 
     // POPULATE LIST OF CRITERIA
     populateWithClassificationColumns();
+
+}
+
+//THIS FUNCTION MMITATES THE ROLE OF PARSETOTABLE() BUT WITH EXCEL JS LIBRARY
+function parseToPopulationTable(arr) {
+
+    let tableHeader = document.querySelector("#assessment-population-thead");
+    let tableBody = document.querySelector("#assessment-population-tbody");
+
+    // Delete any content header and body
+    tableHeader.innerHTML = "";
+    tableBody.innerHTML = "";
+
+    for (let i = 0; i <= arr.length; i++) {
+        // INSERT VALUES TO THE HEADER
+        if (i === 0) {
+            var tr = tableHeader.insertRow(-1);                   // TABLE ROW.
+
+            for (var j = 0; j < arr[i][j]; j++) {
+                var th = document.createElement("th");      // TABLE HEADER.
+
+                th.innerHTML = arr[i][j];
+                tr.appendChild(th);
+
+                th.classList.add("wd-15p", "border-bottom-0");
+            }
+        } else {
+            // INSERT VALUES TO BODY
+            tr = tableBody.insertRow(-1);
+
+            for (var j = 0; j < arr[i][j]; j++) {
+                var tabCell = tr.insertCell(-1);
+                tabCell.innerHTML = arr[i][j];
+            }
+        }
+
+    }
+
+    // // INITIALTE DATATABLE
+    // $("#tb1").DataTable();
+
+    // POPULATE LIST OF CRITERIA
+    populateWithClassificationColumns();
+
+
 
 }
 
@@ -443,6 +658,18 @@ function lastCriteriaContainer() {
     let lastCriteria = allCriteriasContainers[[allCriteriasContainers.length - 1]];
 
     return lastCriteria;
+}
+
+function generateColumnsForDatatable(arr) {
+    let colArr = [];
+    console.log(arr);
+    arr.map((e, i) => {
+        colArr.push({
+            "title": e
+        })
+    })
+
+    return colArr;
 }
 
 
@@ -620,8 +847,6 @@ function parseToCategoryTable(categoryJson) {
         let nameCell = tr.insertCell(-1);
         nameCell.innerHTML = categoryJson[i].name;
 
-        let typeAssessment = tr.insertCell(-1);
-        typeAssessment.innerHTML = categoryJson[i].typeAssessment;
 
         let actionsCell = tr.insertCell(-1);
         actionsCell.innerHTML = `
@@ -690,11 +915,11 @@ function parseToCategoryTable(categoryJson) {
 
 
             // START POPULATE THE INPUTS
-            
+
             let contentInput = $("#evaluation-content").select2();
 
             $("#name-categorie").val(categoriesRequestBody[categoryIndex].name);
-            
+
             contentInput.val(categoriesRequestBody[categoryIndex].contentAssessment).trigger("change");
 
 
@@ -775,7 +1000,7 @@ function parseToCategoryContainer(category, index) {
     let categoryContainer = document.querySelector("#category-container");
 
     categoryContainer.querySelector("#name-categorie").value = category.name;
-    
+
 
     let criteriasContainer = categoryContainer.querySelector("#");
 
