@@ -85,7 +85,6 @@ public class Niveau {
         this.responsabilites = responsabilites;
         this.exigences = exigences;
         this.marqueurs = marqueurs;
-
     }
 
 }

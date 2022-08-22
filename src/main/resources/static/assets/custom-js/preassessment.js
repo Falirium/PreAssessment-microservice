@@ -18,27 +18,26 @@ let fileId;
 let categoriesRequestBody = [];
 let jsonFinalPreassessment = {};
 
+let categoriesListDb = [];
+
 
 const manager1Columns = [
-    "Matricule N1",
-    "Nom N1",
-    "PRENOM N1"
+    "MATRICULE_N1",
+    "NOM_N1",
+    "PRENOM_N1"
 ];
 const manager2Columns = [
-    "Matricule N2",
-    "Nom N2",
-    "PRENOM N2"
+    "MATRICULE_N2",
+    "NOM_N2",
+    "PRENOM_N2"
 ];
 const employeeColumns = [
-    "Matricule",
-    "Nom",
-    "Prénom",
-    "affectation (Code)",
-    "affectation (Libelle)",
-    "Fonction (Libelle)",
-    "Date fonction actuelle",
-    "Date fonction avant "
+    "MATRICULE",
+    "NOM",
+    "PRENOM"
 ];
+
+const emploiColumn = "EMPLOIS_CIBLES";
 
 
 let classificationColumns = [];
@@ -47,6 +46,8 @@ let populationArr = []
 
 let indexOfDeletedCategory = -1;
 let indexOfEditedCategory = -1;
+
+let listOfNewCategories = [];
 
 
 const form = document.querySelector("assessment-form");
@@ -99,6 +100,44 @@ $(function () {
         console.log(getSelect2Selections(selected));
     })
 
+    $("#btn-assessment-save").click(function (e) {
+
+        //SAVE NEW CATEGORIES TO DB  then SAVE ASSESSMENT-CATEGORIES
+        let newCategories = [];
+        categoriesRequestBody.map((cat, index) => {
+            if (listOfNewCategories.includes(cat.name)) {
+                newCategories.push({
+                    "name": cat.name,
+                    "contentAssessment": cat.contentAssessment
+                })
+            }
+        })
+        postCategories(newCategories);
+
+        
+
+        //SAVE ASSESSMENT TO DB
+
+
+        // IF IT IS SAVED, SHOW SUCCESS MODAL
+
+
+    })
+
+
+
+
+
+
+    $("#evaluation-content").select2();
+    $("#select-classification").select2();
+
+    // GET REQUEST TO GET LIST OF CATEGORIES
+    getListOfCategories();
+
+
+
+
 })
 
 
@@ -122,7 +161,7 @@ btnSaveCategory.addEventListener('click', () => {
 
         // SAVE CATEGORY TO THE JSON
         let newCategory = {
-            "name": document.querySelector("#name-categorie").value,
+            "name": $("#name-categorie").select2('data')[0].text,
             "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data')),
             "criterias": []
         }
@@ -142,7 +181,7 @@ btnSaveCategory.addEventListener('click', () => {
                 criteria.min = $(this).find("#min-value").val();
                 criteria.max = $(this).find("#max-value").val();
 
-            } else {
+            } else if (typeOfSelection(selectedValue) === "string") {
                 criteria.value = $(this).find("#valeur-criteria").val();
             }
 
@@ -160,11 +199,35 @@ btnSaveCategory.addEventListener('click', () => {
     } else {
 
         categoriesRequestBody[indexOfEditedCategory] = {
-            "name": document.querySelector("#name-categorie").value,
-            "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data'))
+            "name": $("#name-categorie").select2('data')[0].text,
+            "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data')),
+            "criterias": []
         }
 
-        console.log(categoriesRequestBody);
+        $(".criteria-container").each(function (index) {
+            let selectedValue = $(this).find("#select-classification").select2('data')[0].id;
+
+
+            let criteria = {
+                "name": selectedValue
+            }
+
+            if (typeOfSelection(selectedValue) === "number") {
+
+                criteria.min = $(this).find("#min-value").val();
+                criteria.max = $(this).find("#max-value").val();
+
+            } else if (typeOfSelection(selectedValue) === "string") {
+                criteria.value = $(this).find("#valeur-criteria").val();
+            }
+
+
+            categoriesRequestBody[indexOfEditedCategory]["criterias"].push(criteria);
+
+
+        })
+
+        //console.log(categoriesRequestBody);
 
         //INITIALIZE THE INDEX
         indexOfEditedCategory = -1;
@@ -206,33 +269,34 @@ btnSaveCategory.addEventListener('click', () => {
     //         element.remove();
     //     }
     // })
+
     // USING JAVASCRIPT
     let categoryContainer = document.querySelector("#category-container");
     categoryContainer.innerHTML = `
     <div id="category-container">
 
-        <div class="form-group">
-            <label for="name-categorie" class="form-label">Nom de la catégorie</label>
-            <input type="text" class="form-control" id="name-categorie"
-                placeholder="Eg: Cat 1, ...">
-        </div>
-        
-        <div class="form-group">
-            <label for="type-assessment-categorie" class="form-label">Contenue de l'évaluation</label>
-        
-            <select multiple="multiple" class="form-control select2"
-                    id="evaluation-content">
-                    <option value="responsabilites">Responsabilités - Finalités</option>
-                    <option value="exigences">Exigences spécifiques de l’emploi</option>
-                    <option value="marqueurs">Marqueurs de séniorité</option>
-                    <option value="competences-dc">Compétences requises - Domaines de connaissance</option>
-                    <option value="competences-sf">Compétences requises - Savoir-faire</option>
-                    <option value="competences-se">Compétences requises - Savoir-être</option>
-                    
-                </select>
+    <div class="form-group">
+        <label for="name-categorie" class="form-label">NOM_de la catégorie</label>
+        <select type="text" class="form-control select2" id="name-categorie"
+                                    placeholder="Eg: Cat 1, ..."></select>
+    </div>                       
+    <div class="form-group">
+        <label for="type-assessment-categorie" class="form-label">Contenue de l'évaluation</label>
+       
+        <select multiple="multiple" class="form-control select2"
+                id="evaluation-content">
+                <option value="responsabilites">Responsabilités - Finalités</option>
+                <option value="exigences">Exigences spécifiques de l’emploi</option>
+                <option value="marqueurs">Marqueurs de séniorité</option>
+                <option value="competences-dc">Compétences requises - Domaines de connaissance</option>
+                <option value="competences-sf">Compétences requises - Savoir-faire</option>
+                <option value="competences-se">Compétences requises - Savoir-être</option>
+                
+            </select>
 
-        </div>
+    </div>
 
+    <div class="criterias-container">
         <div class="criteria-container">
 
             <div class="form-group">
@@ -247,12 +311,52 @@ btnSaveCategory.addEventListener('click', () => {
 
             </div>
         </div>
-
     </div>
+
+    
+
+</div>
         `;
 
     // INITILIZE SELECT2 ON THE SELECT FIELDS
 
+    //INITILIAZE SELECT2 ON NOM DE CATEGORIE INPUT
+    $("#name-categorie").select2({
+        data: getCategoriesForSelect2(categoriesListDb),
+        tags: true,
+        tokenSeparators: [',']
+    })
+
+    // ADD EVENT LISTENER
+    $("#name-categorie").change(function (e) {
+        let isNew = true;
+        console.log("change")
+
+        // var keycode = (e.keyCode ? e.keyCode : e.which);
+        // console.log(keycode);
+
+        // if (keycode == '13') {
+        // e.stopPropagation();
+        categoriesListDb.map((cat, index) => {
+            if ($("#name-categorie").select2('data')[0].text === cat.name) {
+                isNew = false;
+                $("#evaluation-content").val(cat.contentAssessment).trigger("change");
+
+                // DISABLE ASSESSMENT CONTENT FIELD
+                $("#evaluation-content").prop("disabled", true);
+            }
+        })
+        console.log(isNew);
+        if (isNew) {
+            // SHOW A MODAL TO CONFIRM IF YOU WANT TO ADD THIS CATEGORY
+            //showModal("confirm", "Ajout d'une nouvelle catégorie !", 'Vous allez ajouter une nouvelle catégorie, veuillez confirmer votre choix en cliquant sur "Oui" bouton', "category")
+            listOfNewCategories.push($("#name-categorie").select2('data')[0].text);
+
+            $("#evaluation-content").val(null).trigger("change");
+        }
+
+
+    })
     $("#evaluation-content").select2();
     $("#select-classification").select2();
 
@@ -378,30 +482,179 @@ async function postExcelFile(file) {
         // REMOVE LOADING EFFECT
         btnVisualize.classList.remove("btn-loading");
 
-        populationArr = data;
+        let excelData = data[0];
+        let listEmploi = data[1];
+
+        populationArr = excelData;
+
+
 
         // console.log(fileId, data);
 
         // INITIALTE DATATABLE
-        let dataSet = data.filter((element, index) => {
+        let dataSet = excelData.filter((element, index) => {
             if (index !== 0) return true;
         });
 
-        // console.log(data, Array.isArray(data), data[0]);
+        // console.log(excelData, Array.isArray(excelData), excelData[0]);
         // data.forEach((e) => {
         //     console.log(e);
         // })
 
-        let col = generateColumnsForDatatable(data[0]);
+        let col = generateColumnsForDatatable(excelData[0]);
 
         $("#tb1").DataTable({
             data: dataSet,
             columns: col
         });
+
+
+        classificationColumns = getClassificationColumn(excelData[0]);
+
+        populateWithClassificationColumns();
+
+
+        // POPULATE EMPLOI SECTION
+        for (var i = 0; i < listEmploi.length; i++) {
+            $(".emploi-cible-list").append(`<button class="btn btn-secondary" href="">` + listEmploi[i] + `</button>`);
+        }
+
     });
 
 }
 
+
+async function postCategories(jsonArr) {
+    let url = "http://localhost:8080/preassessment/api/v1/category/"
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonArr)
+
+    }).then(
+        response => response.json()
+    ).then(
+        success => {
+            console.log(success);
+
+            // POST ASSESSMENT-CATEGORY ENTITIES
+            postAssessmenCategories(categoriesRequestBody);
+        
+        }
+    ).catch(
+        error => console.log(error)
+    )
+}
+
+async function postAssessmenCategories(jsonArr) {
+    let url = "http://localhost:8080/preassessment/api/v1/assessment/category/"
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonArr)
+
+    }).then(
+        response => response.json()
+    ).then(
+        success => console.log(success)
+    ).catch(
+        error => console.log(error)
+    )
+}
+
+async function getListOfCategories() {
+    let url = "http://localhost:8080/preassessment/api/v1/category/"
+
+    fetch(url, {
+        method: 'GET'
+    }).then(
+        response => response.json()
+    ).then(
+        success => {
+            console.log(success);
+            categoriesListDb = success;
+            return success;
+        }
+    ).then((list) => {
+        //CREATE
+
+        // INILIALIZE SELCET2 ON NOM DE LA CATEGORIE
+        $("#name-categorie").select2({
+            data: getCategoriesForSelect2(list),
+            tags: true,
+            tokenSeparators: [',']
+        });
+
+        // ADD EVENT LISTENER
+        $("#name-categorie").change(function (e) {
+            let isNew = true;
+            console.log("change")
+
+            // var keycode = (e.keyCode ? e.keyCode : e.which);
+            // console.log(keycode);
+
+            // if (keycode == '13') {
+            // e.stopPropagation();
+            categoriesListDb.map((cat, index) => {
+                if ($("#name-categorie").select2('data')[0].text === cat.name) {
+                    isNew = false;
+                    $("#evaluation-content").val(cat.contentAssessment).trigger("change");
+
+                    // DISABLE ASSESSMENT CONTENT FIELD
+                    $("#evaluation-content").prop("disabled", true);
+                }
+            })
+            console.log(isNew);
+            if (isNew) {
+                // SHOW A MODAL TO CONFIRM IF YOU WANT TO ADD THIS CATEGORY
+                //showModal("confirm", "Ajout d'une nouvelle catégorie !", 'Vous allez ajouter une nouvelle catégorie, veuillez confirmer votre choix en cliquant sur "Oui" bouton', "category")
+                listOfNewCategories.push($("#name-categorie").select2('data')[0].text);
+
+                $("#evaluation-content").val(null).trigger("change");
+            }
+
+
+        })
+
+    }).catch(
+        error => console.log(error)
+    )
+}
+
+$('#confirm-yes-btn[data-action="category"]').click(function () {
+    console.log("kldfsdf");
+
+
+})
+
+
+async function postAssessment(jsonArr) {
+    let url = "http://localhost:8080/preassessment/api/v1/assessment/"
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonArr)
+
+    }).then(
+        response => response.json()
+    ).then(
+        success => console.log(success)
+    ).catch(
+        error => console.log(error)
+    )
+}
+
+// THIS FUNCTION : READ THE EXCEL FILE AND RETURNS A ARRAY OF POPULATION CONTENT + 
+//                  GET THE LIST OF JOBS
 function parseExcelPopulation(excelFile) {
 
 
@@ -411,6 +664,7 @@ function parseExcelPopulation(excelFile) {
         // var file = files[0];
         var file = excelFile;
         var excelData = [];
+        let listOfEmplois = [];
 
         // console.time();
         var reader = new FileReader();
@@ -454,10 +708,23 @@ function parseExcelPopulation(excelFile) {
                         index++;
                     }
 
+                    // GET EMPLOI COLUMN INDEX
+                    let indexOfEmploiCol = excelData[0].indexOf("EMPLOIS_CIBLES");
+                    listOfEmplois = [...new Set(worksheet.getColumn(indexOfEmploiCol + 1).values)].filter((e) => {
+                        if (typeof (e) === 'undefined' || e === "EMPLOIS_CIBLES") {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    });
+
+
+                    // START POPULATE THE 
+
 
                 });
 
-                return excelData;
+                return [excelData, listOfEmplois];
 
 
             }).then((data) => {
@@ -491,18 +758,18 @@ function clearWhiteRows(jsonArray) {
 
 function getClassificationColumn(obj) {
     let classificationColumns = [];
-    console.log("inside classification", Array.isArray(obj), obj);
+    //console.log("inside classification", Array.isArray(obj), obj);
 
     if (Array.isArray(obj)) {
         obj.forEach((col) => {
-            if (!(manager1Columns.includes(col) || manager2Columns.includes(col) || employeeColumns.includes(col) || col === null)) {
+            if (!(manager1Columns.includes(col) || manager2Columns.includes(col) || employeeColumns.includes(col) || col === null || col === emploiColumn)) {
                 classificationColumns.push(col);
             }
         })
     } else {
         // FOR JSON FORMAT
         Object.entries(obj).forEach(([key, value]) => {
-            if (!(manager1Columns.includes(key) || manager2Columns.includes(key) || employeeColumns.includes(key) || key === null)) {
+            if (!(manager1Columns.includes(key) || manager2Columns.includes(key) || employeeColumns.includes(key) || key === null || col === emploiColumn)) {
                 classificationColumns.push(key);
             }
         })
@@ -662,7 +929,7 @@ function lastCriteriaContainer() {
 
 function generateColumnsForDatatable(arr) {
     let colArr = [];
-    console.log(arr);
+    //console.log(arr);
     arr.map((e, i) => {
         colArr.push({
             "title": e
@@ -670,6 +937,20 @@ function generateColumnsForDatatable(arr) {
     })
 
     return colArr;
+}
+
+function getCategoriesForSelect2(arr) {
+    console.log(arr);
+    let result = [];
+    let id = 1
+    arr.map((cat, index) => {
+        result.push({
+            "id": id++,
+            "text": cat.name
+        })
+    })
+
+    return result;
 }
 
 
@@ -692,12 +973,12 @@ function populateWithClassificationColumns() {
 
     // Add an event listener to the select
     $(".select-criteria").last().change(function (e) {
-        console.log(e.currentTarget.value);
+        //console.log(e.currentTarget.value);
 
         // GET THE VALUE OF THE SELECTION
         let selectedValue = e.currentTarget.value;
         let input_criteria_html;
-        console.log(typeOfSelection(selectedValue), selectedValue);
+        //console.log(typeOfSelection(selectedValue), selectedValue);
         if (typeOfSelection(selectedValue) === "string") {
             input_criteria_html = `
             
@@ -714,7 +995,7 @@ function populateWithClassificationColumns() {
             $(".input-criteria").last().html(input_criteria_html);
 
 
-        } else {
+        } else if (typeOfSelection(selectedValue) === "number") {
             input_criteria_html = `
                 
                     <div class="form-group col-md-6 mb-0">
@@ -738,6 +1019,7 @@ function populateWithClassificationColumns() {
 
 
         }
+
         $(".input-criteria").last().html(input_criteria_html);
 
         let btnDeleteCriteria = $(".criteria-container").last().find("#btn-delete-criteria")[0];
@@ -830,7 +1112,8 @@ function addNewCriteria() {
 }
 
 function typeOfSelection(selection) {
-    return typeof (jsonFinalPreassessment["Déjà dans l'emploi"][0][selection]);
+    let colIndex = populationArr[0].indexOf(selection);
+    return typeof (populationArr[1][colIndex]);
 }
 
 function parseToCategoryTable(categoryJson) {
@@ -915,11 +1198,8 @@ function parseToCategoryTable(categoryJson) {
 
 
             // START POPULATE THE INPUTS
-
             let contentInput = $("#evaluation-content").select2();
-
             $("#name-categorie").val(categoriesRequestBody[categoryIndex].name);
-
             contentInput.val(categoriesRequestBody[categoryIndex].contentAssessment).trigger("change");
 
 
@@ -929,12 +1209,179 @@ function parseToCategoryTable(categoryJson) {
             // })
 
 
+            // START POPULATE CRETERIA CONTAINER
+            let numberOfCriteria = categoriesRequestBody[categoryIndex].criterias.length;
+
+            // GET NUMBER OF CRITERIA
+            for (var i = 0; i < numberOfCriteria; i++) {
+
+                // ------------- CREATE ONE CRITERIA CONTAINER -------------
+
+                if (i !== 0) {
+
+                    console.log("1- I M NOT THE FIRST CRITERIA: I M CREATING A NEW CRITERIA CONTAINER");
+
+                    $(".criterias-container").append(`
+                    <div class="criteria-container">
+
+                        <div class="form-group">
+                            <label for="name-categorie" class="form-label">Choisissez un critière de
+                                classification</label>
+                            <select class="form-control select2 form-select select-criteria"
+                                data-placeholder="------ Sélectionnez une option ------"
+                                id="select-classification">
+                            </select>
+                        </div>
+                        <div class="form-row input-criteria" id="value-criteria-container">
+
+                        </div>
+                    </div>
+                    
+                    `);
+
+                    console.log("CRITERIA CONTAINER CRETAED");
+
+
+
+                    // POPULATE WITH VALUES OF SELECTED CATEGORY
+                    console.log("2 - I M TRYING TO POPULATE THE CRITERIA VALUES");
+
+                    //POPULTATE VALUES CRITERIA CONTAINER
+                    if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'string') {
+
+                        console.log("2.1 - i M A STRING TYPE");
+
+                        $("#value-criteria-container").append(`
+                            <div class="form-group col-md-12 mb-0">
+                                <label for="valeur-criteria" class="form-label">Valeur du critière </label>
+                                <input type="text" class="form-control" id="valeur-criteria"
+                                placeholder=".........">
+                            </div>
+                            <div class="my-3 w-100 text-center">
+                            <button id="btn-delete-criteria" type="button" class="btn btn-icon me-2 bradius btn-danger-light"> 
+                                <i class="fe fe-trash-2"></i>
+                            </button>
+                        `);
+
+                        $(".input-criteria").last().find("#valeur-criteria").val(categoriesRequestBody[categoryIndex]["criterias"][i].value);
+
+
+                    } else if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'number') {
+
+                        console.log("2.2 - i M A NUMBER TYPE");
+
+                        $("#value-criteria-container").append(`
+                        <div class="form-group col-md-6 mb-0">
+                            <div class="form-group">
+                                <label for="min-value" class="form-label">Min value : </label>
+                                <input type="number" class="form-control" id="min-value">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 mb-0">
+                            <div class="form-group">
+                                <label for="max-value" class="form-label">Max value : </label>
+                                <input type="number" class="form-control" id="max-value">
+                            </div>
+                        </div>
+                        <div class="my-3 w-100  text-center">
+                            <button id="btn-delete-criteria" type="button" 
+                            class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
+                        </div>
+                        `);
+
+                        $(".input-criteria").last().find("#max-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].max));
+                        $(".input-criteria").last().find("#min-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].min));
+
+                    }
+
+                } else {
+
+                    console.log("1 - i M THE FIRST CRITERIA CONTAINER ");
+
+                    console.log("2 - i M THE TRYING TO POPULATETHE CRITERIACONTAINER ");
+
+
+                    //POPULTATE VALUES CRITERIA CONTAINER
+                    if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'string') {
+
+                        console.log("2.1 - i M A STRING CRITERIA");
+
+                        $("#value-criteria-container").append(`
+                            <div class="form-group col-md-12 mb-0">
+                                <label for="valeur-criteria" class="form-label">Valeur du critière </label>
+                                <input type="text" class="form-control" id="valeur-criteria"
+                                placeholder=".........">
+                            </div>
+                            <div class="my-3 w-100 text-center">
+                            <button id="btn-delete-criteria" type="button" class="btn btn-icon me-2 bradius btn-danger-light"> 
+                                <i class="fe fe-trash-2"></i>
+                            </button>
+                        `);
+
+                        $(".input-criteria").last().find("#valeur-criteria").val(categoriesRequestBody[categoryIndex]["criterias"][i].value);
+
+
+                    } else if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'number') { // POPULATE CRITERIA VALUES CONTAINER CUZ THE CONTAINER IS ALREADY EXISTS
+
+                        console.log("2.1 - i M A NUMBER CRITERIA");
+
+                        $("#value-criteria-container").append(`
+                        <div class="form-group col-md-6 mb-0">
+                            <div class="form-group">
+                                <label for="min-value" class="form-label">Min value : </label>
+                                <input type="number" class="form-control" id="min-value">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 mb-0">
+                            <div class="form-group">
+                                <label for="max-value" class="form-label">Max value : </label>
+                                <input type="number" class="form-control" id="max-value">
+                            </div>
+                        </div>
+                        <div class="my-3 w-100  text-center">
+                            <button id="btn-delete-criteria" type="button" 
+                            class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
+                        </div>
+                        `);
+
+                        $(".input-criteria").last().find("#max-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].max));
+                        $(".input-criteria").last().find("#max-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].min));
+
+                    }
+
+                    console.log("END OF POPULATING THE CRITERIA ");
+
+
+
+                }
+
+                // ------------- END CREATE ONE CRITERIA CONTAINER -------------
+
+
+                //POPOLATE SELECT2 FIELD
+
+                //POPOLUATE WITH CRITERIA COLUMNS
+                populateWithClassificationColumns();
+
+
+                // INITILIZE SELECT2
+                let selectInput = $(".criteria-container").last().find("#select-classification").select2();
+
+                // POPULATE THE SELECT INPUT OF CRITERIA
+                selectInput.val(categoriesRequestBody[categoryIndex]["criterias"][i].name).trigger("change");
+
+
+            }
+
+
+
 
 
         })
     })
 
 }
+
 $("#confirm-delete-category").click(function (e) {
     switch ($(this).attr("data-action")) {
 
@@ -1029,13 +1476,14 @@ function showModal(type, header, content, action) {
             modalId = "modaldemo5";
             modalHeaderId = "#modal-error-header";
             modalContentId = "#modal-error-content";
+            $("#confirm-yes-btn").attr("data-action", action);
             break;
 
         case "confirm":
             modalId = "confirm";
             modalHeaderId = "#modal-confirm-header";
             modalContentId = "#modal-confirm-content";
-            $("#confirm-yes-btn").attr("data-action", "category");
+            $("#confirm-yes-btn").attr("data-action", action);
             break;
     }
 

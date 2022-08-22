@@ -25,4 +25,12 @@ public class CategoryService {
     public Category getCategory(Long id) {
         return categoryRepository.findById(id).get();
     }
+
+    public List<Category> saveListOfCategory(List<Category> categories) {
+        return categoryRepository.saveAll(categories);
+    }
+
+    public Category getCategoryByName(String name) {
+        return categoryRepository.findByName(name);
+    }
 }

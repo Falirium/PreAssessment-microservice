@@ -49,7 +49,7 @@ public class AssessmentController {
 
         Assessment assessment = assessmentService.getAssessment(id);
 
-        assessment.setListOfCategories(updatedAssessment.getListOfCategories());
+        assessment.setAssessmentCategories(updatedAssessment.getAssessmentCategories());
         assessment.setListOfCollaborateurs(updatedAssessment.getListOfCollaborateurs());
         assessment.setListOfManagersOne(updatedAssessment.getListOfManagersOne());
         assessment.setListOfManagersTwo(updatedAssessment.getListOfManagersTwo());

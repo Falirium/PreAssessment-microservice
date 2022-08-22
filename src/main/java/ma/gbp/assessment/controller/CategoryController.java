@@ -34,11 +34,11 @@ public class CategoryController {
         //TODO: process POST request
 
         List<Category> savedCategories = new ArrayList<Category>();
-        for ( Category category : categories) {
-            savedCategories.add(categoryService.save(category));
-        }
+        // for ( Category category : categories) {
+        //     savedCategories.add(categoryService.save(category));
+        // }
 
-        return ResponseEntity.status(HttpStatus.OK).body(savedCategories);
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.saveListOfCategory(categories));
         
     }
 

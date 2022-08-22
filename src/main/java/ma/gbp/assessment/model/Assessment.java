@@ -1,7 +1,9 @@
 package ma.gbp.assessment.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -60,18 +62,26 @@ public class Assessment {
     )
     private List<ManagerTwo> listOfManagersTwo;
 
-    @ManyToMany
-    @JoinTable(
-        name = "assessment_category",
-        joinColumns = @JoinColumn(name = "assessment_id"),
-        inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private List<Category> listOfCategories;
+    // @ManyToMany
+    // @JoinTable(
+    //     name = "assessment_category",
+    //     joinColumns = @JoinColumn(name = "assessment_id"),
+    //     inverseJoinColumns = @JoinColumn(name = "category_id")
+    // )
+    // private List<Category> listOfCategories;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id", referencedColumnName = "id")
     private FileDB excelFile;
 
+
+    @ManyToMany
+    @JoinTable(
+        name = "assessment_categorie",
+        joinColumns = @JoinColumn(name = "assessment_id"),
+        inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<AssessmentCategory> assessmentCategories = new HashSet<>();
 
 
 }

@@ -29,7 +29,14 @@
             <div class="col-md-12 col-xl-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Informations d'assessment</h4>
+                        <h4 class="card-title col-sm-6">Informations d'assessment</h4>
+                        <div class="text-end col-sm-6 d-flex flex-row-reverse">
+                            <a id="btn-assessment-save" class="btn btn-primary mx-1" role="button"
+                                aria-pressed="true">Sauvegarder</a>
+                            <a id="btn-assessment-reset" class="btn btn-warning mx-1" role="button"
+                                aria-pressed="true">Réinitialiser</a>
+
+                        </div>
                     </div>
                     <div class="card-body">
                         <form id="assessment-form">
@@ -128,7 +135,7 @@
             <div class="col-md-12 col-xl-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Importation de la liste</h4>
+                        <h4 class="card-title">Importation de la liste de population cible</h4>
                     </div>
                     <div class="card-body" id="file-form">
                         <div class="form-group">
@@ -158,6 +165,24 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-md-12 col-xl-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Emplois cibles</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="assessment-excel-file" class="form-label mt-0 fst-italic text-danger">La liste
+                                d'emplois ci-dessous provient du fichier Excel.</label>
+                            <div class="btn-list emploi-cible-list">
+            
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
             <div class="col-md-12 col-xl-12">
                 <div class="card">
                     <div class="card-header">
@@ -168,7 +193,7 @@
                             <thead id="category-table-header">
                                 <tr>
                                     <th class="w-auto">Nom</th>
-                                    
+
                                     <th clas="w-20">Actions</th>
                                 </tr>
                             </thead>
@@ -186,41 +211,47 @@
                         </div>
                         <div id="category-container">
 
+
                             <div class="form-group">
                                 <label for="name-categorie" class="form-label">Nom de la catégorie</label>
-                                <input type="text" class="form-control" id="name-categorie"
-                                    placeholder="Eg: Cat 1, ...">
-                            </div>                       
+                                <select type="text" class="form-control select2" id="name-categorie"
+                                    placeholder="Eg: Cat 1, ..."></select>
+                            </div>
                             <div class="form-group">
-                                <label for="type-assessment-categorie" class="form-label">Contenue de l'évaluation</label>
-                               
-                                <select multiple="multiple" class="form-control select2"
-                                        id="evaluation-content">
-                                        <option value="responsabilites">Responsabilités - Finalités</option>
-                                        <option value="exigences">Exigences spécifiques de l’emploi</option>
-                                        <option value="marqueurs">Marqueurs de séniorité</option>
-                                        <option value="competences-dc">Compétences requises - Domaines de connaissance</option>
-                                        <option value="competences-sf">Compétences requises - Savoir-faire</option>
-                                        <option value="competences-se">Compétences requises - Savoir-être</option>
-                                        
-                                    </select>
+                                <label for="type-assessment-categorie" class="form-label">Contenue de
+                                    l'évaluation</label>
+
+                                <select multiple="multiple" class="form-control select2" id="evaluation-content">
+                                    <option value="responsabilites">Responsabilités - Finalités</option>
+                                    <option value="exigences">Exigences spécifiques de l’emploi</option>
+                                    <option value="marqueurs">Marqueurs de séniorité</option>
+                                    <option value="competences-dc">Compétences requises - Domaines de connaissance
+                                    </option>
+                                    <option value="competences-sf">Compétences requises - Savoir-faire</option>
+                                    <option value="competences-se">Compétences requises - Savoir-être</option>
+
+                                </select>
 
                             </div>
 
-                            <div class="criteria-container">
+                            <div class="criterias-container">
+                                <div class="criteria-container">
 
-                                <div class="form-group">
-                                    <label for="name-categorie" class="form-label">Choisissez un critière de
-                                        classification</label>
-                                    <select class="form-control select2 form-select select-criteria"
-                                        data-placeholder="------ Sélectionnez une option ------"
-                                        id="select-classification">
-                                    </select>
-                                </div>
-                                <div class="form-row input-criteria" id="value-criteria-container">
+                                    <div class="form-group">
+                                        <label for="name-categorie" class="form-label">Choisissez un critière de
+                                            classification</label>
+                                        <select class="form-control select2 form-select select-criteria"
+                                            data-placeholder="------ Sélectionnez une option ------"
+                                            id="select-classification">
+                                        </select>
+                                    </div>
+                                    <div class="form-row input-criteria" id="value-criteria-container">
 
+                                    </div>
                                 </div>
                             </div>
+
+
 
                         </div>
                         <div class="mt-5 text-center">
@@ -279,14 +310,15 @@
                     <div class="modal-body text-center p-4 pb-5">
                         <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
                                 aria-hidden="true">&times;</span></button>
-                        <i class="icon icon-close fs-70 text-warning lh-1 my-5 d-inline-block"></i>
+                        <i class="fe fe-alert-circle fs-70 text-warning lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-confirm-header" class="text-warning">Attention: vous êtes sûr de vouloir supprimer
                             cette entrée!</h4>
                         <p id="modal-confirm-content" class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui",
                             vous
                             ne récupérerez pas ces
                             informations.</p>
-                        <button id="confirm-yes-btn" class="btn btn-warning pd-x-25" data-bs-dismiss="modal">Oui</button>
+                        <button id="confirm-yes-btn" class="btn btn-warning pd-x-25"
+                            data-bs-dismiss="modal">Oui</button>
                         <button aria-label="Close" class="btn btn-primary pd-x-25"
                             data-bs-dismiss="modal">Fermer</button>
                     </div>
@@ -346,15 +378,13 @@
         <script th:src="@{/assets/plugins/p-scroll/pscroll.js}"></script>
         <script th:src="@{/assets/plugins/p-scroll/pscroll-1.js}"></script>
 
-        <!-- INTERNAL SELECT2 JS -->
-        <script th:src="@{/assets/plugins/select2/select2.full.min.js}"></script>
 
         <!-- Color Theme js -->
         <script th:src="@{/assets/js/themeColors.js}"></script>
 
         <!-- Sticky js -->
         <script th:src="@{/assets/js/sticky.js}"></script>
-        <script th:src="@{/assets/js/select2.js}"></script>
+
 
         <!-- CUSTOM JS -->
         <script th:src="@{/assets/js/custom.js}"></script>
