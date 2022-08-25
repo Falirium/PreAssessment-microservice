@@ -5,6 +5,9 @@
 <head>
 
     <title>Dashboard</title>
+
+    <!--- PREASSESSMENT CSS -->
+    <link th:href="@{/assets/custom-css/preassessment.css}" rel="stylesheet" />
 </head>
 
 <body>
@@ -24,19 +27,32 @@
         </div>
         <!-- PAGE-HEADER END -->
 
-        <!-- ROW-1 -->
+
+        <!-- ROW 1 -->
         <div class="row">
-            <div class="col-md-12 col-xl-12">
+            <!-- Progress bar -->
+            <div class="progressbar">
+
+                <div class="progress" id="progress"></div>
+
+                <div class="progress-step progress-step-active" data-title=""></div>
+                <div class="progress-step" data-title=""></div>
+                <div class="progress-step" data-title=""></div>
+                <div class="progress-step" data-title=""></div>
+                <div class="progress-step" data-title=""></div>
+                <div class="progress-step" data-title=""></div>
+
+            </div>
+        </div>
+
+        <!-- ROW-2 -->
+        <div class="row">
+
+            <!-- INFORMATIONS DE BASE -->
+            <div class="col-md-12 col-xl-12 form-step form-step-active">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title col-sm-6">Informations d'assessment</h4>
-                        <div class="text-end col-sm-6 d-flex flex-row-reverse">
-                            <a id="btn-assessment-save" class="btn btn-primary mx-1" role="button"
-                                aria-pressed="true">Sauvegarder</a>
-                            <a id="btn-assessment-reset" class="btn btn-warning mx-1" role="button"
-                                aria-pressed="true">Réinitialiser</a>
-
-                        </div>
                     </div>
                     <div class="card-body">
                         <form id="assessment-form">
@@ -50,7 +66,7 @@
                                 <div class="form-group assessment-property-container">
                                     <label for="input-regions-campagne" class="form-label">Filiale / BPR ciblée <span
                                             class="text-red">*</span></label>
-                                    <select multiple="multiple" class="form-control select2 form-select"
+                                    <select multiple="multiple" class="form-control select2"
                                         id="input-regions-campagne">
                                         <option value="bp_tanger_tetouan">B.P de Tanger-Tétouan</option>
                                         <option value="bp_rabat_kenitra">B.P de Rabat-Kénitra</option>
@@ -125,70 +141,55 @@
                                 </div>
 
                             </div>
-                            <a href="#file-form" class="btn btn-primary mt-4 mb-0" role="button"
-                                aria-pressed="true">Suivant</a>
-
                         </form>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 col-xl-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Importation de la liste de population cible</h4>
-                    </div>
-                    <div class="card-body" id="file-form">
-                        <div class="form-group">
-                            <label for="assessment-excel-file" class="form-label mt-0">Importez le fichier Excel qui
-                                contient la liste des employés
-                                et d'autres informations.</label>
-                            <small class="fw-bold fst-italic text-danger">** Important ** Vérifiez que le modèle que
-                                vous utilisez
-                                est conforme au fichier suggéré par le développeur.</small>
-                            <input id="assessment-excel-file" class="form-control" type="file" accept=".xlsx">
-                        </div>
-                        <div class="form-footer my-2 mb-2">
-                            <a class="btn btn-primary" id="btn-visualize">Visualiser la population</a>
-                        </div>
-
-                        <div class="table-responsive mt-2">
-                            <table class="table table-bordered text-nowrap border-bottom" id="tb1">
-                                <!-- <thead id="assessment-population-thead">
-
-                                </thead>
-                                <tbody id="assessment-population-tbody">
-
-
-                                </tbody> -->
-                            </table>
+                        <div class="text-end col-sm-12 d-flex justify-content-around  my-5">
+                            <button type="button" class="btn btn-primary-light btn-next">Suivant</i></button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-12 col-xl-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Emplois cibles</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="assessment-excel-file" class="form-label mt-0 fst-italic text-danger">La liste
-                                d'emplois ci-dessous provient du fichier Excel.</label>
-                            <div class="btn-list emploi-cible-list">
-            
-                            </div>
-                        </div>
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 col-xl-12">
+
+            <!-- IMPORT EXCEL FILE + CATEGORIES CREATION -->
+            <div class="col-md-12 col-xl-12 form-step ">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Configuration des catégories</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="file-form">
+
+                        <div class="population-container">
+
+                            <div class="form-group mb-5">
+                                <div class="form-footer my-2 mb-2">
+                                    <a class="btn btn-warning" id="btn-visualize">Catégoriser la population</a>
+                                </div>
+                                <label for="assessment-excel-file" class="form-label mt-0">Importez le fichier Excel qui
+                                    contient la liste des employés
+                                    et d'autres informations.</label>
+                                <small class="fw-bold fst-italic text-danger">** Important ** Vérifiez que le modèle que
+                                    vous utilisez
+                                    est conforme au fichier suggéré par le développeur.</small>
+                                <input id="assessment-excel-file" class="form-control" type="file" accept=".xlsx">
+                            </div>
+
+
+                            <div class="table-responsive mt-2">
+                                <table class="table table-bordered text-nowrap border-bottom" id="tb1">
+                                    <!-- <thead id="assessment-population-thead">
+    
+                                    </thead>
+                                    <tbody id="assessment-population-tbody">
+    
+    
+                                    </tbody> -->
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr>
+
                         <table class="table border text-nowrap text-md-nowrap table-bordered mb-0">
                             <thead id="category-table-header">
                                 <tr>
@@ -210,7 +211,6 @@
                                 combinaison de critères afin d'obtenir des groupes distincts.</small>
                         </div>
                         <div id="category-container">
-
 
                             <div class="form-group">
                                 <label for="name-categorie" class="form-label">Nom de la catégorie</label>
@@ -261,6 +261,94 @@
                                 class="btn btn-icon me-2 bradius btn-primary-light"> <i
                                     class="fe fe-database"></i></button>
                         </div>
+                        <div class="text-end col-sm-12 d-flex justify-content-around  my-5">
+                            <button type="button" class="btn btn-outline-primary btn-prev">Précédent</i></button>
+                            <button type="button" class="btn btn-primary-light btn-next">Suivant</i></button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CATEGORIZATION  -->
+            <div class="col-md-12 col-xl-12 form-step ">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Visualisation de la population cible</h4>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="form-footer my-2 mb-2">
+                            <a class="btn btn-warning" id="btn-visualize">Catégoriser la population</a>
+                        </div>
+
+                        <div class="table-responsive mt-2">
+                            <table class="table table-bordered text-nowrap border-bottom" id="tb1">
+                                <!-- <thead id="assessment-population-thead">
+
+                                </thead>
+                                <tbody id="assessment-population-tbody">
+
+
+                                </tbody> -->
+                            </table>
+                        </div>
+                        <div class="text-end col-sm-12 d-flex justify-content-around  my-5">
+                            <button type="button" class="btn btn-outline-primary btn-prev">Précédent</i></button>
+                            <button type="button" class="btn btn-primary-light btn-next">Suivant</i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMPLOIS CIBLES -->
+            <div class="col-md-12 col-xl-12 form-step ">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Emplois cibles</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="assessment-excel-file" class="form-label mt-0 fst-italic text-danger">La liste
+                                d'emplois ci-dessous provient du fichier Excel.</label>
+                            <div class="btn-list emploi-cible-list">
+
+                            </div>
+                        </div>
+
+                        <div class="text-end col-sm-12 d-flex justify-content-around  my-5">
+                            <button type="button" class="btn btn-outline-primary btn-prev">Précédent</i></button>
+                            <button type="button" class="btn btn-primary-light btn-next">Suivant</i></button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- LANCH / SAVE PHASE -->
+            <div class="col-md-12 col-xl-12 form-step ">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title col-sm-6">Actions</h4>
+                        <div class="text-end col-sm-6 d-flex flex-row-reverse">
+                            <a id="btn-assessment-lanch" class="btn btn-success" role="button"
+                                aria-pressed="true">Lancer</a>
+                            <a id="btn-assessment-save" class="btn btn-warning" role="button"
+                                aria-pressed="true">Sauvegarder</a>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+
+                        <div class="text-end col-sm-12 d-flex justify-content-around  my-5">
+
+                            <button type="button" class="btn btn-outline-primary btn-prev">Précédent</i></button>
+
+
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -423,6 +511,8 @@
         <!-- PREASSESSMENT -->
         <script th:src="@{/assets/custom-js/preassessment.js}"></script>
 
+        <!-- PROGRESS_BAR JS -->
+        <script th:src="@{/assets/custom-js/progress-step.js}"></script>
 
 
 

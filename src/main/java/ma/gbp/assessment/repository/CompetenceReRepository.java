@@ -12,4 +12,5 @@ public interface CompetenceReRepository extends JpaRepository<CompetenceRe, Long
 
     // List<CompetenceRe> findCompetenceResByNiveausId(Long niveauId);
     
+    
 }

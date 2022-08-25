@@ -1,5 +1,6 @@
 package ma.gbp.assessment.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -71,8 +72,8 @@ public class Niveau {
     })
     @JoinTable(name = "niveau_competenceRequis", joinColumns = {
             @JoinColumn(name = "niveau_id") }, inverseJoinColumns = { @JoinColumn(name = "competenceRequis_id") })
-
-    private Set<CompetenceRe> listOfCompetenceRequis = new HashSet<>();
+        
+    private List<CompetenceRe> competencesRequis = new ArrayList<>();
 
     public Niveau(String intitule, String filiere, String sousFiliere, Date dateMaj, String vocation, int level,
             List<Responsabilite> responsabilites, List<String> exigences, List<String> marqueurs) {

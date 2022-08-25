@@ -30,4 +30,8 @@ public class CompetenceService {
     public List<Competence> saveListOfCompetences(List<Competence> competences) {
         return competenceRepository.saveAll(competences);
     }
+
+    public Competence getCompetenceByName(String name) {
+        return competenceRepository.findByName(name);
+    }
 }

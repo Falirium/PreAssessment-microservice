@@ -26,5 +26,9 @@ public class CompetenceReService {
     public CompetenceRe saveCompetenceRequis(CompetenceRe newCompetence) {
         return competenceReRepository.save(newCompetence);
     }
+
+    public List<CompetenceRe> saveListOfComeptences(List<CompetenceRe> competences) {
+        return competenceReRepository.saveAll(competences);
+    }
     
 }

@@ -26,4 +26,8 @@ public class NiveauService {
     public List<Niveau> getAllNiveaux() {
         return niveauRepository.findAll();
     }
+
+    public Niveau getNiveauByIdAndByLevel(Long id, int level) {
+        return niveauRepository.findByIdAndLevel(id, level);
+    }
 }

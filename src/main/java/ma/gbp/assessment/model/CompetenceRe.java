@@ -38,7 +38,7 @@ public class CompetenceRe {
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
-    }, mappedBy = "listOfCompetenceRequis")
+    }, mappedBy = "competencesRequis")
     @JsonIgnore
     private Set<Niveau> niveaux = new HashSet<>();
 

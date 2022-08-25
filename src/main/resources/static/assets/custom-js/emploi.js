@@ -709,7 +709,7 @@ function parseCompetenceToTable(competences, niveauContainer) {
         nameCell.innerHTML = competences[i].name;
 
         let categoryCell = tr.insertCell(-1);
-        categoryCell.innerHTML = competences[i].categorie;
+        categoryCell.innerHTML = competences[i].type;
 
         let niveauCell = tr.insertCell(-1);
         niveauCell.innerHTML = competences[i].niveauRequis;
@@ -1065,7 +1065,7 @@ function addListenersToNewNiveau(container) {
 
         let competenceJson = {
             "name": $("select[data-index=" + currentNiveauIndex + "]").select2('data')[0].text,
-            "categorie": categoryInput.options[categoryInput.selectedIndex].value,
+            "type": categoryInput.options[categoryInput.selectedIndex].value,
             "niveauRequis": niveauInput.options[niveauInput.selectedIndex].value
         }
 

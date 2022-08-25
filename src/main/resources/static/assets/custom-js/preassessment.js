@@ -4,7 +4,10 @@ let requestBodyAssessment = {
     "name": "",
     "targetedDirection": [],
     "startedAt": null,
-    "finishesAt": null
+    "finishesAt": null,
+    "populationFile": null,
+    "targetEmplois": [],
+    "assessmentCategories" : []
 
 }
 const btnVisualize = document.querySelector("#btn-visualize");
@@ -37,7 +40,7 @@ const employeeColumns = [
     "PRENOM"
 ];
 
-const emploiColumn = "EMPLOIS_CIBLES";
+const emploiColumn = ["EMPLOIS_CIBLES","NIVEAU_SENIORITÉ"];
 
 
 let classificationColumns = [];
@@ -372,6 +375,50 @@ inputFileUploader.addEventListener('change', (e) => {
 
     btnVisualize.classList.add("btn-loading");
 
+    parseExcelPopulation(file).then((data) => {
+
+        // REMOVE LOADING EFFECT
+        btnVisualize.classList.remove("btn-loading");
+
+        let excelData = data[0];
+        let listEmploi = data[1];
+
+        populationArr = excelData;
+
+
+
+        // console.log(fileId, data);
+
+        // INITIALTE DATATABLE
+        let dataSet = excelData.filter((element, index) => {
+            if (index !== 0) return true;
+        });
+
+        // console.log(excelData, Array.isArray(excelData), excelData[0]);
+        // data.forEach((e) => {
+        //     console.log(e);
+        // })
+
+        let col = generateColumnsForDatatable(excelData[0]);
+
+        $("#tb1").DataTable({
+            data: dataSet,
+            columns: col
+        });
+
+
+        classificationColumns = getClassificationColumn(excelData[0]);
+
+        populateWithClassificationColumns();
+
+
+        // POPULATE EMPLOI SECTION
+        for (var i = 0; i < listEmploi.length; i++) {
+            $(".emploi-cible-list").append(`<button class="btn btn-secondary" href="">` + listEmploi[i] + `</button>`);
+        }
+
+    });
+
     postExcelFile(file);
 })
 
@@ -425,101 +472,24 @@ async function postExcelFile(file) {
     bodyFile.append("file", file);
 
     //console.log(bodyFile);
-    // fetch(url, { // Your POST endpoint
-    //     method: 'POST',
-    //     headers: {
-    //         // Content-Type may need to be completely **omitted**
-    //         // or you may need something
-    //     },
-    //     body: bodyFile // This is your file object
-    // }).then(
-    //     response => response.json() // if the response is a JSON object
-    // ).then(
-    //     success => {
-    //         // REMOVE LOADING EFFECT
-    //         btnVisualize.classList.remove("btn-loading");
-
-    //         fileId = success["id"];
-
-    //         // START READING WITH EXCELJS LIBRARY
-    //         parseExcelPopulation(file).then((data) => {
-
-    //             // populationArr = data;
-
-    //             // console.log(fileId, data);
-
-    //             // // INITIALTE DATATABLE
-    //             // let dataSet = data.filter((element, index) => {
-    //             //     if (index !== 0) return true;
-    //             // });
-
-    //             console.log(data, Array.isArray(data), data[0]);
-    //             data.forEach((e) => {
-    //                 console.log(e);
-    //             })
-
-    //             // let col = generateColumnsForDatatable(data[0]);
-
-    //             // $("#tb1").DataTable({
-    //             //     data: dataSet,
-    //             //     columns: col
-    //             // });
-    //         });
-
-
-
-
-
-
-
-    //     } // Handle the success response object
-    // ).catch(
-    //     error => console.log(error) // Handle the error response object
-    // );
-
-    parseExcelPopulation(file).then((data) => {
-
-        // REMOVE LOADING EFFECT
-        btnVisualize.classList.remove("btn-loading");
-
-        let excelData = data[0];
-        let listEmploi = data[1];
-
-        populationArr = excelData;
-
-
-
-        // console.log(fileId, data);
-
-        // INITIALTE DATATABLE
-        let dataSet = excelData.filter((element, index) => {
-            if (index !== 0) return true;
-        });
-
-        // console.log(excelData, Array.isArray(excelData), excelData[0]);
-        // data.forEach((e) => {
-        //     console.log(e);
-        // })
-
-        let col = generateColumnsForDatatable(excelData[0]);
-
-        $("#tb1").DataTable({
-            data: dataSet,
-            columns: col
-        });
-
-
-        classificationColumns = getClassificationColumn(excelData[0]);
-
-        populateWithClassificationColumns();
-
-
-        // POPULATE EMPLOI SECTION
-        for (var i = 0; i < listEmploi.length; i++) {
-            $(".emploi-cible-list").append(`<button class="btn btn-secondary" href="">` + listEmploi[i] + `</button>`);
+    fetch(url, { // Your POST endpoint
+        method: 'POST',
+        headers: {
+            // Content-Type may need to be completely **omitted**
+            // or you may need something
+        },
+        body: bodyFile // This is your file object
+    }).then(
+        response => response.json() // if the response is a JSON object
+    ).then(
+        success => {
+            console.log(success);
         }
+    ).catch(
+        error => console.log(error) // Handle the error response object
+    );
 
-    });
+    
 
 }
 
@@ -562,7 +532,16 @@ async function postAssessmenCategories(jsonArr) {
     }).then(
         response => response.json()
     ).then(
-        success => console.log(success)
+        success => {
+            console.log(success);
+
+            // ASSIGN RESULTS TO ASSESSMENT JSON
+             success.map((e, index) => {
+                requestBodyAssessment.assessmentCategories.push(e.id);
+            })
+
+
+        }
     ).catch(
         error => console.log(error)
     )
@@ -710,10 +689,24 @@ function parseExcelPopulation(excelFile) {
 
                     // GET EMPLOI COLUMN INDEX
                     let indexOfEmploiCol = excelData[0].indexOf("EMPLOIS_CIBLES");
-                    listOfEmplois = [...new Set(worksheet.getColumn(indexOfEmploiCol + 1).values)].filter((e) => {
+                    //let indexOfSenioriteEmploi = excelData[0].indexOf("NIVEAU_SENIORITÉ");
+                    let emploiCol = worksheet.getColumn(indexOfEmploiCol + 1).values;
+                    //let senioriteCol = worksheet.getColumn(indexOfSenioriteEmploi + 1).values;
+
+                    listOfEmplois = emploiCol.map((e, i) => {
+                        if (typeof(e) === 'undefined'  || i === 0) {
+                            return null;
+                        } else {
+                            return e;
+                        }
+                        
+                    })
+
+                    listOfEmplois = [...new Set(listOfEmplois)].filter((e) => {
                         if (typeof (e) === 'undefined' || e === "EMPLOIS_CIBLES") {
                             return false;
                         } else {
+                            
                             return true;
                         }
                     });
@@ -762,14 +755,14 @@ function getClassificationColumn(obj) {
 
     if (Array.isArray(obj)) {
         obj.forEach((col) => {
-            if (!(manager1Columns.includes(col) || manager2Columns.includes(col) || employeeColumns.includes(col) || col === null || col === emploiColumn)) {
+            if (!(manager1Columns.includes(col) || manager2Columns.includes(col) || employeeColumns.includes(col) || col === null || emploiColumn.includes(col))) {
                 classificationColumns.push(col);
             }
         })
     } else {
         // FOR JSON FORMAT
         Object.entries(obj).forEach(([key, value]) => {
-            if (!(manager1Columns.includes(key) || manager2Columns.includes(key) || employeeColumns.includes(key) || key === null || col === emploiColumn)) {
+            if (!(manager1Columns.includes(key) || manager2Columns.includes(key) || employeeColumns.includes(key) || key === null || emploiColumn.includes(col))) {
                 classificationColumns.push(key);
             }
         })
