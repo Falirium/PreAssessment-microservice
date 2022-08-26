@@ -1087,7 +1087,7 @@ function addNewCriteria() {
                 classification</label>
             <select class="form-control select2 form-select select-criteria"
                 data-placeholder="------ Sélectionnez une option ------"
-                id="select-classification">
+                id="select-classification" data-width="100%">
             </select>
         </div>
         <div class="form-row input-criteria" id="value-criteria-container">
