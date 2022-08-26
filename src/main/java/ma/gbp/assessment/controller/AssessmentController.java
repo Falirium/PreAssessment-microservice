@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.querydsl.core.types.Predicate;
 
+import ma.gbp.assessment.message.EmploiRequest;
 import ma.gbp.assessment.message.FicheEvaluation;
 import ma.gbp.assessment.model.Assessment;
 import ma.gbp.assessment.model.Niveau;
@@ -68,14 +69,5 @@ public class AssessmentController {
         return ResponseEntity.status(HttpStatus.OK).body(assessmentService.save(assessment));
     }
 
-    // @GetMapping(value = "/fiche")
-    // public ResponseEntity<List<Niveau>> getFicheEvaluation(
-    //         @QuerydslPredicate(root = Niveau.class) Predicate predicate) {
-
-    //             Iterable<Niveau> iterable = niveauRepository.findAll(predicate);
-    //             List<Niveau> emplois = StreamSupport.stream(iterable.spliterator(), false)
-    //                                         .collect(Collectors.toList());
-
-    //             return ResponseEntity.status(HttpStatus.OK).body(emplois);
-    // }
+   
 }

@@ -7,7 +7,7 @@ let requestBodyAssessment = {
     "finishesAt": null,
     "populationFile": null,
     "targetEmplois": [],
-    "assessmentCategories" : []
+    "assessmentCategories": []
 
 }
 const btnVisualize = document.querySelector("#btn-visualize");
@@ -40,7 +40,7 @@ const employeeColumns = [
     "PRENOM"
 ];
 
-const emploiColumn = ["EMPLOIS_CIBLES","NIVEAU_SENIORITÉ"];
+const emploiColumn = ["EMPLOIS_CIBLES", "NIVEAU_SENIORITÉ"];
 
 
 let classificationColumns = [];
@@ -51,6 +51,9 @@ let indexOfDeletedCategory = -1;
 let indexOfEditedCategory = -1;
 
 let listOfNewCategories = [];
+
+// REPRESENTS LISTS OF EMPLOIS IN POPULATION EXCEL FILE
+let listEmploi = []
 
 
 const form = document.querySelector("assessment-form");
@@ -117,7 +120,7 @@ $(function () {
         })
         postCategories(newCategories);
 
-        
+
 
         //SAVE ASSESSMENT TO DB
 
@@ -381,7 +384,7 @@ inputFileUploader.addEventListener('change', (e) => {
         btnVisualize.classList.remove("btn-loading");
 
         let excelData = data[0];
-        let listEmploi = data[1];
+        listEmploi = data[1];
 
         populationArr = excelData;
 
@@ -413,14 +416,213 @@ inputFileUploader.addEventListener('change', (e) => {
 
 
         // POPULATE EMPLOI SECTION
-        for (var i = 0; i < listEmploi.length; i++) {
-            $(".emploi-cible-list").append(`<button class="btn btn-secondary" href="">` + listEmploi[i] + `</button>`);
-        }
+        // for (var i = 0; i < listEmploi.length; i++) {
+
+        //     let arr = listEmploi[i].split("_");
+
+        //     //DEFINE EMPLOI NAME + EMPLOI LEVEL
+        //     let emploiName = arr[0];
+        //     let emploiLevel = arr[1];
+
+        //     let doesResponsabilitesExist = false;
+        //     let doesMarqueursExist = false;
+        //     let doesExigencesExist = false;
+        //     let doesCompetencesDcExist = false;
+        //     let doesCompetencesSeExist = false;
+        //     let doesCompetencesSfExist = false;
+
+        //     // CREATE THE DROPDOWN CONTAINER
+        //     $(".emploi-cible-list").last().append(`
+        //     <div class="dropdown">
+        //         <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown">
+        //                 <i class="fe fe-calendar me-2"></i>` + listEmploi[i] + `
+        //             </button>
+        //         <div class="dropdown-menu fiche-eva-category">
+
+        //         </div>
+        //     </div>
+        //     `);
+
+        //     // ITERATE OVER THE CATEGOREIS
+        //     for (var j = 0; j < categoriesRequestBody.length; j++) {
+
+        //         let category = categoriesRequestBody[j];
+
+        //         //GET THE CATEGORY ASSESSMENT_CONTENT PROPERTY
+        //         category.contentAssessment.map((e, i) => {
+        //             switch (e) {
+        //                 case "responsabilites":
+        //                     doesResponsabilitesExist = true;
+        //                     break;
+
+        //                 case "exigences":
+        //                     doesExigencesExist = true;
+        //                     break;
+
+        //                 case "marqueurs":
+        //                     doesMarqueursExist = true;
+        //                     break;
+
+        //                 case "competences-dc":
+        //                     doesCompetencesDcExist = true;
+        //                     break;
+
+        //                 case "competences-sf":
+        //                     doesCompetencesSfExist = true;
+        //                     break;
+
+        //                 case "competences-se":
+        //                     doesCompetencesSeExist = true;
+        //                     break;
+
+
+        //             }
+        //         })
+
+        //         // BUILD URL 
+        //         let urlParams = {
+        //             "eName": emploiName,
+        //             "level": emploiLevel,
+        //             "marqueurs": doesMarqueursExist,
+        //             "exigences": doesExigencesExist,
+        //             "responsabilites": doesResponsabilitesExist,
+        //             "competences_dc": doesCompetencesDcExist,
+        //             "competences_se": doesCompetencesSeExist,
+        //             "competences_sf": doesCompetencesSfExist,
+        //         }
+        //         let url = buildURL("/assessment/add/fiche", urlParams);
+
+        //         // APPEND DROPDOWN MENU
+        //         $(".fiche-eva-category").last().append(`
+        //             <a class="dropdown-item" href="` + url + `">` + category.name + `</a>
+        //         `)
+        //     }
+
+
+
+
+
+
+
+        //     // $(".emploi-cible-list").append(`<button class="btn btn-secondary" href="">` + listEmploi[i] + `</button>`);
+        // }
+        //populateEmploiSection(listEmploi);
 
     });
 
     postExcelFile(file);
 })
+$("#btn-suivant-category-section").click(function () {
+    console.log("CLIKKKK");
+    $(".emploi-cible-list").html("");
+    populateEmploiSection(listEmploi);
+})
+
+function populateEmploiSection(arr) {
+
+    for (var i = 0; i < arr.length; i++) {
+
+        let arr2 = arr[i].split("_");
+
+        //DEFINE EMPLOI NAME + EMPLOI LEVEL
+        let emploiName = arr2[0];
+        let emploiLevel = arr2[1];
+
+
+
+        // CREATE THE DROPDOWN CONTAINER
+        $(".emploi-cible-list").last().append(`
+        <div class="dropdown">
+            <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fe fe-calendar me-2"></i>` + arr[i] + `
+                </button>
+            <div class="dropdown-menu fiche-eva-category">
+                
+            </div>
+        </div>
+        `);
+
+        // ITERATE OVER THE CATEGOREIS
+        for (var j = 0; j < categoriesRequestBody.length; j++) {
+
+            let doesResponsabilitesExist = false;
+            let doesMarqueursExist = false;
+            let doesExigencesExist = false;
+            let doesCompetencesDcExist = false;
+            let doesCompetencesSeExist = false;
+            let doesCompetencesSfExist = false;
+
+            let category = categoriesRequestBody[j];
+
+            //GET THE CATEGORY ASSESSMENT_CONTENT PROPERTY
+            category.contentAssessment.map((e, i) => {
+                switch (e) {
+                    case "responsabilites":
+                        doesResponsabilitesExist = true;
+                        break;
+
+                    case "exigences":
+                        doesExigencesExist = true;
+                        break;
+
+                    case "marqueurs":
+                        doesMarqueursExist = true;
+                        break;
+
+                    case "competences-dc":
+                        doesCompetencesDcExist = true;
+                        break;
+
+                    case "competences-sf":
+                        doesCompetencesSfExist = true;
+                        break;
+
+                    case "competences-se":
+                        doesCompetencesSeExist = true;
+                        break;
+
+
+                }
+            })
+
+            // BUILD URL 
+            let urlParams = {
+                "eName": emploiName,
+                "level": emploiLevel,
+                "marqueurs": doesMarqueursExist,
+                "exigences": doesExigencesExist,
+                "responsabilites": doesResponsabilitesExist,
+                "competences_dc": doesCompetencesDcExist,
+                "competences_se": doesCompetencesSeExist,
+                "competences_sf": doesCompetencesSfExist,
+            }
+            let url = buildURL("/assessment/add/fiche", urlParams);
+
+            // APPEND DROPDOWN MENU
+            $(".fiche-eva-category").last().append(`
+                <a class="dropdown-item" href="` + url + `" target="_blank">` + category.name + `</a>
+            `)
+        }
+
+
+
+
+
+
+
+        // $(".emploi-cible-list").append(`<button class="btn btn-secondary" href="">` + arr[i] + `</button>`);
+    }
+}
+
+function buildURL(prefix, params) {
+
+    let url = prefix + "?";
+    for (var key of Object.keys(params)) {
+        url = url + key + "=" + params[key] + "&";
+    }
+
+    return url;
+}
 
 async function fetchEmployeesData(id) {
 
@@ -489,7 +691,7 @@ async function postExcelFile(file) {
         error => console.log(error) // Handle the error response object
     );
 
-    
+
 
 }
 
@@ -512,7 +714,7 @@ async function postCategories(jsonArr) {
 
             // POST ASSESSMENT-CATEGORY ENTITIES
             postAssessmenCategories(categoriesRequestBody);
-        
+
         }
     ).catch(
         error => console.log(error)
@@ -536,7 +738,7 @@ async function postAssessmenCategories(jsonArr) {
             console.log(success);
 
             // ASSIGN RESULTS TO ASSESSMENT JSON
-             success.map((e, index) => {
+            success.map((e, index) => {
                 requestBodyAssessment.assessmentCategories.push(e.id);
             })
 
@@ -694,19 +896,19 @@ function parseExcelPopulation(excelFile) {
                     //let senioriteCol = worksheet.getColumn(indexOfSenioriteEmploi + 1).values;
 
                     listOfEmplois = emploiCol.map((e, i) => {
-                        if (typeof(e) === 'undefined'  || i === 0) {
+                        if (typeof (e) === 'undefined' || i === 0) {
                             return null;
                         } else {
                             return e;
                         }
-                        
+
                     })
 
                     listOfEmplois = [...new Set(listOfEmplois)].filter((e) => {
                         if (typeof (e) === 'undefined' || e === "EMPLOIS_CIBLES") {
                             return false;
                         } else {
-                            
+
                             return true;
                         }
                     });

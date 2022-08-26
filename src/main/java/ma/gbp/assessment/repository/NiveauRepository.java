@@ -16,4 +16,5 @@ public interface NiveauRepository extends JpaRepository<Niveau, Long> {
     // List<Niveau> findNiveausByCompetenceResId(Long competenceReId);
 
     Niveau findByIdAndLevel(Long id, int level);
+    Niveau findByIntituleAndLevel(String intitule, int level);
 }

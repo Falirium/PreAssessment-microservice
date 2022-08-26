@@ -30,4 +30,8 @@ public class NiveauService {
     public Niveau getNiveauByIdAndByLevel(Long id, int level) {
         return niveauRepository.findByIdAndLevel(id, level);
     }
+
+    public Niveau getNiveauByNameAndByLevel(String name, int level) {
+        return niveauRepository.findByIntituleAndLevel(name, level);
+    }
 }
