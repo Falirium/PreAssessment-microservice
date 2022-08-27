@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Target;
@@ -32,6 +33,10 @@ public class ManagerOne extends Employee {
     @ManyToMany(mappedBy = "listOfManagersOne")
     @JsonProperty(access = Access.WRITE_ONLY)
     private List<Assessment> listOfAssessments;
+
+    @OneToMany(mappedBy = "evaluateurOne")
+    private List<FicheEvaluation> fichesEvaluations;
+
 
     
 }

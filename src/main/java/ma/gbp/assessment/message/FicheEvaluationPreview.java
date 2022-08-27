@@ -15,7 +15,7 @@ import ma.gbp.assessment.model.Responsabilite;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FicheEvaluation {
+public class FicheEvaluationPreview {
 
     private String intitule;
     private String filiere;

@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -74,6 +75,10 @@ public class Niveau {
             @JoinColumn(name = "niveau_id") }, inverseJoinColumns = { @JoinColumn(name = "competenceRequis_id") })
         
     private List<CompetenceRe> competencesRequis = new ArrayList<>();
+
+
+    @OneToMany(mappedBy="emploi")
+    private List<FicheEvaluation> associatedFichesEvaluations;
 
     public Niveau(String intitule, String filiere, String sousFiliere, Date dateMaj, String vocation, int level,
             List<Responsabilite> responsabilites, List<String> exigences, List<String> marqueurs) {

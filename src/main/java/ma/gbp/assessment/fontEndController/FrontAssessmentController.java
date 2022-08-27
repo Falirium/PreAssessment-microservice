@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import ma.gbp.assessment.message.FicheEvaluation;
+import ma.gbp.assessment.message.FicheEvaluationPreview;
 import ma.gbp.assessment.message.FullCompetenceRequis;
 import ma.gbp.assessment.model.Assessment;
 import ma.gbp.assessment.model.Competence;
@@ -54,7 +54,7 @@ public class FrontAssessmentController {
     }
 
     @GetMapping(path = "/add/fiche")
-    public ResponseEntity<FicheEvaluation> buildFicheEvaluationFor(
+    public ResponseEntity<FicheEvaluationPreview> buildFicheEvaluationPreviewFor(
         @RequestParam(name = "eName") String emploiName,
         @RequestParam(name = "level") int level,
         @RequestParam(name = "marqueurs") Boolean marqueurs,
@@ -64,7 +64,7 @@ public class FrontAssessmentController {
         @RequestParam(name = "competences_se") Boolean competences_se,
         @RequestParam(name = "competences_sf") Boolean competences_sf) {
 
-    FicheEvaluation fe = new FicheEvaluation();
+    FicheEvaluationPreview fe = new FicheEvaluationPreview();
 
     Niveau niveau = niveauService.getNiveauByNameAndByLevel(emploiName, level);
 
