@@ -128,7 +128,7 @@ $(".base-emploi-info").change(function (index) {
 
     switch (this.id) {
         case "input-name-emploi":
-            emploiJSON["intitulé"] = this.value;
+            emploiJSON["intitulé"] = this.value.toLowerCase();
             break;
         case "input-filiere-emploi":
             emploiJSON["filière"] = this.value;

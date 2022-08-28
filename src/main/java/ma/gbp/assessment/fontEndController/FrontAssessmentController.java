@@ -66,7 +66,7 @@ public class FrontAssessmentController {
 
     FicheEvaluationPreview fe = new FicheEvaluationPreview();
 
-    Niveau niveau = niveauService.getNiveauByNameAndByLevel(emploiName, level);
+    Niveau niveau = niveauService.getNiveauByNameAndByLevel(emploiName.toLowerCase(), level);
 
     // BASES INFORMATIONS
     fe.setIntitule(niveau.getIntitule());
