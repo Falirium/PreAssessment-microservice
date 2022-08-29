@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import ma.gbp.assessment.message.FicheEvaluation;
+import ma.gbp.assessment.message.FicheEvaluationPreview;
 import ma.gbp.assessment.message.FullCompetenceRequis;
 import ma.gbp.assessment.model.Competence;
 import ma.gbp.assessment.model.CompetenceRe;

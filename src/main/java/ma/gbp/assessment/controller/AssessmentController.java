@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.querydsl.core.types.Predicate;
 
 import ma.gbp.assessment.message.EmploiRequest;
-import ma.gbp.assessment.message.FicheEvaluation;
+import ma.gbp.assessment.message.FicheEvaluationPreview;
 import ma.gbp.assessment.model.Assessment;
 import ma.gbp.assessment.model.Niveau;
 import ma.gbp.assessment.repository.NiveauRepository;
