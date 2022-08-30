@@ -40,6 +40,10 @@ function populateResTable(json) {
                 //console.log("responsa");
                 let resCategories = json[key];
 
+                if (resCategories === null) {
+                    continue;
+                }
+
                 // IETRATE OVER VALUES OF CATEGORY
                 resCategories.forEach(function (categorie, index) {
 
@@ -116,6 +120,10 @@ function populateResTable(json) {
                 let exiValues = json[key];
                 //console.log(exiValues);
 
+                if (exiValues === null) {
+                    continue;
+                }
+
                 // ITERATE OVER THE ARRAY
                 for (var j = 0; j < exiValues.length; j++) {
                     //APPEND A ROW
@@ -158,6 +166,10 @@ function populateResTable(json) {
 
             case "marqueurs":
                 let marqValues = json[key];
+
+                if (marqValues === null) {
+                    continue;
+                }
 
                 // ITERATE OVER THE ARRAY
                 for (var j = 0; j < marqValues.length; j++) {
@@ -204,6 +216,10 @@ function populateResTable(json) {
                 let niveauArr = ["E", "M", "A", "X"];
 
                 let competences = json[key];
+                
+                if (competences === null) {
+                    continue;
+                }
 
                 competences.forEach((competence, index) => {
 
@@ -911,6 +927,10 @@ function populateResTable(json) {
 
 
                 let competences_sf = json[key];
+
+                if (competences_sf === null) {
+                    continue;
+                }
 
                 competences_sf.forEach((competence, index) => {
 
@@ -1628,6 +1648,12 @@ function populateResTable(json) {
             case "competences_se":
                 let competences_se = json[key];
 
+
+                if (competences_se === null) {
+                    continue;
+                }
+                
+
                 competences_se.forEach((competence, index) => {
 
                     // GET COMPETENCE NIVEAU
@@ -1703,7 +1729,7 @@ function populateResTable(json) {
                         $("#comp-table-body").find("tr").last().append(`<td> ${competence.requiredNiveau}</td>`);
 
                         $("#comp-table-body").find("tr").last().append(`
-                        <td  data-bs-placement="bottom" data-bs-toggle="tooltip" title="${eDescription}>
+                        <td  data-bs-placement="bottom" data-bs-toggle="tooltip" title="${eDescription}">
                             <div class="">
                                 <label class="custom-switch form-switch ">
                                     <input type="radio" value="E" id="radioE-${compSeBtnCompteur}" name="comp-se-switch-radio-${compSeBtnCompteur}" class="custom-switch-input e-se-radio-btn">
@@ -1716,7 +1742,7 @@ function populateResTable(json) {
                         `);
 
                         $("#comp-table-body").find("tr").last().append(`
-                        <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${mDescription}>
+                        <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${mDescription}">
                             <div class="">
                                 <label class="custom-switch form-switch ">
                                     <input type="radio" value="M" id="radioM-${compSeBtnCompteur}" name="comp-se-switch-radio-${compSeBtnCompteur}" class="custom-switch-input m-se-radio-btn">
@@ -1729,7 +1755,7 @@ function populateResTable(json) {
                         `);
 
                         $("#comp-table-body").find("tr").last().append(`
-                        <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${aDescription}>
+                        <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${aDescription}">
                             <div class="">
                                 <label class="custom-switch form-switch ">
                                     <input type="radio" value="A" id="radioA-${compSeBtnCompteur}" name="comp-se-switch-radio-${compSeBtnCompteur}" class="custom-switch-input a-se-radio-btn">
@@ -1742,7 +1768,7 @@ function populateResTable(json) {
                         `);
 
                         $("#comp-table-body").find("tr").last().append(`
-                        <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${xDescription}>
+                        <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${xDescription}">
                             <div class="">
                                 <label class="custom-switch form-switch ">
                                     <input type="radio" value="X" id="radioX-${compSeBtnCompteur}" name="comp-se-switch-radio-${compSeBtnCompteur}" class="custom-switch-input x-se-radio-btn">
@@ -2464,6 +2490,9 @@ function countsInputs(json) {
     let compteur = 0;
 
     for (var key of Object.keys(json)) {
+        if (json[key] === null) {
+            continue;
+        }
         switch (key) {
             case "responsabilites":
                 let categories = json[key];

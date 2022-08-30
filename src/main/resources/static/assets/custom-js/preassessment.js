@@ -1181,10 +1181,14 @@ function populateWithClassificationColumns() {
                     <label for="valeur-criteria" class="form-label">Valeur du critière </label>
                     <input type="text" class="form-control" id="valeur-criteria"
                         placeholder=".........">
+
+                        <div id="invalid-value" class="invalid-feedback">
+                            
+                        </div>
                 </div>
                 <div class="my-3 w-100 text-center">
                     <button id="btn-delete-criteria" type="button" 
-                    class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
+                    class="btn btn-icon me-2 btn-danger-light"> <i class="fe fe-trash-2"></i>Supprimer le critère</button>
                 
             `;
             $(".input-criteria").last().html(input_criteria_html);
@@ -1197,17 +1201,27 @@ function populateWithClassificationColumns() {
                         <div class="form-group">
                             <label for="min-value" class="form-label">Min value : </label>
                             <input type="number" class="form-control" id="min-value">
+
+                            <div id="invalid-min" class="invalid-feedback">
+                            
+                            </div>
                         </div>
+                        
                     </div>
                     <div class="form-group col-md-6 mb-0">
                         <div class="form-group">
                             <label for="max-value" class="form-label">Max value : </label>
                             <input type="number" class="form-control" id="max-value">
+
+                            <div id="invalid-max" class="invalid-feedback">
+                            
+                            </div>
                         </div>
+                        
                     </div>
                     <div class="my-3 w-100  text-center">
                         <button id="btn-delete-criteria" type="button" 
-                        class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
+                        class="btn btn-icon me-2 btn-danger-light"> <i class="fe fe-trash-2"></i> Supprimer le critère</button>
                     </div>
                 
             `;
@@ -1215,14 +1229,15 @@ function populateWithClassificationColumns() {
 
         }
 
+        // POPULATE CRITERIA VALUES CONTAINER
         $(".input-criteria").last().html(input_criteria_html);
 
         let btnDeleteCriteria = $(".criteria-container").last().find("#btn-delete-criteria")[0];
 
         //console.log(btnDeleteCriteria);
 
+        //ADD EVENT LISTENER TO DELETE BTN
         btnDeleteCriteria.addEventListener("click", (e) => {
-
 
             console.log("HEERREEE")
             let deleteBtn;
@@ -1273,7 +1288,10 @@ function populateWithClassificationColumns() {
 
 }
 
+
+
 function addNewCriteria() {
+
     let lastCriteria = lastCriteriaContainer();
     let parent = lastCriteria.parentElement;
     let newCriteria = document.createElement("div");
@@ -1692,6 +1710,87 @@ function showModal(type, header, content, action) {
     $(modalContentId).text(content)
 
     myModal.show();
+
+}
+
+
+// CHECK IF ALL CRITERIA VALUES INPUTS ARE NOT NULL + CHECK FOR LOGIC VALIDITY FOR MIN AND MAX 
+// RETURN TRUE ----> FOUND NULL
+// FALSE ------> ALL IS VALID
+function checkInputsValidity() {
+
+    let isNull = false;
+
+    // LOOP OVER ALL CRITERIA CONTAINERS
+
+    $(".criteria-container").each(function (index, criteria) {
+
+        //  GET THE VALUE OF CRITERIA SELECTION
+        let criteriaName = $(this).find("#select-classification").select2('data')[0].text;
+
+        switch (typeOfSelection(criteriaName)) {
+            case "string":
+                // SELECT STRING INPUT
+                if ($(this).find("#valeur-criteria").val() === "") {
+
+                    $(this).find("#valeur-criteria").addClass("is-invalid");
+
+                    $(this).find("#invalid-value").html('Ce champ ne doit pas être nul');
+                    isNull = true;
+                }
+                break;
+
+            case "number":
+                console.log($(this).find("#min-value").val(), $(this).find("#max-value").val())
+
+                // SELECT NUMBER INPUTS
+                if ($(this).find("#min-value").val() === "" && $(this).find("#max-value").val() === "") {
+
+                    $(this).find("#min-value").addClass("is-invalid");
+                    $(this).find("#max-value").addClass("is-invalid");
+
+                    $(this).find("#invalid-min").html('Ce champ ne doit pas être nul');
+                    $(this).find("#invalid-max").html('Ce champ ne doit pas être nul');
+
+                    isNull = true;
+
+                } else if ($(this).find("#min-value").val() !== "" && $(this).find("#max-value").val() !== "") {
+
+                    console.log(parseFloat($(this).find("#min-value").val()) > parseFloat($(this).find("#max-value").val()));
+                    if (parseFloat($(this).find("#min-value").val()) > parseFloat($(this).find("#max-value").val())) {
+                       
+                        $(this).find("#min-value").addClass("is-invalid");
+                        $(this).find("#max-value").addClass("is-invalid");
+
+                        
+                        $(this).find("#invalid-max").html('Cette valeur doit être strictement supérieure à la valeur minimale.');
+
+                        isNull = true;
+                    }
+
+                } else {
+
+                }
+                break;
+        }
+
+
+    })
+
+    return null;
+
+}
+
+
+// CHECK IF THE LAST CRITERIA VALUES INPUTS OF TYPE NUMBER ARE VALID : MAX > MIN
+function checkForMinMaxValidity() {
+
+    // LOOP OVER ALL CRITERIA CONTAINERS
+
+    $(".criteria-container").each(function (criteria) {
+
+
+    })
 
 }
 
