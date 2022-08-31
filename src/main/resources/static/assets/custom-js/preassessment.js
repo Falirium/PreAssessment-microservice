@@ -14,6 +14,9 @@ const btnVisualize = document.querySelector("#btn-visualize");
 const btnAddCriteria = document.querySelector("#btn-add-criteria");
 const btnSaveCategory = document.querySelector("#btn-save-category");
 
+let categorizationTable;
+let populationTable;
+
 
 const inputFileUploader = document.querySelector("#assessment-excel-file");
 let fileId;
@@ -147,14 +150,7 @@ $(function () {
 })
 
 
-btnVisualize.addEventListener("click", () => {
 
-    //fetchEmployeesData(fileId);
-
-    // PARSE TO POPLATION TABLE
-    //parseToPopulationTable(populationArr)
-
-})
 
 btnAddCriteria.addEventListener('click', () => {
 
@@ -163,83 +159,181 @@ btnAddCriteria.addEventListener('click', () => {
 
 btnSaveCategory.addEventListener('click', () => {
 
-    if (indexOfEditedCategory === -1) {
+    if (!checkInputsValidity()) {
+        if (indexOfEditedCategory === -1) {
 
-        // SAVE CATEGORY TO THE JSON
-        let newCategory = {
-            "name": $("#name-categorie").select2('data')[0].text,
-            "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data')),
-            "criterias": []
+            // SAVE CATEGORY TO THE JSON
+            let newCategory = {
+                "name": $("#name-categorie").select2('data')[0].text,
+                "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data')),
+                "criterias": []
+            }
+
+            let criteriasContainers = document.querySelectorAll(".criteria-container");
+
+            $(".criteria-container").each(function (index) {
+                let selectedValue = $(this).find("#select-classification").select2('data')[0].id;
+
+
+                let criteria = {
+                    "name": selectedValue
+                }
+
+                if (typeOfSelection(selectedValue) === "number") {
+
+                    criteria.min = $(this).find("#min-value").val();
+                    criteria.max = $(this).find("#max-value").val();
+
+                } else if (typeOfSelection(selectedValue) === "string") {
+                    criteria.value = $(this).find("#valeur-criteria").val();
+                }
+
+
+                newCategory["criterias"].push(criteria);
+
+                console.log(criteria);
+            })
+
+            categoriesRequestBody.push(newCategory);
+
+            // POPULATE THE TABLE
+            parseToCategoryTable(categoriesRequestBody);
+
+        } else {
+
+            categoriesRequestBody[indexOfEditedCategory] = {
+                "name": $("#name-categorie").select2('data')[0].text,
+                "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data')),
+                "criterias": []
+            }
+
+            $(".criteria-container").each(function (index) {
+                let selectedValue = $(this).find("#select-classification").select2('data')[0].id;
+
+
+                let criteria = {
+                    "name": selectedValue
+                }
+
+                if (typeOfSelection(selectedValue) === "number") {
+
+                    criteria.min = $(this).find("#min-value").val();
+                    criteria.max = $(this).find("#max-value").val();
+
+                } else if (typeOfSelection(selectedValue) === "string") {
+                    criteria.value = $(this).find("#valeur-criteria").val();
+                }
+
+
+                categoriesRequestBody[indexOfEditedCategory]["criterias"].push(criteria);
+
+
+            })
+
+            //console.log(categoriesRequestBody);
+
+            //INITIALIZE THE INDEX
+            indexOfEditedCategory = -1;
+
+            // POPULATE THE TABLE
+            parseToCategoryTable(categoriesRequestBody);
+
         }
 
-        let criteriasContainers = document.querySelectorAll(".criteria-container");
+        // USING JAVASCRIPT
+        let categoryContainer = document.querySelector("#category-container");
+        categoryContainer.innerHTML = `
+        <div id="category-container">
 
-        $(".criteria-container").each(function (index) {
-            let selectedValue = $(this).find("#select-classification").select2('data')[0].id;
+            <div class="form-group">
+                <label for="name-categorie" class="form-label">Nom de la catégorie</label>
+                <select type="text" class="form-control select2" id="name-categorie"
+                    placeholder="Eg: Cat 1, ..." data-width="100%"></select>
+            </div>
+            <div class="form-group">
+                <label for="type-assessment-categorie" class="form-label">Contenue de
+                    l'évaluation</label>
 
+                <select multiple="multiple" class="form-control form-select select2"
+                    id="evaluation-content" data-width="100%">
+                    <option value="responsabilites">Responsabilités - Finalités</option>
+                    <option value="exigences">Exigences spécifiques de l’emploi</option>
+                    <option value="marqueurs">Marqueurs de séniorité</option>
+                    <option value="competences-dc">Compétences requises - Domaines de connaissance
+                    </option>
+                    <option value="competences-sf">Compétences requises - Savoir-faire</option>
+                    <option value="competences-se">Compétences requises - Savoir-être</option>
 
-            let criteria = {
-                "name": selectedValue
-            }
+                </select>
 
-            if (typeOfSelection(selectedValue) === "number") {
+            </div>
 
-                criteria.min = $(this).find("#min-value").val();
-                criteria.max = $(this).find("#max-value").val();
+            <div class="criterias-container">
+                <div class="criteria-container">
 
-            } else if (typeOfSelection(selectedValue) === "string") {
-                criteria.value = $(this).find("#valeur-criteria").val();
-            }
+                    <div class="form-group">
+                        <label for="name-categorie" class="form-label">Choisissez un critière de
+                            classification</label>
+                        <select class="form-control select2 form-select select-criteria"
+                            data-placeholder="------ Sélectionnez une option ------"
+                            id="select-classification" data-width="100%">
+                        </select>
+                    </div>
+                    <div class="form-row input-criteria" id="value-criteria-container">
 
+                    </div>
+                </div>
+            </div>
 
-            newCategory["criterias"].push(criteria);
+        </div>
+        `;
 
-            console.log(criteria);
+        // INITILIZE SELECT2 ON THE SELECT FIELDS
+
+        //INITILIAZE SELECT2 ON NOM DE CATEGORIE INPUT
+        $("#name-categorie").select2({
+            data: getCategoriesForSelect2(categoriesListDb),
+            tags: true,
+            tokenSeparators: [',']
         })
 
-        categoriesRequestBody.push(newCategory);
+        // ADD EVENT LISTENER
+        $("#name-categorie").change(function (e) {
+            let isNew = true;
+            console.log("change")
 
-        // POPULATE THE TABLE
-        parseToCategoryTable(categoriesRequestBody);
+            // var keycode = (e.keyCode ? e.keyCode : e.which);
+            // console.log(keycode);
 
-    } else {
+            // if (keycode == '13') {
+            // e.stopPropagation();
+            categoriesListDb.map((cat, index) => {
+                if ($("#name-categorie").select2('data')[0].text === cat.name) {
+                    isNew = false;
+                    $("#evaluation-content").val(cat.contentAssessment).trigger("change");
 
-        categoriesRequestBody[indexOfEditedCategory] = {
-            "name": $("#name-categorie").select2('data')[0].text,
-            "contentAssessment": getSelect2Selections($("#evaluation-content").select2('data')),
-            "criterias": []
-        }
+                    // DISABLE ASSESSMENT CONTENT FIELD
+                    $("#evaluation-content").prop("disabled", true);
+                }
+            })
+            console.log(isNew);
+            if (isNew) {
+                // SHOW A MODAL TO CONFIRM IF YOU WANT TO ADD THIS CATEGORY
+                //showModal("confirm", "Ajout d'une nouvelle catégorie !", 'Vous allez ajouter une nouvelle catégorie, veuillez confirmer votre choix en cliquant sur "Oui" bouton', "category")
+                listOfNewCategories.push($("#name-categorie").select2('data')[0].text);
 
-        $(".criteria-container").each(function (index) {
-            let selectedValue = $(this).find("#select-classification").select2('data')[0].id;
-
-
-            let criteria = {
-                "name": selectedValue
+                $("#evaluation-content").val(null).trigger("change");
             }
-
-            if (typeOfSelection(selectedValue) === "number") {
-
-                criteria.min = $(this).find("#min-value").val();
-                criteria.max = $(this).find("#max-value").val();
-
-            } else if (typeOfSelection(selectedValue) === "string") {
-                criteria.value = $(this).find("#valeur-criteria").val();
-            }
-
-
-            categoriesRequestBody[indexOfEditedCategory]["criterias"].push(criteria);
 
 
         })
+        $("#evaluation-content").select2();
+        $("#select-classification").select2();
 
-        //console.log(categoriesRequestBody);
 
-        //INITIALIZE THE INDEX
-        indexOfEditedCategory = -1;
+        // POPULATE CRITERIA FIEDS
+        populateWithClassificationColumns();
 
-        // POPULATE THE TABLE
-        parseToCategoryTable(categoriesRequestBody);
 
     }
 
@@ -276,99 +370,7 @@ btnSaveCategory.addEventListener('click', () => {
     //     }
     // })
 
-    // USING JAVASCRIPT
-    let categoryContainer = document.querySelector("#category-container");
-    categoryContainer.innerHTML = `
-    <div id="category-container">
 
-    <div class="form-group">
-        <label for="name-categorie" class="form-label">NOM_de la catégorie</label>
-        <select type="text" class="form-control select2" id="name-categorie"
-                                    placeholder="Eg: Cat 1, ..."></select>
-    </div>                       
-    <div class="form-group">
-        <label for="type-assessment-categorie" class="form-label">Contenue de l'évaluation</label>
-       
-        <select multiple="multiple" class="form-control select2"
-                id="evaluation-content">
-                <option value="responsabilites">Responsabilités - Finalités</option>
-                <option value="exigences">Exigences spécifiques de l’emploi</option>
-                <option value="marqueurs">Marqueurs de séniorité</option>
-                <option value="competences-dc">Compétences requises - Domaines de connaissance</option>
-                <option value="competences-sf">Compétences requises - Savoir-faire</option>
-                <option value="competences-se">Compétences requises - Savoir-être</option>
-                
-            </select>
-
-    </div>
-
-    <div class="criterias-container">
-        <div class="criteria-container">
-
-            <div class="form-group">
-                <label for="name-categorie" class="form-label">Choisissez un critière de
-                    classification</label>
-                <select class="form-control select2 form-select select-criteria"
-                    data-placeholder="------ Sélectionnez une option ------"
-                    id="select-classification">
-                </select>
-            </div>
-            <div class="form-row input-criteria" id="value-criteria-container">
-
-            </div>
-        </div>
-    </div>
-
-    
-
-</div>
-        `;
-
-    // INITILIZE SELECT2 ON THE SELECT FIELDS
-
-    //INITILIAZE SELECT2 ON NOM DE CATEGORIE INPUT
-    $("#name-categorie").select2({
-        data: getCategoriesForSelect2(categoriesListDb),
-        tags: true,
-        tokenSeparators: [',']
-    })
-
-    // ADD EVENT LISTENER
-    $("#name-categorie").change(function (e) {
-        let isNew = true;
-        console.log("change")
-
-        // var keycode = (e.keyCode ? e.keyCode : e.which);
-        // console.log(keycode);
-
-        // if (keycode == '13') {
-        // e.stopPropagation();
-        categoriesListDb.map((cat, index) => {
-            if ($("#name-categorie").select2('data')[0].text === cat.name) {
-                isNew = false;
-                $("#evaluation-content").val(cat.contentAssessment).trigger("change");
-
-                // DISABLE ASSESSMENT CONTENT FIELD
-                $("#evaluation-content").prop("disabled", true);
-            }
-        })
-        console.log(isNew);
-        if (isNew) {
-            // SHOW A MODAL TO CONFIRM IF YOU WANT TO ADD THIS CATEGORY
-            //showModal("confirm", "Ajout d'une nouvelle catégorie !", 'Vous allez ajouter une nouvelle catégorie, veuillez confirmer votre choix en cliquant sur "Oui" bouton', "category")
-            listOfNewCategories.push($("#name-categorie").select2('data')[0].text);
-
-            $("#evaluation-content").val(null).trigger("change");
-        }
-
-
-    })
-    $("#evaluation-content").select2();
-    $("#select-classification").select2();
-
-
-    // POPULATE CRITERIA FIEDS
-    populateWithClassificationColumns();
 })
 
 
@@ -376,17 +378,19 @@ inputFileUploader.addEventListener('change', (e) => {
     let input = document.getElementById('assessment-excel-file');
     let file = input.files[0];
 
-    btnVisualize.classList.add("btn-loading");
+    // btnVisualize.classList.add("btn-loading");
 
     parseExcelPopulation(file).then((data) => {
 
         // REMOVE LOADING EFFECT
-        btnVisualize.classList.remove("btn-loading");
+        // btnVisualize.classList.remove("btn-loading");
 
         let excelData = data[0];
         listEmploi = data[1];
 
         populationArr = excelData;
+
+        console.log(populationArr);
 
 
 
@@ -396,11 +400,6 @@ inputFileUploader.addEventListener('change', (e) => {
         let dataSet = excelData.filter((element, index) => {
             if (index !== 0) return true;
         });
-
-        // console.log(excelData, Array.isArray(excelData), excelData[0]);
-        // data.forEach((e) => {
-        //     console.log(e);
-        // })
 
         let col = generateColumnsForDatatable(excelData[0]);
 
@@ -516,6 +515,48 @@ $("#btn-suivant-category-section").click(function () {
     console.log("CLIKKKK");
     $(".emploi-cible-list").html("");
     populateEmploiSection(listEmploi);
+})
+
+$("#btn-categorize").click(function (e) {
+
+    // SHOW ERROR MODAL WHEN CATEGORIES TABLE ARE NOT FILLLED OR ONLY ONE CATEGORY IS CREATED
+    if (categoriesRequestBody.length === 0 && categoriesRequestBody.length === 1) {
+
+        showModal("warning", "Attention", "Vous ne pouvez pas catégoriser la population. Veuillez créer au moins deux catégories pour pouvoir continuer sans problème.", "")
+
+    } else {
+
+        // INITILIZE TABLE TB2
+        let arrForCategorization = JSON.parse(JSON.stringify(populationArr));
+        let categorizedData = categorizePopulation(arrForCategorization, categoriesRequestBody);
+        let col = generateColumnsForDatatable(categorizedData[0]);
+        let dataSet = categorizedData.filter((e, i) => {
+            if (i !== 0) return true;
+        })
+
+        if (typeof (categorizationTable) === "undefined") {
+            console.log("fiesr time");
+            categorizationTable = $("#tb2").DataTable(
+                {
+                    data: dataSet,
+                    columns: col
+                }
+            );
+        } else {
+            console.log( "second time");
+            console.log(dataSet);
+            categorizationTable.clear();
+            categorizationTable.rows.add(dataSet);
+            categorizationTable.draw();
+        }
+
+
+
+        // SHOW SUCCESS MODAL 
+        showModal("success", "Population catégorisée", "La liste de la population a été catégorisée avec succès sur la base des catégories créées. Allez à l'étape 3 pour voir le résultat", "");
+    }
+
+
 })
 
 function populateEmploiSection(arr) {
@@ -808,11 +849,17 @@ async function getListOfCategories() {
     )
 }
 
-$('#confirm-yes-btn[data-action="category"]').click(function () {
-    console.log("kldfsdf");
+// $('#confirm-yes-btn[data-action="category"]').click(function () {
+//     //console.log("kldfsdf");
+
+//     // DELETE THE SELECTED CAT FROM CATEGORIES_BODY_REQUEST
 
 
-})
+//     // REDRAW THE CATEGORY TABLE
+
+
+
+// })
 
 
 async function postAssessment(jsonArr) {
@@ -1379,7 +1426,7 @@ function parseToCategoryTable(categoryJson) {
 
             indexOfDeletedCategory = categoryIndex;
 
-            showModal("error", "Vous allez supprimer cette catégorie !", 'Cliquez sur le bouton "Oui" pour confirmer votre choix', "category")
+            showModal("confirm", "Vous allez supprimer cette catégorie !", 'Cliquez sur le bouton "Oui" pour confirmer votre choix', "category")
 
             // console.log(categoryIndex);
             // categoriesRequestBody.splice(categoryIndex, 1);
@@ -1401,190 +1448,193 @@ function parseToCategoryTable(categoryJson) {
                 aElement = e.target;
             }
 
-            let categoryIndex = [...allEditCatBtns].indexOf(aElement);
+            // SHOW A MODAL THAT THIS FUNCTIONALITY IS NOT AVAILABLE YET
+            showModal("info", "Cette fonctionnalité n'est pas disponible", "Nous travaillons sur cette fonctionnalité. Pour le moment, vous pouvez supprimer la catégorie --> puis en créer une nouvelle.");
 
-            console.log(categoryIndex);
+            // let categoryIndex = [...allEditCatBtns].indexOf(aElement);
 
-
-            console.log(categoriesRequestBody[categoryIndex].contentAssessment);
-
-
-
-            // START POPULATE THE INPUTS
-            let contentInput = $("#evaluation-content").select2();
-            $("#name-categorie").val(categoriesRequestBody[categoryIndex].name);
-            contentInput.val(categoriesRequestBody[categoryIndex].contentAssessment).trigger("change");
+            // console.log(categoryIndex);
 
 
-            indexOfEditedCategory = categoryIndex;
-            // $(".criteria-container").each(function(index , element) {
-
-            // })
-
-
-            // START POPULATE CRETERIA CONTAINER
-            let numberOfCriteria = categoriesRequestBody[categoryIndex].criterias.length;
-
-            // GET NUMBER OF CRITERIA
-            for (var i = 0; i < numberOfCriteria; i++) {
-
-                // ------------- CREATE ONE CRITERIA CONTAINER -------------
-
-                if (i !== 0) {
-
-                    console.log("1- I M NOT THE FIRST CRITERIA: I M CREATING A NEW CRITERIA CONTAINER");
-
-                    $(".criterias-container").append(`
-                    <div class="criteria-container">
-
-                        <div class="form-group">
-                            <label for="name-categorie" class="form-label">Choisissez un critière de
-                                classification</label>
-                            <select class="form-control select2 form-select select-criteria"
-                                data-placeholder="------ Sélectionnez une option ------"
-                                id="select-classification">
-                            </select>
-                        </div>
-                        <div class="form-row input-criteria" id="value-criteria-container">
-
-                        </div>
-                    </div>
-                    
-                    `);
-
-                    console.log("CRITERIA CONTAINER CRETAED");
+            // console.log(categoriesRequestBody[categoryIndex].contentAssessment);
 
 
 
-                    // POPULATE WITH VALUES OF SELECTED CATEGORY
-                    console.log("2 - I M TRYING TO POPULATE THE CRITERIA VALUES");
-
-                    //POPULTATE VALUES CRITERIA CONTAINER
-                    if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'string') {
-
-                        console.log("2.1 - i M A STRING TYPE");
-
-                        $("#value-criteria-container").append(`
-                            <div class="form-group col-md-12 mb-0">
-                                <label for="valeur-criteria" class="form-label">Valeur du critière </label>
-                                <input type="text" class="form-control" id="valeur-criteria"
-                                placeholder=".........">
-                            </div>
-                            <div class="my-3 w-100 text-center">
-                            <button id="btn-delete-criteria" type="button" class="btn btn-icon me-2 bradius btn-danger-light"> 
-                                <i class="fe fe-trash-2"></i>
-                            </button>
-                        `);
-
-                        $(".input-criteria").last().find("#valeur-criteria").val(categoriesRequestBody[categoryIndex]["criterias"][i].value);
+            // // START POPULATE THE INPUTS
+            // let contentInput = $("#evaluation-content").select2();
+            // $("#name-categorie").val(categoriesRequestBody[categoryIndex].name);
+            // contentInput.val(categoriesRequestBody[categoryIndex].contentAssessment).trigger("change");
 
 
-                    } else if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'number') {
+            // indexOfEditedCategory = categoryIndex;
+            // // $(".criteria-container").each(function(index , element) {
 
-                        console.log("2.2 - i M A NUMBER TYPE");
-
-                        $("#value-criteria-container").append(`
-                        <div class="form-group col-md-6 mb-0">
-                            <div class="form-group">
-                                <label for="min-value" class="form-label">Min value : </label>
-                                <input type="number" class="form-control" id="min-value">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-6 mb-0">
-                            <div class="form-group">
-                                <label for="max-value" class="form-label">Max value : </label>
-                                <input type="number" class="form-control" id="max-value">
-                            </div>
-                        </div>
-                        <div class="my-3 w-100  text-center">
-                            <button id="btn-delete-criteria" type="button" 
-                            class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
-                        </div>
-                        `);
-
-                        $(".input-criteria").last().find("#max-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].max));
-                        $(".input-criteria").last().find("#min-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].min));
-
-                    }
-
-                } else {
-
-                    console.log("1 - i M THE FIRST CRITERIA CONTAINER ");
-
-                    console.log("2 - i M THE TRYING TO POPULATETHE CRITERIACONTAINER ");
+            // // })
 
 
-                    //POPULTATE VALUES CRITERIA CONTAINER
-                    if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'string') {
+            // // START POPULATE CRETERIA CONTAINER
+            // let numberOfCriteria = categoriesRequestBody[categoryIndex].criterias.length;
 
-                        console.log("2.1 - i M A STRING CRITERIA");
+            // // GET NUMBER OF CRITERIA
+            // for (var i = 0; i < numberOfCriteria; i++) {
 
-                        $("#value-criteria-container").append(`
-                            <div class="form-group col-md-12 mb-0">
-                                <label for="valeur-criteria" class="form-label">Valeur du critière </label>
-                                <input type="text" class="form-control" id="valeur-criteria"
-                                placeholder=".........">
-                            </div>
-                            <div class="my-3 w-100 text-center">
-                            <button id="btn-delete-criteria" type="button" class="btn btn-icon me-2 bradius btn-danger-light"> 
-                                <i class="fe fe-trash-2"></i>
-                            </button>
-                        `);
+            //     // ------------- CREATE ONE CRITERIA CONTAINER -------------
 
-                        $(".input-criteria").last().find("#valeur-criteria").val(categoriesRequestBody[categoryIndex]["criterias"][i].value);
+            //     if (i !== 0) {
 
+            //         console.log("1- I M NOT THE FIRST CRITERIA: I M CREATING A NEW CRITERIA CONTAINER");
 
-                    } else if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'number') { // POPULATE CRITERIA VALUES CONTAINER CUZ THE CONTAINER IS ALREADY EXISTS
+            //         $(".criterias-container").append(`
+            //         <div class="criteria-container">
 
-                        console.log("2.1 - i M A NUMBER CRITERIA");
+            //             <div class="form-group">
+            //                 <label for="name-categorie" class="form-label">Choisissez un critière de
+            //                     classification</label>
+            //                 <select class="form-control select2 form-select select-criteria"
+            //                     data-placeholder="------ Sélectionnez une option ------"
+            //                     id="select-classification">
+            //                 </select>
+            //             </div>
+            //             <div class="form-row input-criteria" id="value-criteria-container">
 
-                        $("#value-criteria-container").append(`
-                        <div class="form-group col-md-6 mb-0">
-                            <div class="form-group">
-                                <label for="min-value" class="form-label">Min value : </label>
-                                <input type="number" class="form-control" id="min-value">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-6 mb-0">
-                            <div class="form-group">
-                                <label for="max-value" class="form-label">Max value : </label>
-                                <input type="number" class="form-control" id="max-value">
-                            </div>
-                        </div>
-                        <div class="my-3 w-100  text-center">
-                            <button id="btn-delete-criteria" type="button" 
-                            class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
-                        </div>
-                        `);
+            //             </div>
+            //         </div>
 
-                        $(".input-criteria").last().find("#max-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].max));
-                        $(".input-criteria").last().find("#max-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].min));
+            //         `);
 
-                    }
-
-                    console.log("END OF POPULATING THE CRITERIA ");
+            //         console.log("CRITERIA CONTAINER CRETAED");
 
 
 
-                }
+            //         // POPULATE WITH VALUES OF SELECTED CATEGORY
+            //         console.log("2 - I M TRYING TO POPULATE THE CRITERIA VALUES");
 
-                // ------------- END CREATE ONE CRITERIA CONTAINER -------------
+            //         //POPULTATE VALUES CRITERIA CONTAINER
+            //         if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'string') {
+
+            //             console.log("2.1 - i M A STRING TYPE");
+
+            //             $("#value-criteria-container").append(`
+            //                 <div class="form-group col-md-12 mb-0">
+            //                     <label for="valeur-criteria" class="form-label">Valeur du critière </label>
+            //                     <input type="text" class="form-control" id="valeur-criteria"
+            //                     placeholder=".........">
+            //                 </div>
+            //                 <div class="my-3 w-100 text-center">
+            //                 <button id="btn-delete-criteria" type="button" class="btn btn-icon me-2 bradius btn-danger-light"> 
+            //                     <i class="fe fe-trash-2"></i>
+            //                 </button>
+            //             `);
+
+            //             $(".input-criteria").last().find("#valeur-criteria").val(categoriesRequestBody[categoryIndex]["criterias"][i].value);
 
 
-                //POPOLATE SELECT2 FIELD
+            //         } else if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'number') {
 
-                //POPOLUATE WITH CRITERIA COLUMNS
-                populateWithClassificationColumns();
+            //             console.log("2.2 - i M A NUMBER TYPE");
+
+            //             $("#value-criteria-container").append(`
+            //             <div class="form-group col-md-6 mb-0">
+            //                 <div class="form-group">
+            //                     <label for="min-value" class="form-label">Min value : </label>
+            //                     <input type="number" class="form-control" id="min-value">
+            //                 </div>
+            //             </div>
+            //             <div class="form-group col-md-6 mb-0">
+            //                 <div class="form-group">
+            //                     <label for="max-value" class="form-label">Max value : </label>
+            //                     <input type="number" class="form-control" id="max-value">
+            //                 </div>
+            //             </div>
+            //             <div class="my-3 w-100  text-center">
+            //                 <button id="btn-delete-criteria" type="button" 
+            //                 class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
+            //             </div>
+            //             `);
+
+            //             $(".input-criteria").last().find("#max-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].max));
+            //             $(".input-criteria").last().find("#min-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].min));
+
+            //         }
+
+            //     } else {
+
+            //         console.log("1 - i M THE FIRST CRITERIA CONTAINER ");
+
+            //         console.log("2 - i M THE TRYING TO POPULATETHE CRITERIACONTAINER ");
 
 
-                // INITILIZE SELECT2
-                let selectInput = $(".criteria-container").last().find("#select-classification").select2();
+            //         //POPULTATE VALUES CRITERIA CONTAINER
+            //         if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'string') {
 
-                // POPULATE THE SELECT INPUT OF CRITERIA
-                selectInput.val(categoriesRequestBody[categoryIndex]["criterias"][i].name).trigger("change");
+            //             console.log("2.1 - i M A STRING CRITERIA");
+
+            //             $("#value-criteria-container").append(`
+            //                 <div class="form-group col-md-12 mb-0">
+            //                     <label for="valeur-criteria" class="form-label">Valeur du critière </label>
+            //                     <input type="text" class="form-control" id="valeur-criteria"
+            //                     placeholder=".........">
+            //                 </div>
+            //                 <div class="my-3 w-100 text-center">
+            //                 <button id="btn-delete-criteria" type="button" class="btn btn-icon me-2 bradius btn-danger-light"> 
+            //                     <i class="fe fe-trash-2"></i>
+            //                 </button>
+            //             `);
+
+            //             $(".input-criteria").last().find("#valeur-criteria").val(categoriesRequestBody[categoryIndex]["criterias"][i].value);
 
 
-            }
+            //         } else if (typeOfSelection(categoriesRequestBody[categoryIndex]["criterias"][i].name) === 'number') { // POPULATE CRITERIA VALUES CONTAINER CUZ THE CONTAINER IS ALREADY EXISTS
+
+            //             console.log("2.1 - i M A NUMBER CRITERIA");
+
+            //             $("#value-criteria-container").append(`
+            //             <div class="form-group col-md-6 mb-0">
+            //                 <div class="form-group">
+            //                     <label for="min-value" class="form-label">Min value : </label>
+            //                     <input type="number" class="form-control" id="min-value">
+            //                 </div>
+            //             </div>
+            //             <div class="form-group col-md-6 mb-0">
+            //                 <div class="form-group">
+            //                     <label for="max-value" class="form-label">Max value : </label>
+            //                     <input type="number" class="form-control" id="max-value">
+            //                 </div>
+            //             </div>
+            //             <div class="my-3 w-100  text-center">
+            //                 <button id="btn-delete-criteria" type="button" 
+            //                 class="btn btn-icon me-2 bradius btn-danger-light"> <i class="fe fe-trash-2"></i></button>
+            //             </div>
+            //             `);
+
+            //             $(".input-criteria").last().find("#max-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].max));
+            //             $(".input-criteria").last().find("#max-value").val(parseInt(categoriesRequestBody[categoryIndex]["criterias"][i].min));
+
+            //         }
+
+            //         console.log("END OF POPULATING THE CRITERIA ");
+
+
+
+            //     }
+
+            //     // ------------- END CREATE ONE CRITERIA CONTAINER -------------
+
+
+            //     //POPOLATE SELECT2 FIELD
+
+            //     //POPOLUATE WITH CRITERIA COLUMNS
+            //     populateWithClassificationColumns();
+
+
+            //     // INITILIZE SELECT2
+            //     let selectInput = $(".criteria-container").last().find("#select-classification").select2();
+
+            //     // POPULATE THE SELECT INPUT OF CRITERIA
+            //     selectInput.val(categoriesRequestBody[categoryIndex]["criterias"][i].name).trigger("change");
+
+
+            // }
 
 
 
@@ -1595,7 +1645,7 @@ function parseToCategoryTable(categoryJson) {
 
 }
 
-$("#confirm-delete-category").click(function (e) {
+$("#confirm-yes-btn").click(function (e) {
     switch ($(this).attr("data-action")) {
 
         case "category":
@@ -1685,6 +1735,18 @@ function showModal(type, header, content, action) {
             modalContentId = "#modal-success-content";
             break;
 
+        case "warning":
+            modalId = "warning";
+            modalHeaderId = "#modal-warning-header";
+            modalContentId = "#modal-warning-content";
+            break;
+
+        case "info":
+            modalId = "info";
+            modalHeaderId = "#modal-info-header";
+            modalContentId = "#modal-info-content";
+            break;
+
         case "error":
             modalId = "modaldemo5";
             modalHeaderId = "#modal-error-header";
@@ -1758,11 +1820,11 @@ function checkInputsValidity() {
 
                     console.log(parseFloat($(this).find("#min-value").val()) > parseFloat($(this).find("#max-value").val()));
                     if (parseFloat($(this).find("#min-value").val()) > parseFloat($(this).find("#max-value").val())) {
-                       
+
                         $(this).find("#min-value").addClass("is-invalid");
                         $(this).find("#max-value").addClass("is-invalid");
 
-                        
+
                         $(this).find("#invalid-max").html('Cette valeur doit être strictement supérieure à la valeur minimale.');
 
                         isNull = true;
@@ -1777,20 +1839,129 @@ function checkInputsValidity() {
 
     })
 
-    return null;
+    return isNull;
 
 }
 
 
-// CHECK IF THE LAST CRITERIA VALUES INPUTS OF TYPE NUMBER ARE VALID : MAX > MIN
-function checkForMinMaxValidity() {
 
-    // LOOP OVER ALL CRITERIA CONTAINERS
+function categorizePopulation(arr, catArr) {
+    console.log(arr[0]);
+    let newPopulationArr = [];
+    let copyArr = [...arr];
 
-    $(".criteria-container").each(function (criteria) {
+    // ADD HEADER TO THE NEW ARR
+    let header = copyArr[0];
+    header.push("CATEGORIE");
+    newPopulationArr.push(header);
+
+    console.log(arr[0]);
+    // SET UP CATEGORY FOR EVERY COLLABORATEUR
+    for (var t = 0; t < copyArr.length; t++) {
+        let categoryHasBeenSet = false;
+
+        if (t !== 0) {
+            let row = copyArr[t];
+
+            // ITERATE OVER CATEGORIES ARR
+            for (var j = 0; j < catArr.length; j++) {
+                let category = catArr[j];
+
+                let notVerified = false;
+                let criteries = category.criterias;
+                let compteur = criteries.length;
 
 
-    })
+                // IF ONE CRITERIA IS NOT MATCHING, GO TO THE NEXT CATEGORY
+                for (var i = 0; i < criteries.length; i++) {
+                    let criteriaName = criteries[i].name;
+
+                    let index = getIndexOfColumn(copyArr[0], criteriaName);
+
+
+                    if (typeOfSelection(criteriaName) === "string") {
+                        let criteriaValue = criteries[i].value;
+
+                        if (row[index] === criteriaValue) {
+                            compteur--;
+                        } else {
+                            notVerified = true;
+                            break;
+                        }
+
+                    } else if (typeOfSelection(criteriaName) === "number") {
+                        let min = criteries[i].min;
+                        let max = criteries[i].max;
+
+                        console.log(row[index], parseFloat(min));
+
+                        // POSSIBLE VALUE FOR MIN AND MAX
+                        if (min !== '' && max !== '') {
+                            if (row[index] >= parseFloat(min) && row[index] <= parseFloat(max)) {
+                                compteur--;
+                            } else {
+                                notVerified = true;
+                                break;
+                            }
+                        } else if (min === '') {
+                            if (row[index] <= parseFloat(max)) {
+                                compteur--;
+                            } else {
+                                notVerified = true;
+                                break;
+                            }
+                        } else if (max === '') {
+                            if (row[index] >= parseFloat(min)) {
+                                compteur--;
+                            } else {
+                                notVerified = true;
+                                break;
+                            }
+                        }
+
+                    }
+
+                }
+
+                // WHEN ALL CRITERIAS ARE MATCHED, SET THE NEW CATEGORY
+                if (compteur === 0) {
+                    row.push(category.name);
+                    console.log(row);
+
+                    // GO TO THE NEXT ROW
+                    categoryHasBeenSet = true;
+                    break;
+
+
+
+                }
+
+                // WHENE ONE CRITERIA IS NOT MATCH, GO TO THE NEXT CATEGORY
+                if (notVerified) {
+                    continue;
+                }
+
+            }
+
+            // GO TO THE NEX ROW
+            if (categoryHasBeenSet) {
+                newPopulationArr.push(row);
+                continue;
+            } else { // NO MATCHED CATEGORY
+                row.push("uncategorized");
+                newPopulationArr.push(row);
+            }
+
+
+        }
+
+
+    }
+
+    return newPopulationArr;
 
 }
 
+function getIndexOfColumn(arr, column) {
+    return arr.indexOf(column);
+}

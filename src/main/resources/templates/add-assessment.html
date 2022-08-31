@@ -266,7 +266,7 @@
                                     <i class="fe fe-database"></i> Sauvegarder la catégorie</button>
                             </div>
                             <div class="col-sm-4 m-auto text-center">
-                                <button id="btn-visualize" type="button" class="btn btn-icon me-2  btn-warning">
+                                <button id="btn-categorize" type="button" class="btn btn-icon me-2  btn-warning">
                                     <i class="fe fe-check-circle"></i> Catégoriser la population</button>
                             </div>
                         </div>
@@ -292,14 +292,8 @@
 
 
                     <div class="table-responsive mt-2">
-                        <table class="table table-bordered text-nowrap border-bottom" id="tb1">
-                            <!-- <thead id="assessment-population-thead">
+                        <table class="table table-bordered text-nowrap border-bottom" id="tb2">
 
-                                </thead>
-                                <tbody id="assessment-population-tbody">
-
-
-                                </tbody> -->
                         </table>
                     </div>
                     <div class="text-end col-sm-12 d-flex justify-content-around  my-5">
@@ -367,10 +361,9 @@
                 </div>
             </div>
         </div>
-    </div>
-    <!-- ROW-1 END -->
 
-    <!-- MODAL ALERT MESSAGE -->
+
+        <!-- MODAL ALERT MESSAGE -->
     <div class="modal fade" id="modaldemo5">
         <div class="modal-dialog modal-dialog-centered text-center" role="document">
             <div class="modal-content tx-size-sm">
@@ -389,6 +382,26 @@
         </div>
     </div>
 
+
+    <!-- MODAL WARNING MESSAGE -->
+    <div class="modal fade" id="warning">
+        <div class="modal-dialog modal-dialog-centered text-center" role="document">
+            <div class="modal-content tx-size-sm">
+                <div class="modal-body text-center p-4 pb-5">
+                    <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                            aria-hidden="true">&times;</span></button>
+                    <i class="icon icon-close fs-70 text-warning lh-1 my-5 d-inline-block"></i>
+                    <h4 id="modal-warning-header" class="text-warning">Attention: vous êtes sûr de vouloir supprimer
+                        cette entrée!</h4>
+                    <p id="modal-warning-content" class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui", vous
+                        ne récupérerez pas ces
+                        informations.</p><button aria-label="Close" id=""
+                        class="btn btn-warning pd-x-25" data-bs-dismiss="modal">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL SUCCESS MESSAGE -->
     <div class="modal fade" id="success">
         <div class="modal-dialog modal-dialog-centered text-center " role="document">
@@ -400,6 +413,23 @@
                     <h4 id="modal-success-header" class="text-success tx-semibold">Complété!</h4>
                     <p id="modal-success-content" class="mg-b-20 mg-x-20">La liste des compétences a été sauvegardée
                         avec succès. .</p><button aria-label="Close" class="btn btn-success pd-x-25"
+                        data-bs-dismiss="modal">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL INFO MESSAGE -->
+    <div class="modal fade" id="info">
+        <div class="modal-dialog modal-dialog-centered text-center " role="document">
+            <div class="modal-content tx-size-sm">
+                <div class="modal-body text-center p-4 pb-5">
+                    <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                            aria-hidden="true">&times;</span></button>
+                    <i class="icon icon-clock fs-70 text-primary lh-1 my-5 d-inline-block"></i>
+                    <h4 id="modal-info-header" class="text-primary tx-semibold">Complété!</h4>
+                    <p id="modal-info-content" class="mg-b-20 mg-x-20">La liste des compétences a été sauvegardée
+                        avec succès. .</p><button aria-label="Close" class="btn btn-primary pd-x-25"
                         data-bs-dismiss="modal">Continue</button>
                 </div>
             </div>
@@ -426,9 +456,11 @@
             </div>
         </div>
     </div>
-
     </div>
-    <!-- CONTAINER CLOSED -->
+    <!-- ROW-1 END -->
+
+
+
 
     <!-- SCRIPT -->
     <th:block layout:fragment="script">
