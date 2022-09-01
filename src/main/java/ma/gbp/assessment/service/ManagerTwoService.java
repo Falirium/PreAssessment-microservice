@@ -22,5 +22,20 @@ public class ManagerTwoService {
         return managerTwoRepository.findById(id).get();
     }
 
+    public List<ManagerTwo> saveListOfManagers(List<ManagerTwo> managers) {
+        return managerTwoRepository.saveAll(managers);
+    }
+
+    public ManagerTwo saveManager(ManagerTwo manager) {
+        return managerTwoRepository.save(manager);
+    }
+
+    public ManagerTwo getManagerByFirstAndLastName (String firstname, String lastname) {
+        return managerTwoRepository.findByFirstNameAndLastName(firstname, lastname);
+    }
+
+    public ManagerTwo getManagerByFirstAndLastNameAndMatricule (String firstname, String lastname, String matricule) {
+        return managerTwoRepository.findByFirstNameAndLastNameAndMatricule(firstname, lastname,matricule);
+    }
     // TODO: GET LISTS OF : COLLABORATEURS, MANAGER N+2, FICHE EVALUATION
 }

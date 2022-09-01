@@ -15,4 +15,16 @@ public class CollaborateurService {
     public Collaborateur getCollaborateur(Long id) {
         return collaborateurRepository.findById(id).get();
     }
+
+    public Collaborateur saveCollaborateur(Collaborateur newCollaborateur) {
+        return collaborateurRepository.save(newCollaborateur);
+    }
+
+    public Collaborateur getCollByFirstAndLastName( String firstname, String lastname) {
+        return collaborateurRepository.findByFirstNameAndLastName(firstname, lastname);
+    }
+
+    public Collaborateur getCollByFirstAndLastNameAndMatricule( String firstname, String lastname, String matricule) {
+        return collaborateurRepository.findByFirstNameAndLastNameAndMatricule(firstname, lastname, matricule);
+    }
 }

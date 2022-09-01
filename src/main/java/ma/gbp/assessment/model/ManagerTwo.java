@@ -7,7 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -30,10 +32,19 @@ public class ManagerTwo extends Employee{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idManagerTwo;
 
+    @OneToMany(mappedBy = "manager")
+    private List<ManagerOne> managersOnes;
+
     @ManyToMany(mappedBy = "listOfManagersTwo")
     @JsonProperty(access = Access.WRITE_ONLY)
     private List<Assessment> listOfAssessments;
 
     @OneToMany(mappedBy = "evaluateurTwo")
     private List<FicheEvaluation> fichesEvaluations;
+
+    public ManagerTwo(String firstName, String lastName, String matricule) {
+        super(firstName, lastName, matricule);
+    }
+
+    
 }

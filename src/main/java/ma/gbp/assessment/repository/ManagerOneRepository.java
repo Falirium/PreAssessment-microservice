@@ -8,4 +8,6 @@ import ma.gbp.assessment.model.ManagerOne;
 @Repository
 public interface ManagerOneRepository extends JpaRepository<ManagerOne, Long> {
     
+    ManagerOne findByFirstNameAndLastName(String firstname, String lastname);
+    ManagerOne findByFirstNameAndLastNameAndMatricule(String firstname, String lastname, String matricule);
 }

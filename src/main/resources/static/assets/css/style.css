@@ -157,7 +157,7 @@ License        :   Licensed under ThemeForest License
 /*Transparent variables*/
 /* ###### Bootstrap ###### */
 :root {
-    --primary-bg-color: #6c5ffc;
+    --primary-bg-color: #DA6C00;
     --primary-bg-hover: #233ac5;
     --primary-bg-border: #5161c1;
     --dark-body: #292e4a;
@@ -795,8 +795,8 @@ body {
     -webkit-text-size-adjust: none;
     -ms-touch-action: manipulation;
     touch-action: manipulation;
-    -webkit-font-feature-settings: "liga" 0;
-    font-feature-settings: "liga" 0;
+    -webkit-font-feature-settings: "liga"0;
+    font-feature-settings: "liga"0;
     overflow-y: scroll;
     position: relative;
 }

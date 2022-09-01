@@ -3,11 +3,15 @@ let requestBodyAssessment = {
 
     "name": "",
     "targetedDirection": [],
+    "status": "CREATED",
     "startedAt": null,
     "finishesAt": null,
-    "populationFile": null,
     "targetEmplois": [],
-    "assessmentCategories": []
+    "assessmentCategories": "",
+    "collaborateurs": [],
+    "managers1": [],
+    "managers2": [],
+    "fichesEvaluations": []
 
 }
 const btnVisualize = document.querySelector("#btn-visualize");
@@ -16,6 +20,9 @@ const btnSaveCategory = document.querySelector("#btn-save-category");
 
 let categorizationTable;
 let populationTable;
+
+// IMORTANT ARRAYS
+let fichesEvaluations = [];
 
 
 const inputFileUploader = document.querySelector("#assessment-excel-file");
@@ -42,13 +49,19 @@ const employeeColumns = [
     "NOM",
     "PRENOM"
 ];
+const employeeBaseColumn = [
+    "affectation (Code)",
+    "affectation (Libelle)",
+    "Fonction (Libelle)"
+]
 
 const emploiColumn = ["EMPLOIS_CIBLES", "NIVEAU_SENIORITÉ"];
 
 
 let classificationColumns = [];
 
-let populationArr = []
+let populationArr = [];
+let categorizedPopulationArr = [];
 
 let indexOfDeletedCategory = -1;
 let indexOfEditedCategory = -1;
@@ -64,7 +77,8 @@ let assessmentPropertyContainer = document.querySelectorAll(".assessment-propert
 
 Array.from(assessmentPropertyContainer).forEach((propertyContainer) => {
 
-
+    $("#input-started-date").removeClass("is-invalid");
+    $("#input-finishes-date").removeClass("is-invalid");
 
     propertyContainer.addEventListener("change", (e) => {
 
@@ -105,13 +119,13 @@ $(function () {
     $("#input-regions-campagne").change(function (e) {
 
         let selected = $("#input-regions-campagne").select2('data');
-
+        requestBodyAssessment["targetedDirection"] = getSelect2Selections(selected);
         console.log(getSelect2Selections(selected));
     })
 
     $("#btn-assessment-save").click(function (e) {
 
-        //SAVE NEW CATEGORIES TO DB  then SAVE ASSESSMENT-CATEGORIES
+        // //SAVE NEW CATEGORIES TO DB  then SAVE ASSESSMENT-CATEGORIES
         let newCategories = [];
         categoriesRequestBody.map((cat, index) => {
             if (listOfNewCategories.includes(cat.name)) {
@@ -123,10 +137,12 @@ $(function () {
         })
         postCategories(newCategories);
 
+        // SEND POST REQUEST TO SAVE ASSESSMENT AND ALL OTHER ENTITIES
+
 
 
         //SAVE ASSESSMENT TO DB
-
+        console.log(requestBodyAssessment);
 
         // IF IT IS SAVED, SHOW SUCCESS MODAL
 
@@ -156,6 +172,7 @@ btnAddCriteria.addEventListener('click', () => {
 
     addNewCriteria();
 })
+
 
 btnSaveCategory.addEventListener('click', () => {
 
@@ -527,8 +544,8 @@ $("#btn-categorize").click(function (e) {
     } else {
 
         // INITILIZE TABLE TB2
-        let arrForCategorization = JSON.parse(JSON.stringify(populationArr));
-        let categorizedData = categorizePopulation(arrForCategorization, categoriesRequestBody);
+        categorizedPopulationArr = JSON.parse(JSON.stringify(populationArr));
+        let categorizedData = categorizePopulation(categorizedPopulationArr, categoriesRequestBody);
         let col = generateColumnsForDatatable(categorizedData[0]);
         let dataSet = categorizedData.filter((e, i) => {
             if (i !== 0) return true;
@@ -542,14 +559,54 @@ $("#btn-categorize").click(function (e) {
                     columns: col
                 }
             );
+
+            // WE FILL ASSESSMENT REQUEST BODY JSON
+
         } else {
-            console.log( "second time");
-            console.log(dataSet);
+            // console.log( "second time");
+            // console.log(dataSet);
             categorizationTable.clear();
             categorizationTable.rows.add(dataSet);
             categorizationTable.draw();
         }
 
+
+        // UPDATE ASSESSMENT JSON VARIABLE WITH NEW VALUES AFTER INITILILIZATION
+        requestBodyAssessment.targetEmplois = [];
+        requestBodyAssessment.assessmentCategories = [];
+        requestBodyAssessment.collaborateurs = [];
+        requestBodyAssessment.managers1 = [];
+        requestBodyAssessment.managers2 = [];
+        requestBodyAssessment.fichesEvaluations = [];
+
+        requestBodyAssessment.targetEmplois = generateTargetedEmplois();
+        requestBodyAssessment.assessmentCategories = generateAssessmentCategory();
+
+        let managers1 = [];
+        let managers2 = [];
+        for (var i = 0; i < categorizedPopulationArr.length; i++) {
+            if (i != 0) {
+
+                let row = categorizedPopulationArr[i];
+                requestBodyAssessment.collaborateurs.push(generateCollaborateur(row));
+                managers1.push(generateManager1(row));
+                managers2.push(generateManager2(row));
+                requestBodyAssessment.fichesEvaluations.push(generateFicheEvaluation(row));
+
+            }
+        }
+        requestBodyAssessment.managers1 = [...new Set(
+            managers1
+                .map(element => element.matricule )
+                .map((mat) => {
+                    return managers1.find(e => e.matricule === mat)
+                }))];
+        requestBodyAssessment.managers2 = [...new Set(
+            managers2
+                .map(element => element.matricule )
+                .map((mat) => {
+                    return managers2.find(e => e.matricule === mat)
+                }))];
 
 
         // SHOW SUCCESS MODAL 
@@ -665,46 +722,46 @@ function buildURL(prefix, params) {
     return url;
 }
 
-async function fetchEmployeesData(id) {
+// async function fetchEmployeesData(id) {
 
-    let url = "http://localhost:8080/preassessment/api/v1/file/2json/" + id;
+//     let url = "http://localhost:8080/preassessment/api/v1/file/2json/" + id;
 
-    fetch(url, {
-        method: 'GET'
-    }).then(
-        response => response.json() // if the response is a JSON object
-    ).then(
-        success => {
-            console.log(success);
-            // RETURN AN ID OF THE FILE IS SAVED TO DB
-
-
+//     fetch(url, {
+//         method: 'GET'
+//     }).then(
+//         response => response.json() // if the response is a JSON object
+//     ).then(
+//         success => {
+//             console.log(success);
+//             // RETURN AN ID OF THE FILE IS SAVED TO DB
 
 
-        } // Handle the success response object
-    ).catch(
-        error => console.log(error) // Handle the error response object
-    );
-
-    // try {
-    //     let res = await fetch(url);
-    //     let response = await res.json();
-
-    //     response["Déjà dans l'emploi"] = clearWhiteRows(response["Déjà dans l'emploi"])
-    //     jsonFinalPreassessment = response;
-
-    //     classificationColumns = getClassificationColumn(response["Déjà dans l'emploi"][0]);
-
-    //     parseToTable(response["Déjà dans l'emploi"]);
 
 
-    //     console.log(response);
+//         } // Handle the success response object
+//     ).catch(
+//         error => console.log(error) // Handle the error response object
+//     );
 
-    // } catch (error) {
-    //     console.log(error);
-    // }
+//     // try {
+//     //     let res = await fetch(url);
+//     //     let response = await res.json();
 
-}
+//     //     response["Déjà dans l'emploi"] = clearWhiteRows(response["Déjà dans l'emploi"])
+//     //     jsonFinalPreassessment = response;
+
+//     //     classificationColumns = getClassificationColumn(response["Déjà dans l'emploi"][0]);
+
+//     //     parseToTable(response["Déjà dans l'emploi"]);
+
+
+//     //     console.log(response);
+
+//     // } catch (error) {
+//     //     console.log(error);
+//     // }
+
+// }
 
 async function postExcelFile(file) {
 
@@ -754,7 +811,7 @@ async function postCategories(jsonArr) {
             console.log(success);
 
             // POST ASSESSMENT-CATEGORY ENTITIES
-            postAssessmenCategories(categoriesRequestBody);
+            //postAssessmenCategories(categoriesRequestBody);
 
         }
     ).catch(
@@ -1141,24 +1198,24 @@ function parseToPopulationTable(arr) {
 
 }
 
-function loadJS(FILE_URL, async = true) {
-    let scriptEle = document.createElement("script");
+// function loadJS(FILE_URL, async = true) {
+//     let scriptEle = document.createElement("script");
 
-    scriptEle.setAttribute("src", FILE_URL);
-    scriptEle.setAttribute("type", "text/javascript");
-    scriptEle.setAttribute("async", async);
+//     scriptEle.setAttribute("src", FILE_URL);
+//     scriptEle.setAttribute("type", "text/javascript");
+//     scriptEle.setAttribute("async", async);
 
-    document.body.appendChild(scriptEle);
+//     document.body.appendChild(scriptEle);
 
-    // success event 
-    scriptEle.addEventListener("load", () => {
-        console.log("File loaded")
-    });
-    // error event
-    scriptEle.addEventListener("error", (ev) => {
-        console.log("Error on loading file", ev);
-    });
-}
+//     // success event 
+//     scriptEle.addEventListener("load", () => {
+//         console.log("File loaded")
+//     });
+//     // error event
+//     scriptEle.addEventListener("error", (ev) => {
+//         console.log("Error on loading file", ev);
+//     });
+// }
 
 function lastCriteriaContainer() {
     let lastCategory = document.querySelector("#category-container");
@@ -1846,7 +1903,7 @@ function checkInputsValidity() {
 
 
 function categorizePopulation(arr, catArr) {
-    console.log(arr[0]);
+
     let newPopulationArr = [];
     let copyArr = [...arr];
 
@@ -1855,7 +1912,6 @@ function categorizePopulation(arr, catArr) {
     header.push("CATEGORIE");
     newPopulationArr.push(header);
 
-    console.log(arr[0]);
     // SET UP CATEGORY FOR EVERY COLLABORATEUR
     for (var t = 0; t < copyArr.length; t++) {
         let categoryHasBeenSet = false;
@@ -1893,7 +1949,6 @@ function categorizePopulation(arr, catArr) {
                         let min = criteries[i].min;
                         let max = criteries[i].max;
 
-                        console.log(row[index], parseFloat(min));
 
                         // POSSIBLE VALUE FOR MIN AND MAX
                         if (min !== '' && max !== '') {
@@ -1926,7 +1981,7 @@ function categorizePopulation(arr, catArr) {
                 // WHEN ALL CRITERIAS ARE MATCHED, SET THE NEW CATEGORY
                 if (compteur === 0) {
                     row.push(category.name);
-                    console.log(row);
+
 
                     // GO TO THE NEXT ROW
                     categoryHasBeenSet = true;
@@ -1964,4 +2019,141 @@ function categorizePopulation(arr, catArr) {
 
 function getIndexOfColumn(arr, column) {
     return arr.indexOf(column);
+}
+
+function generateCollaborateur(arr) {
+    let indexOfMatriculle = getIndexOfColumn(categorizedPopulationArr[0], "MATRICULE");
+    let indexOfPrenom = getIndexOfColumn(categorizedPopulationArr[0], "PRENOM");
+    let indexOfNom = getIndexOfColumn(categorizedPopulationArr[0], "NOM");
+    let indexOfDirection = getIndexOfColumn(categorizedPopulationArr[0], "affectation (Code)");
+    let indexOfRole = getIndexOfColumn(categorizedPopulationArr[0], "Fonction (Libelle)");
+
+    let collaborateurJson = {
+        "firstName": arr[indexOfNom],
+        "lastName": arr[indexOfPrenom],
+        "matricule": arr[indexOfMatriculle],
+        "role": arr[indexOfRole],
+        "direction": arr[indexOfDirection],
+        "topDirection": "",
+        "managerOne": generateManager1(arr)
+    }
+
+    return collaborateurJson;
+}
+
+function generateManager1(arr) {
+    let indexOfMatriculle = getIndexOfColumn(categorizedPopulationArr[0], "MATRICULE_N1");
+    let indexOfPrenom = getIndexOfColumn(categorizedPopulationArr[0], "PRENOM_N1");
+    let indexOfNom = getIndexOfColumn(categorizedPopulationArr[0], "NOM_N1");
+
+    let managerJson = {
+        "firstName": arr[indexOfNom],
+        "lastName": arr[indexOfPrenom],
+        "matricule": arr[indexOfMatriculle],
+        "role": "",
+        "direction": "",
+        "topDirection": "",
+        "manager": generateManager2(arr)
+    }
+
+    return managerJson;
+}
+
+function generateManager2(arr) {
+    let indexOfMatriculle = getIndexOfColumn(categorizedPopulationArr[0], "MATRICULE_N2");
+    let indexOfPrenom = getIndexOfColumn(categorizedPopulationArr[0], "PRENOM_N2");
+    let indexOfNom = getIndexOfColumn(categorizedPopulationArr[0], "NOM_N2");
+
+    let managerJson = {
+        "firstName": arr[indexOfNom],
+        "lastName": arr[indexOfPrenom],
+        "matricule": arr[indexOfMatriculle],
+        "role": "",
+        "direction": "",
+        "topDirection": ""
+    }
+
+    return managerJson;
+}
+
+function generateFicheEvaluation(arr) {
+
+    let indexOfEmploi = getIndexOfColumn(categorizedPopulationArr[0], "EMPLOIS_CIBLES");
+    let indexOfCategory = getIndexOfColumn(categorizedPopulationArr[0], "CATEGORIE");
+
+
+    let ficheJson = {
+        "score": "",
+        "sousPoints": "",
+        "surPoints": "",
+        "createdAt": new Date(),
+        "dateEvaluation": new Date(),
+        "evaluateurOne": generateManager1(arr),
+        "evaluateurTwo": generateManager2(arr),
+        "collaborateur": generateCollaborateur(arr),
+        "ficheContent": getEvaluationContentByCategory(arr[indexOfCategory]),
+        "emploi": generateTargetedEmploi(arr),
+    }
+    return ficheJson;
+}
+
+function generateTargetedEmploi(arr) {
+
+    let indexOfEmploi = getIndexOfColumn(categorizedPopulationArr[0], "EMPLOIS_CIBLES");
+
+    let emploiJson = {
+        "intitule": arr[indexOfEmploi].split("_")[0],
+        "level": arr[indexOfEmploi].split("_")[1]
+    }
+
+    return emploiJson;
+}
+
+function generateTargetedEmplois() {
+
+    let arr = [];
+
+    listEmploi.map((e, i) => {
+        arr.push({
+            "intitule": (e.split("_")[0]).toLowerCase(),
+            "level": e.split("_")[1]
+        })
+    })
+
+    return arr;
+
+}
+
+function generateAssessmentCategory() {
+
+    let arr = [];
+
+    categoriesRequestBody.map((e, i) => {
+        arr.push({
+            "categorie": {
+                "name": e.name
+            },
+            "criterias": e.criterias
+        })
+    })
+
+
+    return arr;
+}
+
+function getEvaluationContentByCategory(catName) {
+    for (var i = 0; i < categoriesRequestBody.length; i++) {
+        if (categoriesRequestBody[i].name === catName) {
+            return categoriesRequestBody[i].contentAssessment;
+        }
+    }
+}
+
+
+function getCriteriasByCategory(catName) {
+    for (var i = 0; i < categoriesRequestBody.length; i++) {
+        if (categoriesRequestBody[i].name === catName) {
+            return categoriesRequestBody[i].criterias;
+        }
+    }
 }

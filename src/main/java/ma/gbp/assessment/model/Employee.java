@@ -25,5 +25,27 @@ public class Employee {
     private String direction;
     private String role;
 
+    public Employee(String firstName, String lastName, String matricule) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.matricule = matricule;
+        
+    }
+
+    public Employee(String firstName, String lastName, String matricule, String topDirection, String direction,
+            String role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.matricule = matricule;
+        this.topDirection = topDirection;
+        this.direction = direction;
+        this.role = role;
+    }
+
+    
+
+
+    
+
     
 }

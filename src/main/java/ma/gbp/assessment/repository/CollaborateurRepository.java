@@ -8,4 +8,6 @@ import ma.gbp.assessment.model.Collaborateur;
 @Repository
 public interface CollaborateurRepository extends JpaRepository<Collaborateur, Long>{
     
+    Collaborateur findByFirstNameAndLastName(String firstname, String lastname);
+    Collaborateur findByFirstNameAndLastNameAndMatricule(String firstname, String lastname, String matricule);
 }

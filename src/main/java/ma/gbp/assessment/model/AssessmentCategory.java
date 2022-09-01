@@ -45,7 +45,7 @@ public class AssessmentCategory {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "assessmentCategory_id", nullable = false)
+    @JoinColumn(name = "assessmentCategory_id")
     private Category categorie;
 
     @Type(type = "jsonb")
@@ -59,8 +59,7 @@ public class AssessmentCategory {
     @JsonIgnore
     private Set<Assessment> assessments = new HashSet<>();
 
-    public AssessmentCategory(Category categorie, List<Criteria> criterias) {
-        this.categorie = categorie;
+    public AssessmentCategory( List<Criteria> criterias) {
         this.criterias = criterias;
     }
 

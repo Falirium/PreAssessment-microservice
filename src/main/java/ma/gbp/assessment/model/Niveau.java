@@ -67,6 +67,9 @@ public class Niveau {
     @Column(columnDefinition = "text[]", length = 2048)
     private List<String> marqueurs;
 
+    @ManyToMany(mappedBy = "emplois")
+    private List<Assessment> assessments;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE

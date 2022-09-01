@@ -8,4 +8,6 @@ import ma.gbp.assessment.model.ManagerTwo;
 @Repository
 public interface ManagerTwoRepository extends JpaRepository<ManagerTwo, Long> {
     
+    ManagerTwo findByFirstNameAndLastName(String firstname, String lastname);
+    ManagerTwo findByFirstNameAndLastNameAndMatricule(String firstname, String lastname, String matricule);
 }

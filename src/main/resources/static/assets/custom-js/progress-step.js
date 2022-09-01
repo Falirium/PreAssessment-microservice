@@ -9,10 +9,33 @@ let formStepsNum = 0;
 console.log("PROGRESS STEPS");
 
 nextBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    formStepsNum++;
-    updateFormSteps();
-    updateProgressbar();
+  btn.addEventListener("click", (e) => {
+
+    let toContinue = true;
+
+    if (e.target.id === "btn-next-info-assessment") {
+      let startedAt = $("#input-started-date").val();
+      let finishesAt = $("#input-finishes-date").val();
+
+      if (startedAt >= finishesAt) {
+        $("#input-started-date").addClass("is-invalid");
+        $("#input-finishes-date").addClass("is-invalid");
+
+        $("#started-date-error").text("Ce jour doit être inférieur à la date de fin !");
+
+      } else {
+        formStepsNum++;
+        updateFormSteps();
+        updateProgressbar();
+      }
+    } else {
+
+      formStepsNum++;
+      updateFormSteps();
+      updateProgressbar();
+
+    }
+
   });
 });
 

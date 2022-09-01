@@ -22,5 +22,21 @@ public class ManagerOneService {
         return managerOneRepository.findById(id).get();
     }
 
+    public List<ManagerOne> saveListOfManagers(List<ManagerOne> managers) {
+        return managerOneRepository.saveAll(managers);
+    }
+
+    public ManagerOne saveManager(ManagerOne manager) {
+        return managerOneRepository.save(manager);
+    }
+
+    public ManagerOne getManagerByFirstAndLastName (String firstname, String lastname) {
+        return managerOneRepository.findByFirstNameAndLastName(firstname, lastname);
+    }
+
+    public ManagerOne getManagerByFirstAndLastNameAndMatricule (String firstname, String lastname, String matricule) {
+        return managerOneRepository.findByFirstNameAndLastNameAndMatricule(firstname, lastname, matricule);
+    }
+
     // TODO: GET LISTS OF : COLLABORATEURS, MANAGER N+2, FICHE EVALUATION
 }

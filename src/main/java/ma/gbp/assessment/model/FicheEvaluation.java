@@ -1,8 +1,10 @@
 package ma.gbp.assessment.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +14,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
+
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +28,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "fiche_evaluation")
+@TypeDefs({
+    @TypeDef(name = "list-array", typeClass = ListArrayType.class),
+    
+})
 public class FicheEvaluation {
 
     @Id
@@ -32,6 +44,10 @@ public class FicheEvaluation {
 
     private Date createdAt;
     private Date dateEvaluation;
+
+    @Type(type = "list-array")
+    @Column(columnDefinition = "text[]", length = 2048)
+    private List<String> ficheContent;
 
     @ManyToOne
     @JoinColumn(name = "evaluateurOne_id", referencedColumnName = "idManagerOne")
@@ -52,6 +68,8 @@ public class FicheEvaluation {
     @ManyToOne
     @JoinColumn(name = "assessment_id")
     private Assessment associatedAssessment;
+
+    
 
     public FicheEvaluation(float score, float sousPoints, float surPoints, Date createdAt) {
         this.score = score;
@@ -74,4 +92,13 @@ public class FicheEvaluation {
         this.associatedAssessment = associatedAssessment;
     }
 
+    public FicheEvaluation(float score, float sousPoints, float surPoints, Date createdAt, Date dateEvaluation) {
+        this.score = score;
+        this.sousPoints = sousPoints;
+        this.surPoints = surPoints;
+        this.createdAt = createdAt;
+        this.dateEvaluation = dateEvaluation;
+    }
+
+    
 }
