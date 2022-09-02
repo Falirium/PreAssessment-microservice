@@ -532,6 +532,11 @@ inputFileUploader.addEventListener('change', (e) => {
         // }
         //populateEmploiSection(listEmploi);
 
+    }).catch((error) => {
+        console.log(error);
+        
+        // SHOW ERROR MODAL
+        showModal("error", "Mauvais format de fichier", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard.", "");
     });
 
     postExcelFile(file);
@@ -972,70 +977,78 @@ function parseExcelPopulation(excelFile) {
             workbook.xlsx.load(arrayBuffer).then(function (workbook) {
                 console.timeEnd();
                 // var result = ''
+                try {
+                    workbook.eachSheet(function (worksheet, sheetId) {
 
-                workbook.eachSheet(function (worksheet, sheetId) {
-
-                    let index = 1;
-                    while (worksheet.getRow(index).values.length !== 0) {
-                        let rowValues = worksheet.getRow(index).values;
-                        let rowArr = [];
-
-                        rowValues.forEach((cell, index) => {
-                            //console.log(cell, Object.prototype.toString.call(cell))
-
-                            // FILTER OUT THE FOLLOWING TYPES : STRING, NULBER, DATE, JSON OBJECT
-                            if (Object.prototype.toString.call(cell) === '[object Date]') {
-                                //console.log(index, cell, typeof(cell));
-                                rowArr.push(cell.toLocaleDateString())
-                                //console.log(cell.toLocaleDateString());
-                            } else if (Object.prototype.toString.call(cell) === '[object Object]') {
-                                rowArr.push(cell.result);
+                        let index = 1;
+                        while (worksheet.getRow(index).values.length !== 0) {
+                            let rowValues = worksheet.getRow(index).values;
+                            let rowArr = [];
+    
+                            rowValues.forEach((cell, index) => {
+                                //console.log(cell, Object.prototype.toString.call(cell))
+    
+                                // FILTER OUT THE FOLLOWING TYPES : STRING, NULBER, DATE, JSON OBJECT
+                                if (Object.prototype.toString.call(cell) === '[object Date]') {
+                                    //console.log(index, cell, typeof(cell));
+                                    rowArr.push(cell.toLocaleDateString())
+                                    //console.log(cell.toLocaleDateString());
+                                } else if (Object.prototype.toString.call(cell) === '[object Object]') {
+                                    rowArr.push(cell.result);
+                                } else {
+                                    rowArr.push(cell);
+                                }
+    
+                            })
+    
+                            excelData.push(rowArr);
+    
+                            index++;
+                        }
+    
+                        // GET EMPLOI COLUMN INDEX
+                        let indexOfEmploiCol = excelData[0].indexOf("EMPLOIS_CIBLES");
+                        //let indexOfSenioriteEmploi = excelData[0].indexOf("NIVEAU_SENIORITÉ");
+                        let emploiCol = worksheet.getColumn(indexOfEmploiCol + 1).values;
+                        //let senioriteCol = worksheet.getColumn(indexOfSenioriteEmploi + 1).values;
+    
+                        listOfEmplois = emploiCol.map((e, i) => {
+                            if (typeof (e) === 'undefined' || i === 0) {
+                                return null;
                             } else {
-                                rowArr.push(cell);
+                                return e;
                             }
-
+    
                         })
-
-                        excelData.push(rowArr);
-
-                        index++;
-                    }
-
-                    // GET EMPLOI COLUMN INDEX
-                    let indexOfEmploiCol = excelData[0].indexOf("EMPLOIS_CIBLES");
-                    //let indexOfSenioriteEmploi = excelData[0].indexOf("NIVEAU_SENIORITÉ");
-                    let emploiCol = worksheet.getColumn(indexOfEmploiCol + 1).values;
-                    //let senioriteCol = worksheet.getColumn(indexOfSenioriteEmploi + 1).values;
-
-                    listOfEmplois = emploiCol.map((e, i) => {
-                        if (typeof (e) === 'undefined' || i === 0) {
-                            return null;
-                        } else {
-                            return e;
-                        }
-
-                    })
-
-                    listOfEmplois = [...new Set(listOfEmplois)].filter((e) => {
-                        if (typeof (e) === 'undefined' || e === "EMPLOIS_CIBLES") {
-                            return false;
-                        } else {
-
-                            return true;
-                        }
+    
+                        listOfEmplois = [...new Set(listOfEmplois)].filter((e) => {
+                            if (typeof (e) === 'undefined' || e === "EMPLOIS_CIBLES") {
+                                return false;
+                            } else {
+    
+                                return true;
+                            }
+                        });
+    
+    
+                        // START POPULATE THE 
+    
+    
                     });
-
-
-                    // START POPULATE THE 
-
-
-                });
+                } catch (error) {
+                    console.error(error);
+                    throw error;
+                }
+                
 
                 return [excelData, listOfEmplois];
 
 
             }).then((data) => {
                 resolve(data);
+            }).catch((error) => {
+                console.error(error);
+                reject(error);
             });
 
 

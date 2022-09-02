@@ -27,7 +27,7 @@ btnAddFile.addEventListener("click", (e) => {
         var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
         myModal.show();
     } else {
-        showModal("warning", "Attention !", 'Vous ne pouvez pas ajouter une nouvelle liste de compétences sans sauvegarder la liste sur la table. Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.' )
+        showModal("warning", "Attention !", 'Vous ne pouvez pas ajouter une nouvelle liste de compétences sans sauvegarder la liste sur la table. Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.')
 
     }
 })
@@ -35,7 +35,7 @@ btnAddFile.addEventListener("click", (e) => {
 
 // SAVE THE LIST INTO THE DATABASE
 
-btnSaveCompetences.addEventListener("click",(e) => {
+btnSaveCompetences.addEventListener("click", (e) => {
     postListOfCompetence(competenceArray);
 })
 
@@ -51,19 +51,19 @@ if (sessionStorage.getItem("competences")) {
     parseGlossaireToTable(competenceArray);
 
     // ADD DATABALE LIBRARY SCRIPTS
-        loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", true);
-        loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", true);
-        loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", true);
-        loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", true);
-        loadJS("/assets/plugins/datatable/js/jszip.min.js", true);
-        loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", true);
-        loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", true);
-        loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", true);
-        loadJS("/assets/plugins/datatable/js/buttons.print.min.js", true);
-        loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", true);
-        loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", true);
-        loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", true);
-        loadJS("/assets/js/table-data.js", true);
+    loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", true);
+    loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", true);
+    loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", true);
+    loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", true);
+    loadJS("/assets/plugins/datatable/js/jszip.min.js", true);
+    loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", true);
+    loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", true);
+    loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", true);
+    loadJS("/assets/plugins/datatable/js/buttons.print.min.js", true);
+    loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", true);
+    loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", true);
+    loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", true);
+    loadJS("/assets/js/table-data.js", true);
 
 }
 
@@ -161,7 +161,10 @@ fileExcel.addEventListener("change", (e) => {
     $("#btn-add-file").addClass("btn-loading");
 
     // POPULATE GLOSSAIRE ARRAY
+
     parseExcelFile2(fileExcel);
+
+
 
 })
 
@@ -261,9 +264,9 @@ function parseGlossaireToTable(glossaire) {
 
             //console.log(competenceArray[competenceIndex].name, competenceArray[competenceIndex]["niveaux"][levelIndex])
 
-            
 
-            showModal("error", "Vous voulez supprimer cette compétence ?" , 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
+
+            showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
 
 
 
@@ -414,10 +417,16 @@ async function parseExcelFile2(inputElement) {
                 // INITIALIZE DATATABLE ON TABLE 
                 $("#tbs3").DataTable({
                     "pageLength": 4,
-                    "lengthMenu": [4,8,16,20,24,'All']
+                    "lengthMenu": [4, 8, 16, 20, 24, 'All']
                 });
 
-            
+
+            }).catch(error => {
+                // SHOW MODAL ERROR
+                showModal("error", "Mauvais format de fichier", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard.", "");
+
+                // //HIDE LOADER
+                $("#btn-add-file").removeClass("btn-loading");
             });
     };
     reader.readAsArrayBuffer(file);
@@ -476,7 +485,7 @@ async function postListOfCompetence() {
         success => {
 
             // SHOW SUCCESS MODEL        
-            showModal("success","La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+            showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
 
 
 
