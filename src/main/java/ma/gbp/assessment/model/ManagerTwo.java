@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Target;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -33,6 +34,7 @@ public class ManagerTwo extends Employee{
     private Long idManagerTwo;
 
     @OneToMany(mappedBy = "manager")
+    @JsonIgnore
     private List<ManagerOne> managersOnes;
 
     @ManyToMany(mappedBy = "listOfManagersTwo")
@@ -40,6 +42,7 @@ public class ManagerTwo extends Employee{
     private List<Assessment> listOfAssessments;
 
     @OneToMany(mappedBy = "evaluateurTwo")
+    @JsonIgnore
     private List<FicheEvaluation> fichesEvaluations;
 
     public ManagerTwo(String firstName, String lastName, String matricule) {

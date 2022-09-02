@@ -32,7 +32,7 @@
                         <h4 class="card-title col-sm-6">Ajouter des compétences</h4>
                         <div class="text-end col-sm-6 d-flex flex-row-reverse">
                             <a id="btn-competence-save" class="btn btn-primary mx-1" role="button"
-                                aria-pressed="true">Sauvegarder</a>
+                                aria-pressed="true">Enregistrer</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -45,7 +45,7 @@
                             <label for="input-glossaire-emploi" class="form-label">Glossaire des compétences
                             </label>
                             <div class="table-responsive">
-                                <table class="table border table-bordered my-3 " id="basic-datatable">
+                                <table class="table border table-bordered my-3 " id="tbs3">
                                     <thead id="glossaire-table-header">
                                         <tr>
                                             <th class="w-auto">Nom</th>
@@ -164,14 +164,17 @@
                         <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
                                 aria-hidden="true">&times;</span></button>
                         <i class="icon icon-close fs-70 text-danger lh-1 my-5 d-inline-block"></i>
-                        <h4 class="text-danger">Attention: vous êtes sûr de vouloir supprimer cette entrée!</h4>
-                        <p class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui", vous ne récupérerez pas ces
-                            informations.</p><button aria-label="Close" id="confirm-delete-niveau"
+                        <h4 id="modal-error-header" class="text-danger">Attention: vous êtes sûr de vouloir supprimer
+                            cette entrée!</h4>
+                        <p id="modal-error-content" class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui", vous
+                            ne récupérerez pas ces
+                            informations.</p><button aria-label="Close" id="confirm-delete-category"
                             class="btn btn-danger pd-x-25" data-bs-dismiss="modal">Oui</button>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- MODAL WARNING MESSAGE -->
         <div class="modal fade" id="warning">
@@ -180,12 +183,14 @@
                     <div class="modal-body text-center p-4 pb-5">
                         <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
                                 aria-hidden="true">&times;</span></button>
-                        <i class="fe fe-alert-circle fs-70 text-warning lh-1 my-5 d-inline-block"></i>
-                        <h4 class="text-warning">Avertissement: Vous ne pouvez pas ajouter une nouvelle liste de
-                            compétences sans sauvegarder la liste sur la table !</h4>
-                        <p class="mg-b-20 mg-x-20">Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.</p>
-                        <button aria-label="Close" id="confirm-save-niveau" class="btn btn-warning pd-x-25"
-                            data-bs-dismiss="modal">Enregistrer</button>
+                        <i class="icon icon-close fs-70 text-warning lh-1 my-5 d-inline-block"></i>
+                        <h4 id="modal-warning-header" class="text-warning">Attention: vous êtes sûr de vouloir supprimer
+                            cette entrée!</h4>
+                        <p id="modal-warning-content" class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui",
+                            vous
+                            ne récupérerez pas ces
+                            informations.</p><button aria-label="Close" id="" class="btn btn-warning pd-x-25"
+                            data-bs-dismiss="modal">Oui</button>
                     </div>
                 </div>
             </div>
@@ -199,9 +204,50 @@
                         <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
                                 aria-hidden="true">&times;</span></button>
                         <i class="icon icon-check fs-70 text-success lh-1 my-5 d-inline-block"></i>
-                        <h4 class="text-success tx-semibold">Complété!</h4>
-                        <p class="mg-b-20 mg-x-20">La liste des compétences a été sauvegardée avec succès. .</p><button
-                            aria-label="Close" class="btn btn-success pd-x-25" data-bs-dismiss="modal">Continue</button>
+                        <h4 id="modal-success-header" class="text-success tx-semibold">Complété!</h4>
+                        <p id="modal-success-content" class="mg-b-20 mg-x-20">La liste des compétences a été sauvegardée
+                            avec succès. .</p><button aria-label="Close" class="btn btn-success pd-x-25"
+                            data-bs-dismiss="modal">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL INFO MESSAGE -->
+        <div class="modal fade" id="info">
+            <div class="modal-dialog modal-dialog-centered text-center " role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="modal-body text-center p-4 pb-5">
+                        <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                                aria-hidden="true">&times;</span></button>
+                        <i class="icon icon-clock fs-70 text-primary lh-1 my-5 d-inline-block"></i>
+                        <h4 id="modal-info-header" class="text-primary tx-semibold">Complété!</h4>
+                        <p id="modal-info-content" class="mg-b-20 mg-x-20">La liste des compétences a été sauvegardée
+                            avec succès. .</p><button aria-label="Close" class="btn btn-primary pd-x-25"
+                            data-bs-dismiss="modal">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL CONFIRM -->
+        <div class="modal fade" id="confirm">
+            <div class="modal-dialog modal-dialog-centered text-center" role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="modal-body text-center p-4 pb-5">
+                        <button aria-label="Close" class="btn-close position-absolute" data-bs-dismiss="modal"><span
+                                aria-hidden="true">&times;</span></button>
+                        <i class="fe fe-alert-circle fs-70 text-warning lh-1 my-5 d-inline-block"></i>
+                        <h4 id="modal-confirm-header" class="text-warning">Attention: vous êtes sûr de vouloir supprimer
+                            cette entrée!</h4>
+                        <p id="modal-confirm-content" class="mg-b-20 mg-x-20">Après avoir appuyé sur le bouton "oui",
+                            vous
+                            ne récupérerez pas ces
+                            informations.</p>
+                        <button id="confirm-yes-btn" class="btn btn-warning pd-x-25"
+                            data-bs-dismiss="modal">Oui</button>
+                        <button aria-label="Close" class="btn btn-primary pd-x-25"
+                            data-bs-dismiss="modal">Fermer</button>
                     </div>
                 </div>
             </div>
@@ -249,7 +295,7 @@
         <script th:src="@{/assets/plugins/select2/select2.full.min.js}"></script>
 
         <!-- DATA TABLE JS-->
-        <!-- <script th:src="@{/assets/plugins/datatable/js/jquery.dataTables.min.js}"></script>
+        <script th:src="@{/assets/plugins/datatable/js/jquery.dataTables.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/js/dataTables.bootstrap5.js}"></script>
         <script th:src="@{/assets/plugins/datatable/js/dataTables.buttons.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/js/buttons.bootstrap5.min.js}"></script>
@@ -261,7 +307,7 @@
         <script th:src="@{/assets/plugins/datatable/js/buttons.colVis.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/dataTables.responsive.min.js}"></script>
         <script th:src="@{/assets/plugins/datatable/responsive.bootstrap5.min.js}"></script>
-        <script th:src="@{/assets/js/table-data.js}"></script> -->
+        <script th:src="@{/assets/js/table-data.js}"></script>
 
         <!-- SIDEBAR JS -->
         <script th:src="@{/assets/plugins/sidebar/sidebar.js}"></script>

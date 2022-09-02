@@ -45,7 +45,7 @@ public class AssessmentCategoryController {
             Category associatedCategory = categoryService.getCategoryByName(categories.get(i).getName());
 
             // SAVE THE ASSESSMENT-CATEGORY
-            AssessmentCategory savedAssessment = assessmentCategoryService.saveCategory(new AssessmentCategory(associatedCategory,categories.get(i).getCriterias()));
+            AssessmentCategory savedAssessment = assessmentCategoryService.saveCategory(new AssessmentCategory(categories.get(i).getCriterias()));
 
             savedAssessmentCategories.add(savedAssessment);
         }

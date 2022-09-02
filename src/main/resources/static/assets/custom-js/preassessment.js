@@ -125,26 +125,34 @@ $(function () {
 
     $("#btn-assessment-save").click(function (e) {
 
-        // //SAVE NEW CATEGORIES TO DB  then SAVE ASSESSMENT-CATEGORIES
-        let newCategories = [];
-        categoriesRequestBody.map((cat, index) => {
-            if (listOfNewCategories.includes(cat.name)) {
-                newCategories.push({
-                    "name": cat.name,
-                    "contentAssessment": cat.contentAssessment
-                })
-            }
-        })
-        postCategories(newCategories);
+        // CHECK IF THERE IS SOME UNCATEGORIED COLLABORATEUR
+        if (checkForUncategorizedCollaborateur()) {
+            showModal("warning", "Vous ne pouvez pas sauvegarder cette évaluation", "Certains employés ne sont pas catégorisés ; veuillez retourner à la phase de catégorisation et les inclure", "")
+        } else {
 
-        // SEND POST REQUEST TO SAVE ASSESSMENT AND ALL OTHER ENTITIES
+            // //SAVE NEW CATEGORIES TO DB  then SAVE ASSESSMENT-CATEGORIES
+            let newCategories = [];
+            categoriesRequestBody.map((cat, index) => {
+                if (listOfNewCategories.includes(cat.name)) {
+                    newCategories.push({
+                        "name": cat.name,
+                        "contentAssessment": cat.contentAssessment
+                    })
+                }
+            })
+            postCategories(newCategories);
+
+            // SEND POST REQUEST TO SAVE ASSESSMENT AND ALL OTHER ENTITIES
 
 
 
-        //SAVE ASSESSMENT TO DB
-        console.log(requestBodyAssessment);
+            //SAVE ASSESSMENT TO DB
+            console.log(requestBodyAssessment);
 
-        // IF IT IS SAVED, SHOW SUCCESS MODAL
+            // IF IT IS SAVED, SHOW SUCCESS MODAL
+        }
+
+
 
 
     })
@@ -597,13 +605,13 @@ $("#btn-categorize").click(function (e) {
         }
         requestBodyAssessment.managers1 = [...new Set(
             managers1
-                .map(element => element.matricule )
+                .map(element => element.matricule)
                 .map((mat) => {
                     return managers1.find(e => e.matricule === mat)
                 }))];
         requestBodyAssessment.managers2 = [...new Set(
             managers2
-                .map(element => element.matricule )
+                .map(element => element.matricule)
                 .map((mat) => {
                     return managers2.find(e => e.matricule === mat)
                 }))];
@@ -1316,7 +1324,7 @@ function populateWithClassificationColumns() {
                         <div class="form-group">
                             <label for="max-value" class="form-label">Max value : </label>
                             <input type="number" class="form-control" id="max-value">
-
+                            checkForUncategorizedCollaborateur
                             <div id="invalid-max" class="invalid-feedback">
                             
                             </div>
@@ -2116,7 +2124,7 @@ function generateTargetedEmplois() {
     listEmploi.map((e, i) => {
         arr.push({
             "intitule": (e.split("_")[0]).toLowerCase(),
-            "level": e.split("_")[1]
+            "level": parseInt(e.split("_")[1])
         })
     })
 
@@ -2156,4 +2164,19 @@ function getCriteriasByCategory(catName) {
             return categoriesRequestBody[i].criterias;
         }
     }
+}
+
+function checkForUncategorizedCollaborateur() {
+    let indexOfCategorie = getIndexOfColumn(categorizedPopulationArr[0], "CATEGORIE");
+
+    let isFound = false;
+    categorizedPopulationArr.map((row, index) => {
+        if (index != 0) {
+            if (row[indexOfCategorie] === "uncategorized") {
+                isFound = true;
+            }
+        }
+    });
+
+    return isFound;
 }

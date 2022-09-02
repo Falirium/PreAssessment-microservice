@@ -11,11 +11,14 @@ let competenceEditIndex = -1;
 
 let counter = 1;
 
+let competenceTable;
+
 
 const btnAddGlossaire = document.querySelector("#btn-add-glossaire");
-const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
+// const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
 const btnAddFile = document.querySelector("#btn-add-file");
 const btnSaveCompetences = document.querySelector("#btn-competence-save");
+
 
 btnAddFile.addEventListener("click", (e) => {
     let tbody = document.querySelector("tbody");
@@ -24,8 +27,8 @@ btnAddFile.addEventListener("click", (e) => {
         var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
         myModal.show();
     } else {
-        var myModal = new bootstrap.Modal(document.getElementById('warning'));
-        myModal.show();
+        showModal("warning", "Attention !", 'Vous ne pouvez pas ajouter une nouvelle liste de compétences sans sauvegarder la liste sur la table. Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.' )
+
     }
 })
 
@@ -133,18 +136,15 @@ btnAddGlossaire.addEventListener("click", (e) => {
     parseGlossaireToTable(competenceArray);
 })
 
-btnConfirmDeleteNiveau.addEventListener("click", (e) => {
+// btnConfirmDeleteNiveau.addEventListener("click", (e) => {
 
+//     // SET THE SESSIONSTORAGE
+//     sessionStorage.setItem("competences", JSON.stringify(competenceArray));
 
-    // SET THE SESSIONSTORAGE
-    sessionStorage.setItem("competences", JSON.stringify(competenceArray));
+//     // RELOAD THE PAGE
+//     location.reload();
 
-    // RELOAD THE PAGE
-    location.reload();
-
-
-
-})
+// })
 
 
 
@@ -154,6 +154,7 @@ fileExcel.addEventListener("change", (e) => {
     // HIDE MODAL
     // var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
     // myModal.hide();
+    //console.log("lkdqj");
     $("#input-modal").modal('hide');
 
     // ADD LOADER ON THE PAGE
@@ -161,11 +162,6 @@ fileExcel.addEventListener("change", (e) => {
 
     // POPULATE GLOSSAIRE ARRAY
     parseExcelFile2(fileExcel);
-
-
-
-
-
 
 })
 
@@ -265,9 +261,9 @@ function parseGlossaireToTable(glossaire) {
 
             //console.log(competenceArray[competenceIndex].name, competenceArray[competenceIndex]["niveaux"][levelIndex])
 
-            // A WINDOW IS SHOWN TO CONFIRM THE DELETE
-            var myModal = new bootstrap.Modal(document.getElementById('modaldemo5'));
-            myModal.show();
+            
+
+            showModal("error", "Vous voulez supprimer cette compétence ?" , 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
 
 
 
@@ -415,21 +411,13 @@ async function parseExcelFile2(inputElement) {
                 parseGlossaireToTable(competenceArray);
             })
             .then(function () {
+                // INITIALIZE DATATABLE ON TABLE 
+                $("#tbs3").DataTable({
+                    "pageLength": 4,
+                    "lengthMenu": [4,8,16,20,24,'All']
+                });
 
-                // ADD DATABALE LIBRARY SCRIPTS
-                loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", true);
-                loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", true);
-                loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", true);
-                loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", true);
-                loadJS("/assets/plugins/datatable/js/jszip.min.js", true);
-                loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", true);
-                loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", true);
-                loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", true);
-                loadJS("/assets/plugins/datatable/js/buttons.print.min.js", true);
-                loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", true);
-                loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", true);
-                loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", true);
-                loadJS("/assets/js/table-data.js", true);
+            
             });
     };
     reader.readAsArrayBuffer(file);
@@ -486,9 +474,9 @@ async function postListOfCompetence() {
         response => response.json() // if the response is a JSON object
     ).then(
         success => {
-            // SHOW SUCCESS MODEL
-            var myModal = new bootstrap.Modal(document.getElementById('success'));
-            myModal.show();
+
+            // SHOW SUCCESS MODEL        
+            showModal("success","La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
 
 
 
@@ -496,5 +484,57 @@ async function postListOfCompetence() {
     ).catch(
         error => console.log(error) // Handle the error response object
     );
+}
+
+function showModal(type, header, content, action) {
+
+    let modalId, modalHeaderId, modalContentId;
+
+
+    switch (type) {
+        case "success":
+            modalId = "success";
+            modalHeaderId = "#modal-success-header";
+            modalContentId = "#modal-success-content";
+            break;
+
+        case "warning":
+            modalId = "warning";
+            modalHeaderId = "#modal-warning-header";
+            modalContentId = "#modal-warning-content";
+            break;
+
+        case "info":
+            modalId = "info";
+            modalHeaderId = "#modal-info-header";
+            modalContentId = "#modal-info-content";
+            break;
+
+        case "error":
+            modalId = "modaldemo5";
+            modalHeaderId = "#modal-error-header";
+            modalContentId = "#modal-error-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+
+        case "confirm":
+            modalId = "confirm";
+            modalHeaderId = "#modal-confirm-header";
+            modalContentId = "#modal-confirm-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+    }
+
+
+    var myModal = new bootstrap.Modal(document.getElementById(modalId));
+
+    // SET HEADER
+    $(modalHeaderId).text(header);
+
+    // SET CONTENT
+    $(modalContentId).text(content)
+
+    myModal.show();
+
 }
 
