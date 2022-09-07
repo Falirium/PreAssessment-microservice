@@ -9,7 +9,6 @@ let sous_points = 0;
 let lastClickedIndexYes = -1;
 let lastClickedIndexNo = -1;
 
-
 // GET PARAMS FROM URL
 const params = new URLSearchParams(window.location.search);
 let urlParams = "?";

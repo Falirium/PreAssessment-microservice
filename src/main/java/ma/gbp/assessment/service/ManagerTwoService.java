@@ -37,5 +37,9 @@ public class ManagerTwoService {
     public ManagerTwo getManagerByFirstAndLastNameAndMatricule (String firstname, String lastname, String matricule) {
         return managerTwoRepository.findByFirstNameAndLastNameAndMatricule(firstname, lastname,matricule);
     }
+
+    public ManagerTwo getManagerTwoByMatricule(String matricule) {
+        return managerTwoRepository.findByMatricule(matricule);
+    }
     // TODO: GET LISTS OF : COLLABORATEURS, MANAGER N+2, FICHE EVALUATION
 }

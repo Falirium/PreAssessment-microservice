@@ -38,5 +38,11 @@ public class ManagerOneService {
         return managerOneRepository.findByFirstNameAndLastNameAndMatricule(firstname, lastname, matricule);
     }
 
+
+    public ManagerOne getManagerOneByMatricule(String matricule) {
+        return managerOneRepository.findByMatricule(matricule);
+    }
+    
+
     // TODO: GET LISTS OF : COLLABORATEURS, MANAGER N+2, FICHE EVALUATION
 }

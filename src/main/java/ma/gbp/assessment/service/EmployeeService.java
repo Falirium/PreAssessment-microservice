@@ -39,6 +39,8 @@ public class EmployeeService {
         return managerOneRepository.findById(id).get();
     }
 
+    
+
 
     //ManagerTwo
     public ManagerTwo saveManagerTwo(ManagerTwo managerTwo) {
@@ -52,6 +54,8 @@ public class EmployeeService {
     public ManagerTwo getManagerTwo(Long id) {
         return managerTwoRepository.findById(id).get();
     }
+
+    
 
 
     //Collaborateur

@@ -140,7 +140,14 @@ $(function () {
                     })
                 }
             })
-            postCategories(newCategories);
+            postCategories(newCategories).then((catArr) => {
+
+                console.log("POST ASSESSMENT");
+                postAssessment(requestBodyAssessment);
+
+                // SHOW SUCCESS MODAL
+                showModal("success", "Assessment enregistré ", "L'évaluation a été enregistrée avec succès. L'étape suivante consiste à lancer l'assessment. ", "");
+            });
 
             // SEND POST REQUEST TO SAVE ASSESSMENT AND ALL OTHER ENTITIES
 
@@ -534,13 +541,14 @@ inputFileUploader.addEventListener('change', (e) => {
 
     }).catch((error) => {
         console.log(error);
-        
+
         // SHOW ERROR MODAL
         showModal("error", "Mauvais format de fichier", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard.", "");
     });
 
     postExcelFile(file);
 })
+
 $("#btn-suivant-category-section").click(function () {
     console.log("CLIKKKK");
     $(".emploi-cible-list").html("");
@@ -810,7 +818,7 @@ async function postExcelFile(file) {
 async function postCategories(jsonArr) {
     let url = "http://localhost:8080/preassessment/api/v1/category/"
 
-    fetch(url, {
+    return fetch(url, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -822,6 +830,8 @@ async function postCategories(jsonArr) {
     ).then(
         success => {
             console.log(success);
+
+            return success;
 
             // POST ASSESSMENT-CATEGORY ENTITIES
             //postAssessmenCategories(categoriesRequestBody);
@@ -984,10 +994,10 @@ function parseExcelPopulation(excelFile) {
                         while (worksheet.getRow(index).values.length !== 0) {
                             let rowValues = worksheet.getRow(index).values;
                             let rowArr = [];
-    
+
                             rowValues.forEach((cell, index) => {
                                 //console.log(cell, Object.prototype.toString.call(cell))
-    
+
                                 // FILTER OUT THE FOLLOWING TYPES : STRING, NULBER, DATE, JSON OBJECT
                                 if (Object.prototype.toString.call(cell) === '[object Date]') {
                                     //console.log(index, cell, typeof(cell));
@@ -998,48 +1008,48 @@ function parseExcelPopulation(excelFile) {
                                 } else {
                                     rowArr.push(cell);
                                 }
-    
+
                             })
-    
+
                             excelData.push(rowArr);
-    
+
                             index++;
                         }
-    
+
                         // GET EMPLOI COLUMN INDEX
                         let indexOfEmploiCol = excelData[0].indexOf("EMPLOIS_CIBLES");
                         //let indexOfSenioriteEmploi = excelData[0].indexOf("NIVEAU_SENIORITÉ");
                         let emploiCol = worksheet.getColumn(indexOfEmploiCol + 1).values;
                         //let senioriteCol = worksheet.getColumn(indexOfSenioriteEmploi + 1).values;
-    
+
                         listOfEmplois = emploiCol.map((e, i) => {
                             if (typeof (e) === 'undefined' || i === 0) {
                                 return null;
                             } else {
                                 return e;
                             }
-    
+
                         })
-    
+
                         listOfEmplois = [...new Set(listOfEmplois)].filter((e) => {
                             if (typeof (e) === 'undefined' || e === "EMPLOIS_CIBLES") {
                                 return false;
                             } else {
-    
+
                                 return true;
                             }
                         });
-    
-    
+
+
                         // START POPULATE THE 
-    
-    
+
+
                     });
                 } catch (error) {
                     console.error(error);
                     throw error;
                 }
-                
+
 
                 return [excelData, listOfEmplois];
 
@@ -1337,7 +1347,7 @@ function populateWithClassificationColumns() {
                         <div class="form-group">
                             <label for="max-value" class="form-label">Max value : </label>
                             <input type="number" class="form-control" id="max-value">
-                            checkForUncategorizedCollaborateur
+                            
                             <div id="invalid-max" class="invalid-feedback">
                             
                             </div>
