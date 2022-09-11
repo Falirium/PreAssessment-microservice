@@ -24,6 +24,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 
 import lombok.Data;
@@ -136,6 +137,7 @@ public class Assessment {
 
 
     @OneToMany(mappedBy = "associatedAssessment")
+    @JsonIgnore
     private List<FicheEvaluation> fichesEvaluations;
 
 

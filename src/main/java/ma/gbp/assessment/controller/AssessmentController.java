@@ -159,7 +159,10 @@ public class AssessmentController {
                                                         ficheEvaluation.getSousPoints(),
                                                         ficheEvaluation.getSurPoints(),
                                                         ficheEvaluation.getCreatedAt(),
-                                                        ficheEvaluation.getDateEvaluation()));
+                                                        ficheEvaluation.getDateEvaluation(),
+                                                        "CREATED",
+                                                        ficheEvaluation.getFicheContent())
+                                                        );
 
                         // SET RELATIONSHIPS
                         ManagerOne associatedManagerOne = managerOneService.getManagerByFirstAndLastName(
@@ -179,6 +182,8 @@ public class AssessmentController {
                         savedFicheEvaluation.setEvaluateurOne(associatedManagerOne);
                         savedFicheEvaluation.setEvaluateurTwo(associatedManagerTwo);
                         savedFicheEvaluation.setEmploi(associatedNiveau);
+
+                        savedFicheEvaluation.setAssociatedAssessment(newAssessment);
 
                         savedFicheEvaluation = ficheEvaluationService.saveFicheEvaluation(savedFicheEvaluation);
 

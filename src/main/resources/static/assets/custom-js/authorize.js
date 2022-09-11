@@ -1,7 +1,11 @@
 // CHECK FOR MANAGER ENTITY
-if (sessionStorage.getItem("manager") === null) {
-    currentUrl = window.location.href;
-    window.location.replace(extractDomain(currentUrl));
+if (sessionStorage.getItem("user") === null) {
+    
+
+        currentUrl = window.location.href;
+        window.location.replace(extractDomain(currentUrl));
+    
+   
 
 }
 

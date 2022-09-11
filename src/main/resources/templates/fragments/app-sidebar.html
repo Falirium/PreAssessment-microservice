@@ -1,7 +1,7 @@
 <div class="app-sidebar__overlay" data-bs-toggle="sidebar"></div>
 <div class="app-sidebar">
     <div class="side-header">
-        <a class="header-brand1" href="index.html">
+        <a class="header-brand1" >
             <img th:src="@{/assets/images/brand/logo.png}" class="header-brand-img desktop-logo" alt="logo">
             <img th:src="@{/assets/images/brand/logo-1.png}" class="header-brand-img toggle-logo" alt="logo">
             <img th:src="@{/assets/images/brand/logo-2.png}" class="header-brand-img light-logo" alt="logo">
@@ -19,7 +19,7 @@
                 <h3>Principal</h3>
             </li>
             <li class="slide">
-                <a class="side-menu__item has-link" data-bs-toggle="slide" th:href="@{/}"><i
+                <a class="side-menu__item has-link" data-bs-toggle="slide" ><i
                         class="side-menu__icon fe fe-home"></i><span class="side-menu__label">Dashboard</span></a>
             </li>
             <li class="sub-category">
@@ -27,15 +27,15 @@
             </li>
 
             <li class="slide">
-                <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)"><i
+                <a class="side-menu__item" data-bs-toggle="slide" ><i
                         class="side-menu__icon fe fe-slack"></i><span class="side-menu__label">Assessment</span><i
                         class="angle fe fe-chevron-right"></i></a>
                 <ul class="slide-menu">
-                    <li class="side-menu-label1"><a href="javascript:void(0)">Assessment</a></li>
-                    <li><a href="javascript:void(0)" class="slide-item"> Liste des assessments</a></li>
-                    <li><a href="javascript:void(0)" class="slide-item"> Catégorie</a></li>
-                    <li><a href="javascript:void(0)" class="slide-item"> Manager</a></li>
-                    <li><a href="javascript:void(0)" class="slide-item"> DRH</a></li>
+                    <li class="side-menu-label1"><a >Assessment</a></li>
+                    <li><a th:href="@{/assessment/list}" class="slide-item"> Liste des assessments</a></li>
+                    <li><a th:href="@{/categorie/list}" class="slide-item"> Catégorie</a></li>
+                    <li><a th:href="@{/managers/list}" class="slide-item"> Managers</a></li>
+                    <li><a th:href="@{/drh}" class="slide-item"> DRH</a></li>
                 </ul>
             </li>
             <li class="slide">
@@ -43,9 +43,9 @@
                         class="side-menu__icon fe fe-file-text"></i><span class="side-menu__label">Emploi</span><i
                         class="angle fe fe-chevron-right"></i></a>
                 <ul class="slide-menu">
-                    <li class="side-menu-label1"><a href="javascript:void(0)">Emploi</a></li>
-                    <li><a href="javascript:void(0)" class="slide-item"> Liste des emplois</a></li>
-                    <li><a href="javascript:void(0)" class="slide-item"> Compétences</a></li>
+                    <li class="side-menu-label1"><a >Emploi</a></li>
+                    <li><a th:href="@{/emploi/list}" class="slide-item"> Liste des emplois</a></li>
+                    <li><a th:href="@{/competence/list}" class="slide-item"> Compétences</a></li>
                     
                 </ul>
             </li>

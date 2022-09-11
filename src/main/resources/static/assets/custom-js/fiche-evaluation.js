@@ -1,3 +1,29 @@
+// CHECK IF FICHE EVALUATION IS AVAILABLE
+let ficheEvaluation;
+let manager;
+
+// CHECK IF FICHEEVALUATION IS AVAILABLE
+if (sessionStorage.getItem("ficheEvaluation") === null) {
+
+    // TODO:REDIRECT TO PAGE LIST PAGE
+
+    
+} else {
+
+    ficheEvaluation = JSON.parse(sessionStorage.getItem("ficheEvaluation"));
+    manager = JSON.parse(sessionStorage.getItem("manager"));
+
+    // SET FICHE EVALUATION INFOS
+    $("#emploi-cible-text").text(ficheEvaluation.emploi.intitule); 
+    $("#date-eva-text").text(ficheEvaluation.emploi.dateEvaluation);
+    if(manager.type === "1") {
+        $("#mat-eva-text").text(ficheEvaluation.evaluateurOne.matricule); 
+    } else if (manager.type === "2") {
+        $("#mat-eva-text").text(ficheEvaluation.evaluateurTwo.matricule); 
+    }
+    $("#mat-collaborateur-text").text(ficheEvaluation.collaborateur.matricule); 
+    $("#date-eva-text").text(ficheEvaluation.dateEvaluation.split("T")[0]); 
+}
 
 // SCORE VARIABLES
 let totalPoints = 0;
@@ -5,15 +31,6 @@ let elementsNumbers = 0;
 let score = 0;
 let sur_points = 0;
 let sous_points = 0;
-
-// SET HEADER INFORMATIONS
-var today = new Date();
-var dd = String(today.getDate()).padStart(2, '0');
-var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-var yyyy = today.getFullYear();
-
-today = mm + '/' + dd + '/' + yyyy;
-$("#date-eva-text").text(today);
 
 let lastClickedIndexYes = -1;
 let lastClickedIndexNo = -1;
@@ -27,8 +44,7 @@ for (const param of params) {
 }
 console.log(urlParams);
 
-
-
+// POPULATE FIHCE EVALUATION
 getFicheEmploiPreview(urlParams);
 
 
@@ -37,6 +53,103 @@ let radioBtnCompteur = 0;
 let compBtnCompteur = 0;
 let compSfBtnCompteur = 0;
 let compSeBtnCompteur = 0;
+
+
+// VALIDATE BTN 
+$("#btn-fiche-validate").click(function(e) {
+
+    // UPDATE THE SCORES
+    ficheEvaluation.score = score;
+    ficheEvaluation.sousPoints = sous_points;
+    ficheEvaluation.surPoints = sur_points;
+
+    ficheEvaluation.status = "ÉVALUÉ";
+
+    // SAVE THE RESULT TO THE DB
+    updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
+        console.log(result);
+
+        // SHOW SUCCESS MODAL
+
+
+        // REDIRECT TO EVALUATION LIST PAGE
+        
+
+    })
+
+
+})
+
+async function updateFicheEvaluation(id, jsonFiche) {
+    let url = "http://localhost:8080/preassessment/api/v1/ficheEvaluation/update/" + id;
+
+    return fetch(url, {
+        header : 'PUT',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonFiche)
+
+    }).then(
+        response => response.json()
+    ).then(
+        success => console.log(success)
+    ).catch(
+        error => console.log(error)
+    )
+}
+
+function showModal(type, header, content, action) {
+
+    let modalId, modalHeaderId, modalContentId;
+
+
+    switch (type) {
+        case "success":
+            modalId = "success";
+            modalHeaderId = "#modal-success-header";
+            modalContentId = "#modal-success-content";
+            break;
+
+        case "warning":
+            modalId = "warning";
+            modalHeaderId = "#modal-warning-header";
+            modalContentId = "#modal-warning-content";
+            break;
+
+        case "info":
+            modalId = "info";
+            modalHeaderId = "#modal-info-header";
+            modalContentId = "#modal-info-content";
+            break;
+
+        case "error":
+            modalId = "modaldemo5";
+            modalHeaderId = "#modal-error-header";
+            modalContentId = "#modal-error-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+
+        case "confirm":
+            modalId = "confirm";
+            modalHeaderId = "#modal-confirm-header";
+            modalContentId = "#modal-confirm-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+    }
+
+
+    var myModal = new bootstrap.Modal(document.getElementById(modalId));
+
+    // SET HEADER
+    $(modalHeaderId).text(header);
+
+    // SET CONTENT
+    $(modalContentId).text(content)
+
+    myModal.show();
+
+}
 
 function populateResTable(json) {
     console.log(json);
@@ -2466,7 +2579,7 @@ async function getFicheEmploiPreview(params) {
         elementsNumbers = countsInputs(success);
         return success;
     }).then((json) => {
-        console.log(json)
+        console.log(json);
         populateResTable(json);
     }).catch(error => console.log(error))
 }
@@ -2528,3 +2641,4 @@ function countsInputs(json) {
 
     return compteur;
 }
+

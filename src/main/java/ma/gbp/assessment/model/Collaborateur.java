@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Target;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -40,6 +41,7 @@ public class Collaborateur extends Employee{
     private List<Assessment> listOfAssessments;
 
     @OneToMany(mappedBy = "collaborateur")
+    @JsonIgnore
     private List<FicheEvaluation> fichesEvaluations;
 
     public Collaborateur(String firstName, String lastName, String matricule, String topDirection, String direction,

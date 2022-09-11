@@ -18,6 +18,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 
 import lombok.AllArgsConstructor;
@@ -41,6 +42,7 @@ public class FicheEvaluation {
     private float score;
     private float sousPoints;
     private float surPoints;
+    private String status;
 
     private Date createdAt;
     private Date dateEvaluation;
@@ -98,6 +100,16 @@ public class FicheEvaluation {
         this.surPoints = surPoints;
         this.createdAt = createdAt;
         this.dateEvaluation = dateEvaluation;
+    }
+
+    public FicheEvaluation(float score, float sousPoints, float surPoints, Date createdAt, Date dateEvaluation, String status, List<String> ficheContent) {
+        this.score = score;
+        this.sousPoints = sousPoints;
+        this.surPoints = surPoints;
+        this.createdAt = createdAt;
+        this.dateEvaluation = dateEvaluation;
+        this.status = status;
+        this.ficheContent = ficheContent;
     }
 
     

@@ -23,6 +23,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
@@ -81,6 +82,7 @@ public class Niveau {
 
 
     @OneToMany(mappedBy="emploi")
+    @JsonIgnore
     private List<FicheEvaluation> associatedFichesEvaluations;
 
     public Niveau(String intitule, String filiere, String sousFiliere, Date dateMaj, String vocation, int level,

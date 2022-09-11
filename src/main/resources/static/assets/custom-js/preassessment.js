@@ -2133,7 +2133,7 @@ function generateTargetedEmploi(arr) {
     let indexOfEmploi = getIndexOfColumn(categorizedPopulationArr[0], "EMPLOIS_CIBLES");
 
     let emploiJson = {
-        "intitule": arr[indexOfEmploi].split("_")[0],
+        "intitule": arr[indexOfEmploi].split("_")[0].toLowerCase(),
         "level": arr[indexOfEmploi].split("_")[1]
     }
 

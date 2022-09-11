@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ma.gbp.assessment.exception.CustomErrorException;
 import ma.gbp.assessment.message.FicheEvaluationPreview;
 import ma.gbp.assessment.message.FullCompetenceRequis;
 import ma.gbp.assessment.model.Assessment;
 import ma.gbp.assessment.model.Collaborateur;
 import ma.gbp.assessment.model.Competence;
 import ma.gbp.assessment.model.CompetenceRe;
+import ma.gbp.assessment.model.Employee;
 import ma.gbp.assessment.model.FicheEvaluation;
 import ma.gbp.assessment.model.ManagerOne;
 import ma.gbp.assessment.model.ManagerTwo;
@@ -238,4 +240,38 @@ public class FicheEvaluationController {
     return ResponseEntity.status(HttpStatus.OK).body(fe);
 }
     
+    @GetMapping(path ="/{matricule}")
+    public ResponseEntity<List<FicheEvaluation>> getFichesByManager(@PathVariable String matricule) {
+
+        List<FicheEvaluation> fichesEvaluations = new ArrayList<FicheEvaluation>();
+        ManagerOne manager1 = managerOneService.getManagerOneByMatricule(matricule);
+        ManagerTwo manager2 = managerTwoService.getManagerTwoByMatricule(matricule);
+        // GET THE MANAGER  = 
+        if (manager1 == null && manager2 == null) {
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Manager not found");
+        } else if (manager1 != null) {
+            // TODO: Better to use Streams and filters
+            fichesEvaluations = manager1.getFichesEvaluations();
+
+        } else if (manager2 != null) {
+
+            fichesEvaluations = manager2.getFichesEvaluations();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(fichesEvaluations);
+    }
+
+    @PutMapping(path = "/update/{id}")
+    public ResponseEntity<FicheEvaluation> updateFicheEvaluation(@PathVariable Long id, @RequestBody FicheEvaluation updatedFiche) {
+        FicheEvaluation fe = ficheEvaluationService.getFicheEvaluationById(id);
+        
+        fe.setScore(updatedFiche.getScore());
+        fe.setSousPoints(updatedFiche.getSousPoints());
+        fe.setSurPoints(updatedFiche.getSurPoints());
+        fe.setStatus(updatedFiche.getStatus());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(ficheEvaluationService.saveFicheEvaluation(fe));
+
+
+    }
 }

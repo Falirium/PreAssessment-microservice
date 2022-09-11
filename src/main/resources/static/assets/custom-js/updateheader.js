@@ -1,18 +1,20 @@
 // GET MANAGER OR CONSULTANT INFO
+let user = sessionStorage.getItem("user");
 
-if (sessionStorage.getItem("manager") != null) {
-    let manager = JSON.parse(sessionStorage.getItem("manager"));
+if (user === "admin") {
+    // IS ADMIN
+    $("#profile-name").text("ADMIN");
+    $("#profile-role").text("Consultant BCP");
+
+} else {
+    // IS MANAGER
+    let manager = JSON.parse(user);
     let managerFullName = manager.data.firstName + " " + manager.data.lastName;
 
     $("#profile-name").text(managerFullName);
     $("#profile-role").text("Manager");
-} else if (sessionStorage.getItem("consultant") != null) {
-    let consultant = JSON.parse(sessionStorage.getItem("consultant"));
-    let consultantFullName = consultant.data.firstName + " " + consultant.data.lastName;
-
-    $("#profile-name").text(managerFullName);
-    $("#profile-role").text("Consultant BCP");
 }
+
 
 //ADD EVENT LISTENER ON SIGNOUT
 $("#signout").click(function() {

@@ -12,23 +12,61 @@ $("#pwd-input").change(function (e) {
 
 $("#cnx-btn").click(function () {
     //console.log(typeof(authenticate(matricule)), typeof(authenticate(matricule).then));
-    authenticate(matricule).then((manager) => {
-        console.log(manager, password);
-        console.log(manager.type,( password === "manager2"));
-        if (manager.type === "1" && password === "manager1") {
-            showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
-        } else if (manager.type == "2" && password === "manager2") {
-            showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
-        } else {
-            showModal("error", "échec", "Le mot de passe est incorrect")
-        }
+    if (validateMatriculeConsultant(matricule, password)) {
+
+        // SAVE MANAGER MATRICULE
+        sessionStorage.setItem("manager", "admin");
+
+        // REDIRECT TO HOMEPAGE
+        let currentUrl = window.location.href;
+        window.location.replace(extractDomain(currentUrl) + "assessment/list");
         
-    });
+
+    } else {
+        authenticate(matricule).then((manager) => {
+            console.log(manager, password);
+            console.log(manager.type, (password === "manager2"));
+            if (manager.type === "1" && password === "manager1") {
+                showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
+
+                // SAVE MANAGER MATRICULE
+                sessionStorage.setItem("manager", JSON.stringify(manager));
+
+                // REDIRECT TO HOMEPAGE
+                let currentUrl = window.location.href;
+                window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+                console.log("redirected");
+
+
+            } else if (manager.type == "2" && password === "manager2") {
+                showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
+
+                // SAVE MANAGER MATRICULE
+                sessionStorage.setItem("manager", JSON.stringify(manager));
+
+                // REDIRECT TO HOMEPAGE
+                let currentUrl = window.location.href;
+                window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+
+                console.log("redirected");
+
+            } else {
+                showModal("error", "échec", "Le mot de passe est incorrect")
+            }
+
+        });
+    }
+
 })
+
+const extractDomain = (url) => {
+    const elems = url.split("/");
+    return elems[0] + "//" + elems[2] + "/";
+}
 
 async function authenticate(mat) {
 
-    
+
 
     // GET THE MANAGER
     return validateMatriculeManagerOne(mat).then((res) => {
@@ -56,10 +94,10 @@ async function authenticate(mat) {
             })
         } else {
             manager.type = "1";
-            manager.data = res;  
+            manager.data = res;
         }
         return manager;
-    
+
 
     }).catch((error) => {
         let errorMsg = error;
@@ -108,6 +146,14 @@ async function validateMatriculeManagerTwo(matricule) {
         })
 }
 
+function validateMatriculeConsultant(matricule, pwd) {
+
+    if (matricule === "admin" && pwd === "admin123") {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 function showModal(type, header, content, action) {
