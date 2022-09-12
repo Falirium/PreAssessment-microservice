@@ -15,7 +15,7 @@ $("#cnx-btn").click(function () {
     if (validateMatriculeConsultant(matricule, password)) {
 
         // SAVE MANAGER MATRICULE
-        sessionStorage.setItem("manager", "admin");
+        sessionStorage.setItem("user", "admin");
 
         // REDIRECT TO HOMEPAGE
         let currentUrl = window.location.href;
@@ -30,7 +30,7 @@ $("#cnx-btn").click(function () {
                 showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
 
                 // SAVE MANAGER MATRICULE
-                sessionStorage.setItem("manager", JSON.stringify(manager));
+                sessionStorage.setItem("user", JSON.stringify(manager));
 
                 // REDIRECT TO HOMEPAGE
                 let currentUrl = window.location.href;
@@ -42,7 +42,7 @@ $("#cnx-btn").click(function () {
                 showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
 
                 // SAVE MANAGER MATRICULE
-                sessionStorage.setItem("manager", JSON.stringify(manager));
+                sessionStorage.setItem("user", JSON.stringify(manager));
 
                 // REDIRECT TO HOMEPAGE
                 let currentUrl = window.location.href;

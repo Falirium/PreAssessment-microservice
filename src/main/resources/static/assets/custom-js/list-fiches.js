@@ -23,7 +23,7 @@ let currentUrl = window.location.href;
 let manager = JSON.parse(sessionStorage.getItem("manager"));
 let managerMatricule =  manager.data.matricule;;
 
-let authorizedCol = ["id", "emploi", "niveau", "associatedAssessment", "status"];
+let authorizedCol = ["id", "collaborateur","emploi","niveau", "associatedAssessment", "status"];
 
 let ficheDatatable;
 
@@ -213,9 +213,19 @@ function getFichesColumnFromJson(json, authorizedCol) {
 
             console.log(value);
 
-            colArr.push({
-                "title": value
-            });
+            if (value === "collaborateur") {
+                colArr.push({
+                    "title": "Matriculle"
+                }, {
+                    "title": "Collaborateur"
+                });
+            } else {
+                colArr.push({
+                    "title": value
+                });
+            }
+
+            
 
 
         } else {
@@ -243,6 +253,8 @@ function getFichesDataFromJson(arrJson) {
         let arr = [];
 
         arr.push(e.id);
+        arr.pudh(e.collaborateur.matricule);
+        arr.pudh(e.collaborateur.firstName + " " + e.collaborateur.lastName);
         arr.push(e.emploi.intitule);
         arr.push(e.emploi.level);
         arr.push(e.associatedAssessment.name);
