@@ -122,7 +122,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
         competenceArray.push(competenceGlassaireJson);
 
     }
-
+    
 
     // INITIALIZE THE INPUTS
     nomCompGlossaire.value = "";

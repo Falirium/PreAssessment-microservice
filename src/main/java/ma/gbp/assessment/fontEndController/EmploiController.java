@@ -23,4 +23,9 @@ public class EmploiController {
     public String listOfEmplois() {
         return "list-emplois";
     }
+
+    @GetMapping(path = "competence/list")
+    public String listOfCompetences() {
+        return "list-competences";
+    }
 }

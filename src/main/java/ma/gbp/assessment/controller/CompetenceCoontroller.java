@@ -23,7 +23,7 @@ public class CompetenceCoontroller {
     @Autowired
     private CompetenceService competenceService;
 
-    @GetMapping(value = "/competences")
+    @GetMapping(value = "/")
     public ResponseEntity<List<Competence>> getAllCompetences() {
         return ResponseEntity.status(HttpStatus.OK).body(competenceService.getAllCompetence());
     }
