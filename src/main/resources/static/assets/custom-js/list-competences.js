@@ -19,16 +19,21 @@ getListOfCompetences().then((data) => {
 
     listCompetences = data;
 
-    // FILL THE TABLE WITH DATA
-    parseGlossaireToTable(listCompetences);
+    // // FILL THE TABLE WITH DATA
+    // parseGlossaireToTable(listCompetences);
+
+    let dataSet = getCompetencesDataFromJson(listCompetences);
 
     // INITILIZE TABLE TO DATATABLE
     competenceDatatable = $("#tbs3").DataTable({
-        "pageLength": 4,
-        "lengthMenu": [4, 8, 16, 20, 24, 'All']
+        data: dataSet,
+        pageLength: 4,
+        lengthMenu: [4, 8, 16, 20, 24, 'All']
     });
 
-    // ADD EVENTLISTENERS TO VIEW BTN
+    // ADD EVENTLISTENERS TO TABLE BTNS : EDIT DELETE
+
+    addEventListenersToTableBtns();
 
     // $(".view-btn").click(function (e) {
 
@@ -67,17 +72,41 @@ btnAddGlossaire.addEventListener("click", (e) => {
 
 
     listCompetences[competenceEditIndex] = {
-        "id" : listCompetences[competenceEditIndex].id,
+        "id": listCompetences[competenceEditIndex].id,
         "name": nomCompGlossaire.value,
         "definition": listCompetences[competenceEditIndex]["definition"],
         "niveaux": []
     }
     defCompGlaossaire.forEach((def, index) => {
-        console.log(niveauCompGlassaire[index].value, def.value, index)
-        listCompetences[competenceEditIndex]["niveaux"].push({
-            "level": niveauCompGlassaire[index].value,
-            "definition": def.value
-        })
+        console.log(niveauCompGlassaire[index].value, def.value, index);
+        switch (niveauCompGlassaire[index].value) {
+            case "E":
+                listCompetences[competenceEditIndex]["niveaux"].push({
+                    "level": "Elémentaire",
+                    "definition": def.value
+                });
+                break;
+            case "M":
+                listCompetences[competenceEditIndex]["niveaux"].push({
+                    "level": "Maitrise",
+                    "definition": def.value
+                });
+                break;
+            case "A":
+                listCompetences[competenceEditIndex]["niveaux"].push({
+                    "level": "Avancé",
+                    "definition": def.value
+                });
+                break;
+            case "X":
+                listCompetences[competenceEditIndex]["niveaux"].push({
+                    "level": "Expert",
+                    "definition": def.value
+                });
+                break;
+
+        }
+        
     })
 
     console.log(competenceEditIndex, listCompetences);
@@ -98,14 +127,23 @@ btnAddGlossaire.addEventListener("click", (e) => {
 
     // console.log(listCompetences);
     // FILL THE TABLE WITH NEW DATA
-    parseGlossaireToTable(listCompetences);
+    // parseGlossaireToTable(listCompetences);
 
     // RE-INITIALIZE THE DATATABLE
-    competenceDatatable.destroy();
-    competenceDatatable = $("#tbs3").DataTable({
-        "pageLength": 4,
-        "lengthMenu": [4, 8, 16, 20, 24, 'All']
-    });
+    // competenceDatatable.destroy();
+    // competenceDatatable = $("#tbs3").DataTable({
+    //     "pageLength": 4,
+    //     "lengthMenu": [4, 8, 16, 20, 24, 'All']
+    // });
+
+    let dataSet = getCompetencesDataFromJson(listCompetences);
+
+    competenceDatatable.clear();
+    competenceDatatable.rows.add(dataSet);
+    competenceDatatable.draw();
+
+    // ADD EVENTLISTENERS TO TABLE BTNS : EDIT DELETE
+    addEventListenersToTableBtns();
 
 })
 
@@ -189,27 +227,39 @@ function getCompetenceColumnFromJson(json, authorizedCol) {
 function getCompetencesDataFromJson(arrJson) {
     let finalArr = [];
     arrJson.map((e, i) => {
-        console.log(i);
-        let arr = [];
-
-        arr.push(e.id);
-        arr.push(e.name);
-        arr.push(e.definition);
-        arr.push(niveaux2Array(e.niveaux));
-        arr.push(defNiveaux2Array(e.niveaux));
-
-        // ACTION COL
-        arr.push(`
-            <div class="g-1">
-                <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
-                    data-bs-original-title="Consulter"><span
-                        class="fe fe-edit fs-14"></span></a>
-            </div>
-            `)
+        //console.log(i);
 
 
 
-        finalArr.push(arr);
+        e.niveaux.map((niveau, index) => {
+
+            let arr = [];
+
+            arr.push(e.id);
+            arr.push(e.name);
+            arr.push(niveau.level);
+            arr.push(niveau.definition);
+
+            // ACTION COL
+            arr.push(`
+            <div class="g-2">
+                <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
+                    data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
+                <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
+                    data-bs-original-title="Delete"><span
+                        class="fe fe-trash-2 fs-14"></span></a>
+            </div> 
+            `);
+
+            finalArr.push(arr);
+        })
+
+
+
+
+
+
+
     })
 
     return finalArr;
@@ -374,7 +424,7 @@ function parseGlossaireToTable(glossaire) {
 
             competenceEditIndex = competenceIndex;
 
-            
+
 
 
             // parseGlossaireToTable(listCompetences, niveau);
@@ -436,5 +486,84 @@ function showModal(type, header, content, action) {
 
     myModal.show();
 
+}
+
+function addEventListenersToTableBtns() {
+    let tableBody = document.querySelector("#glossaire-table-body");
+
+
+    // Click event listeners 
+    let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
+    let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
+
+    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
+        deleteBtn.addEventListener("click", (e) => {
+
+            // WHEN THE SPAN ELEMENT IS FIRED
+
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
+
+
+
+            let competenceIndex = Math.floor(glossaireIndex / 4);
+            let levelIndex = glossaireIndex % 4;
+            listCompetences.splice(glossaireIndex, 1);
+
+            //console.log(listCompetences[competenceIndex].name, listCompetences[competenceIndex]["niveaux"][levelIndex])
+
+
+
+            showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
+
+
+
+
+        })
+    });
+
+    Array.from(allEditCatBtns).forEach((editBtn) => {
+        editBtn.addEventListener("click", (e) => {
+
+            // WHEN THE SPAN ELEMENT IS FIRED
+
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let glossaireIndex = [...allEditCatBtns].indexOf(aElement);
+
+
+
+            let competenceIndex = Math.floor(glossaireIndex / 4);
+            let levelIndex = glossaireIndex % 4;
+            console.log(competenceIndex);
+
+            $("#input-nom-competence-glossaire").val(listCompetences[competenceIndex].name);
+
+            $("#input-def-competence-e").val(listCompetences[competenceIndex]["niveaux"][0]["definition"]);
+            $("#input-def-competence-m").val(listCompetences[competenceIndex]["niveaux"][1]["definition"]);
+            $("#input-def-competence-a").val(listCompetences[competenceIndex]["niveaux"][2]["definition"]);
+            $("#input-def-competence-x").val(listCompetences[competenceIndex]["niveaux"][3]["definition"]);
+
+
+            competenceEditIndex = competenceIndex;
+
+
+
+
+            // parseGlossaireToTable(listCompetences, niveau);
+
+        })
+    })
 }
 
