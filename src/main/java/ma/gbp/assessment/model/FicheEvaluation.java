@@ -51,6 +51,12 @@ public class FicheEvaluation {
     @Column(columnDefinition = "text[]", length = 2048)
     private List<String> ficheContent;
 
+    @Column(columnDefinition = "TEXT" ,length = 2048)
+    private String re_manager1;
+
+    @Column(columnDefinition = "TEXT" ,length = 2048)
+    private String re_manager2;
+
     @ManyToOne
     @JoinColumn(name = "evaluateurOne_id", referencedColumnName = "idManagerOne")
     private ManagerOne evaluateurOne;

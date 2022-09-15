@@ -7,22 +7,22 @@ if (sessionStorage.getItem("ficheEvaluation") === null) {
 
     // TODO:REDIRECT TO PAGE LIST PAGE
 
-    
+
 } else {
 
     ficheEvaluation = JSON.parse(sessionStorage.getItem("ficheEvaluation"));
-    manager = JSON.parse(sessionStorage.getItem("manager"));
+    manager = JSON.parse(sessionStorage.getItem("user"));
 
     // SET FICHE EVALUATION INFOS
-    $("#emploi-cible-text").text(ficheEvaluation.emploi.intitule); 
+    $("#emploi-cible-text").text(ficheEvaluation.emploi.intitule);
     $("#date-eva-text").text(ficheEvaluation.emploi.dateEvaluation);
-    if(manager.type === "1") {
-        $("#mat-eva-text").text(ficheEvaluation.evaluateurOne.matricule); 
+    if (manager.type === "1") {
+        $("#mat-eva-text").text(ficheEvaluation.evaluateurOne.matricule);
     } else if (manager.type === "2") {
-        $("#mat-eva-text").text(ficheEvaluation.evaluateurTwo.matricule); 
+        $("#mat-eva-text").text(ficheEvaluation.evaluateurTwo.matricule);
     }
-    $("#mat-collaborateur-text").text(ficheEvaluation.collaborateur.matricule); 
-    $("#date-eva-text").text(ficheEvaluation.dateEvaluation.split("T")[0]); 
+    $("#mat-collaborateur-text").text(ficheEvaluation.collaborateur.matricule);
+    $("#date-eva-text").text(ficheEvaluation.dateEvaluation.split("T")[0]);
 }
 
 // SCORE VARIABLES
@@ -56,35 +56,368 @@ let compSeBtnCompteur = 0;
 
 
 // VALIDATE BTN 
-$("#btn-fiche-validate").click(function(e) {
+$("#btn-fiche-validate").click(function (e) {
 
-    // UPDATE THE SCORES
-    ficheEvaluation.score = score;
-    ficheEvaluation.sousPoints = sous_points;
-    ficheEvaluation.surPoints = sur_points;
+    // VERIFY IF ALL THE FIELS ARE SELECTED
+    // console.log(allFieldSelected());
+    if (!allFieldSelected()) {
 
-    ficheEvaluation.status = "ÉVALUÉ";
+    } else {
+        // UPDATE THE SCORES
+        ficheEvaluation.score = score;
+        ficheEvaluation.sousPoints = sous_points;
+        ficheEvaluation.surPoints = sur_points;
 
-    // SAVE THE RESULT TO THE DB
-    updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
-        console.log(result);
+        ficheEvaluation.status = "ÉVALUÉ";
 
-        // SHOW SUCCESS MODAL
+        // TAKE A COPY OF THIS FICHE
+        let re = takeCopy(ficheEvaluation);
+        console.log(re);
 
 
-        // REDIRECT TO EVALUATION LIST PAGE
-        
+        // // SAVE THE RESULT TO THE DB
+        // updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
+        //     console.log(result);
 
-    })
+        //     // SHOW SUCCESS MODAL
+
+
+        //     // REDIRECT TO EVALUATION LIST PAGE
+
+
+        // })
+
+    }
+
 
 
 })
+function allFieldSelected() {
+    let radioNames = ["custom-switch-radio-", "comp-switch-radio-", "comp-se-switch-radio-", "comp-sf-switch-radio-"];
+
+    // REMOVE DANGER BACKGROUNDS FRON TD ELEMENTS
+    $("td").removeClass("btn-danger-light");
+
+    for (var j = 0; j < radioNames.length; j++) {
+        let radioName = radioNames[j];
+        console.log(radioName);
+
+        switch (radioName) {
+            case "custom-switch-radio-":
+                for (var i = 0; i < radioBtnCompteur; i++) {
+
+                    if (!$("input[name=" + radioName + i + "]").is(":checked")) {
+                        console.log(i);
+
+
+                        // GET THE PROBLEM RADIO + ADD ERROR MESSAGE
+                        let notSelectedRadioContainer = $($("input[name=" + radioName + i + "]")[0]).parents("td").first();
+                        // let notSelectedRadioContainer = $("input[name=" + radioName + i + "]");
+
+                        notSelectedRadioContainer.addClass("btn-danger-light");
+                        notSelectedRadioContainer.prev().addClass("btn-danger-light");
+                        notSelectedRadioContainer.next().addClass("btn-danger-light");
+                        // console.log(notSelectedRadioContainer);
+
+
+                        $('html, body').animate({
+                            scrollTop: notSelectedRadioContainer.offset().top - 100
+                        }, 500);
+
+                        return false;
+                    }
+                }
+                break;
+            case "comp-switch-radio-":
+                for (var i = 0; i < compBtnCompteur; i++) {
+                    if (!$("input[name=" + radioName + i + "]").is(":checked")) {
+
+
+                        // GET THE PROBLEM RADIO + ADD ERROR MESSAGE
+                        let notSelectedRadioContainer = $($("input[name=" + radioName + i + "]")[0]).parents("td").first();
+                        // let notSelectedRadioContainer = $("input[name=" + radioName + i + "]");
+
+                        notSelectedRadioContainer.addClass("btn-danger-light");
+                        notSelectedRadioContainer.prev().addClass("btn-danger-light");
+                        notSelectedRadioContainer.prev().prev().addClass("btn-danger-light");
+
+
+                        notSelectedRadioContainer.next().addClass("btn-danger-light");
+                        notSelectedRadioContainer.next().next().addClass("btn-danger-light");
+                        notSelectedRadioContainer.next().next().next().addClass("btn-danger-light");
+
+
+                        // console.log(notSelectedRadioContainer);
+                        $('html, body').animate({
+                            scrollTop: notSelectedRadioContainer.offset().top - 100
+                        }, 500);
+
+                        return false;
+                    }
+                }
+                break;
+            case "comp-sf-switch-radio-":
+                for (var i = 0; i < compSfBtnCompteur; i++) {
+                    if (!$("input[name=" + radioName + i + "]").is(":checked")) {
+
+
+                        // GET THE PROBLEM RADIO + ADD ERROR MESSAGE
+                        let notSelectedRadioContainer = $($("input[name=" + radioName + i + "]")[0]).parents("td").first();
+                        // let notSelectedRadioContainer = $("input[name=" + radioName + i + "]");
+
+                        notSelectedRadioContainer.addClass("btn-danger-light");
+                        notSelectedRadioContainer.prev().addClass("btn-danger-light");
+                        notSelectedRadioContainer.prev().prev().addClass("btn-danger-light");
+
+
+                        notSelectedRadioContainer.next().addClass("btn-danger-light");
+                        notSelectedRadioContainer.next().next().addClass("btn-danger-light");
+                        notSelectedRadioContainer.next().next().next().addClass("btn-danger-light");
+
+
+                        // console.log(notSelectedRadioContainer);
+
+                        $('html, body').animate({
+                            scrollTop: notSelectedRadioContainer.offset().top - 100
+                        }, 500);
+                        return false;
+
+                    }
+                }
+                break;
+            case "comp-se-switch-radio-":
+                for (var i = 0; i < compSeBtnCompteur; i++) {
+                    if (!$("input[name=" + radioName + i + "]").is(":checked")) {
+
+
+                        // GET THE PROBLEM RADIO + ADD ERROR MESSAGE
+                        let notSelectedRadioContainer = $($("input[name=" + radioName + i + "]")[0]).parents("td").first();
+                        // let notSelectedRadioContainer = $("input[name=" + radioName + i + "]");
+
+                        notSelectedRadioContainer.addClass("btn-danger-light");
+                        notSelectedRadioContainer.prev().addClass("btn-danger-light");
+                        notSelectedRadioContainer.prev().prev().addClass("btn-danger-light");
+
+
+                        notSelectedRadioContainer.next().addClass("btn-danger-light");
+                        notSelectedRadioContainer.next().next().addClass("btn-danger-light");
+                        notSelectedRadioContainer.next().next().next().addClass("btn-danger-light");
+
+
+                        // console.log(notSelectedRadioContainer);
+                        $('html, body').animate({
+                            scrollTop: notSelectedRadioContainer.offset().top - 100
+                        }, 500);
+
+                        return false;
+                    }
+                }
+                break;
+        }
+
+
+    }
+
+    return true;
+
+
+
+
+
+
+}
+
+
+function takeCopy(json) {
+    let result = {
+        "id": null,
+        "score": null,
+        "sousPoints": null,
+        "surPoints": null,
+        "marqueurs": [],
+        "exigences": [],
+        "responsabilites": [],
+        "competences": {
+            "competences_dc": [],
+            "competences_se": [],
+            "competences_sf": []
+        }
+    };
+
+    // BASIC INFO
+    result.id = json.id;
+    result.score = json.score;
+    result.sousPoints = json.sousPoints;
+    result.surPoints = json.surPoints;
+
+    //MARQUEURS
+    if (json.ficheContent.includes("marqueurs")) {
+
+
+        // TAKE ALL MARQUERS CONTAINERS FROM DOM
+        $(".marqueurs").each(function (index, element) {
+            let marqueur = {
+                "value": null,
+                "response": null
+            }
+            let marqRow = $(element);
+            // console.log(marqRow.find("input[type='radio']:checked"));
+
+            marqueur.value = marqRow.find("#marqueur-value").html();
+            marqueur.response = marqRow.find("input[type='radio']:checked").val();
+
+            // console.log(marqueur);
+
+
+            result.marqueurs.push(marqueur);
+
+        })
+
+    }
+
+
+    // RESPONSABILITIES
+    if (json.ficheContent.includes("responsabilites")) {
+
+        // TAKE ALL RES CONTAINERS FROM DOM
+        $(".responsabilites").each(function (index, element) {
+            let res = {
+                "value": null,
+                "response": null
+            }
+            let resRow = $(element);
+            // console.log(resRow.find("input[type='radio']:checked"));
+
+            res.value = resRow.find("#res-value").html();
+            res.response = resRow.find("input[type='radio']:checked").val();
+
+            // console.log(res);
+
+
+            result.responsabilites.push(res);
+
+        })
+    }
+
+    // EXIGENCES
+    if (json.ficheContent.includes("exigences")) {
+
+        // TAKE ALL EXIGENCES CONTAINERS FROM DOM
+        $(".exigences").each(function (index, element) {
+            let exigence = {
+                "value": null,
+                "response": null
+            }
+            let exiRow = $(element);
+            // console.log(exiRow.find("input[type='radio']:checked"));
+
+            exigence.value = exiRow.find("#exi-value").html();
+            exigence.response = exiRow.find("input[type='radio']:checked").val();
+
+            // console.log(exigence);
+
+
+            result.exigences.push(exigence);
+
+        })
+    }
+
+    // COMPETENCES - DC
+    if (json.ficheContent.includes("competences-dc")) {
+
+        console.log()
+
+
+        // TAKE ALL COMPETENCES_DC CONTAINERS FROM DOM
+        $(".comp-dc").each(function (index, element) {
+            let comp_dc = {
+                "value": null,
+                "requis": null,
+                "response": null
+            }
+            let compDcRow = $(element);
+            // console.log(compDcRow.find("input[type='radio']:checked"));
+
+            comp_dc.value = compDcRow.find("#compDc-value").html();
+            comp_dc.requis = compDcRow.find("#compDc-requis-value").html();
+            comp_dc.response = compDcRow.find("input[type='radio']:checked").val();
+
+            // console.log(comp_dc);
+
+
+            result.competences["competences_dc"].push(comp_dc);
+
+        })
+
+
+    }
+
+    // COMPETENCES - SE
+    if (json.ficheContent.includes("competences-se")) {
+
+
+
+
+        // TAKE ALL COMPETENCES_SE CONTAINERS FROM DOM
+        $(".comp-se").each(function (index, element) {
+            let competence_se = {
+                "value": null,
+                "requis": null,
+                "response": null
+            }
+            let compSeRow = $(element);
+            // console.log(compSeRow.find("input[type='radio']:checked"));
+
+            competence_se.value = compSeRow.find("#compSe-value").html();
+            competence_se.requis = compSeRow.find("#compSe-requis-value").html();
+            competence_se.response = compSeRow.find("input[type='radio']:checked").val();
+
+            // console.log(competence_se);
+
+
+            result.competences.competences_se.push(competence_se);
+
+        })
+    }
+
+    // COMPETENCES - SF
+    if (json.ficheContent.includes("competences-sf")) {
+
+
+
+        // TAKE ALL COMPETENCES_SF CONTAINERS FROM DOM
+        $(".comp-sf").each(function (index, element) {
+            let competence_sf = {
+                "value": null,
+                "requis": null,
+                "response": null
+            }
+            let compSfRow = $(element);
+            // console.log(compSfRow.find("input[type='radio']:checked"));
+
+            competence_sf.value = compSfRow.find("#compSf-value").html();
+            competence_sf.requis = compSfRow.find("#compSf-requis-value").html();
+            competence_sf.response = compSfRow.find("input[type='radio']:checked").val();
+
+            // console.log(competence_sf);
+
+
+            result.competences.competences_sf.push(competence_sf);
+
+        })
+    }
+
+
+    console.log(result)
+    return result;
+
+}
 
 async function updateFicheEvaluation(id, jsonFiche) {
     let url = "http://localhost:8080/preassessment/api/v1/ficheEvaluation/update/" + id;
 
     return fetch(url, {
-        header : 'PUT',
+        header: 'PUT',
         headers: {
             "Content-Type": "application/json"
         },
@@ -171,14 +504,14 @@ function populateResTable(json) {
                     for (var j = 0; j < categorie.valeur.length; j++) {
 
                         //ADD A ROW
-                        $("#res-table-body").append("<tr></tr>");
+                        $("#res-table-body").append('<tr class="responsabilites"></tr>');
                         if (j === 0) {
                             $("#res-table-body").find("tr").last().append(`<td rowspan=` + categorie.valeur.length + `>` + categorie["categorie"] + `</td>`);
-                            $("#res-table-body").find("tr").last().append(`<td>` + categorie["valeur"][j] + `</td>`);
+                            $("#res-table-body").find("tr").last().append(`<td id="res-value">` + categorie["valeur"][j] + `</td>`);
                             $("#res-table-body").find("tr").last().append(`<td>
                         <div class="">
                             <label class="custom-switch form-switch  ">
-                                <input type="radio" id="radioNo-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" class="custom-switch-input no-radio-btn">
+                                <input type="radio" id="radioNo-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" value="0" class="custom-switch-input no-radio-btn">
                                 <span class="custom-switch-indicator"></span>
                                 <span class="custom-switch-description"></span>
                             </label>
@@ -189,7 +522,7 @@ function populateResTable(json) {
                             $("#res-table-body").find("tr").last().append(`<td>
                         <div class="">
                             <label class="custom-switch form-switch  ">
-                                <input type="radio" id="radioYes-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" class="custom-switch-input yes-radio-btn">
+                                <input type="radio" id="radioYes-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" value="1" class="custom-switch-input yes-radio-btn">
                                 <span class="custom-switch-indicator"></span>
                                 <span class="custom-switch-description"></span>
                             </label>
@@ -200,11 +533,11 @@ function populateResTable(json) {
                         } else {
 
 
-                            $("#res-table-body").find("tr").last().append(`<td>` + categorie["valeur"][j] + `</td>`);
+                            $("#res-table-body").find("tr").last().append(`<td id="res-value">` + categorie["valeur"][j] + `</td>`);
                             $("#res-table-body").find("tr").last().append(`<td>
-                        <div class="">
+                        <div class="res-result">
                             <label class="custom-switch form-switch  ">
-                                <input type="radio" id="radioNo-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" class="custom-switch-input no-radio-btn">
+                                <input type="radio" id="radioNo-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}"  value="0" class="custom-switch-input no-radio-btn">
                                 <span class="custom-switch-indicator"></span>
                                 <span class="custom-switch-description"></span>
                             </label>
@@ -213,9 +546,9 @@ function populateResTable(json) {
                     `);
 
                             $("#res-table-body").find("tr").last().append(`<td>
-                        <div class="">
+                        <div class="res-result">
                             <label class="custom-switch form-switch  ">
-                                <input type="radio" id="radioYes-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" class="custom-switch-input yes-radio-btn">
+                                <input type="radio" id="radioYes-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}"   value="1" class="custom-switch-input yes-radio-btn">
                                 <span class="custom-switch-indicator"></span>
                                 <span class="custom-switch-description"></span>
                             </label>
@@ -234,8 +567,6 @@ function populateResTable(json) {
 
                 break;
 
-
-
             case "exigences":
                 //console.log("exigences");
                 let exiValues = json[key];
@@ -249,16 +580,16 @@ function populateResTable(json) {
                 for (var j = 0; j < exiValues.length; j++) {
                     //APPEND A ROW
                     console.log("hdsqhdkq");
-                    $("#exi-table-body").append("<tr></tr>");
+                    $("#exi-table-body").append('<tr class="exigences" ></tr>');
 
 
-                    $("#exi-table-body").find("tr").last().append(`<td>${exiValues[j]}</td>`);
+                    $("#exi-table-body").find("tr").last().append(`<td id="exi-value">${exiValues[j]}</td>`);
 
                     $("#exi-table-body").find("tr").last().append(`
                             <td>
                                 <div class="">
                                     <label class="custom-switch form-switch  ">
-                                        <input type="radio" id="radioNo-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" class="custom-switch-input no-radio-btn">
+                                        <input type="radio" id="radioNo-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" value="0" class="custom-switch-input no-radio-btn">
                                         <span class="custom-switch-indicator"></span>
                                         <span class="custom-switch-description"></span>
                                     </label>
@@ -269,7 +600,7 @@ function populateResTable(json) {
                             <td>
                                 <div class="">
                                     <label class="custom-switch form-switch  ">
-                                        <input type="radio" id="radioYes-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" class="custom-switch-input yes-radio-btn">
+                                        <input type="radio" id="radioYes-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" value="1" class="custom-switch-input yes-radio-btn">
                                         <span class="custom-switch-indicator"></span>
                                         <span class="custom-switch-description"></span>
                                     </label>
@@ -295,16 +626,16 @@ function populateResTable(json) {
                 // ITERATE OVER THE ARRAY
                 for (var j = 0; j < marqValues.length; j++) {
                     //APPEND A ROW
-                    $("#marq-table-body").append("<tr></tr>");
+                    $("#marq-table-body").append('<tr class="marqueurs"></tr>');
 
 
-                    $("#marq-table-body").find("tr").last().append(`<td>${marqValues[j]}</td>`);
+                    $("#marq-table-body").find("tr").last().append(`<td id="marqueur-value">${marqValues[j]}</td>`);
 
                     $("#marq-table-body").find("tr").last().append(`
                             <td>
-                                <div class="">
+                                <div class="marqueur-result">
                                     <label class="custom-switch form-switch  ">
-                                        <input type="radio" id="radioNo-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" class="custom-switch-input no-radio-btn">
+                                        <input type="radio" id="radioNo-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" value="0" class="custom-switch-input no-radio-btn">
                                         <span class="custom-switch-indicator"></span>
                                         <span class="custom-switch-description"></span>
                                     </label>
@@ -313,9 +644,9 @@ function populateResTable(json) {
                         `);
                     $("#marq-table-body").find("tr").last().append(`
                             <td>
-                                <div class="">
+                                <div class="marqueur-result">
                                     <label class="custom-switch form-switch  ">
-                                        <input type="radio" id="radioYes-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" class="custom-switch-input yes-radio-btn">
+                                        <input type="radio" id="radioYes-${radioBtnCompteur}" name="custom-switch-radio-${radioBtnCompteur}" value="1"  class="custom-switch-input yes-radio-btn">
                                         <span class="custom-switch-indicator"></span>
                                         <span class="custom-switch-description"></span>
                                     </label>
@@ -337,7 +668,7 @@ function populateResTable(json) {
                 let niveauArr = ["E", "M", "A", "X"];
 
                 let competences = json[key];
-                
+
                 if (competences === null) {
                     continue;
                 }
@@ -351,12 +682,12 @@ function populateResTable(json) {
                     let xDescription = competence.niveaux[3].level + " : " + competence.niveaux[3].definition;
 
                     // APPEND A ROW
-                    $("#comp-table-body").append("<tr></tr>");
+                    $("#comp-table-body").append('<tr class="comp-dc"></tr>');
 
                     if (index === 0) {
                         $("#comp-table-body").find("tr").last().append(`<td rowspan="${competences.length}"> Domaines de compétences </td>`);
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.name}</td>`);
-                        $("#comp-table-body").find("tr").last().append(`<td class="niveau-requis"> ${competence.requiredNiveau}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compDc-value"> ${competence.name}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compDc-requis-value" class="niveau-requis"> ${competence.requiredNiveau}</td>`);
 
                         $("#comp-table-body").find("tr").last().append(`
                         <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${eDescription}">
@@ -413,8 +744,8 @@ function populateResTable(json) {
 
                     } else {
 
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.name}</td>`);
-                        $("#comp-table-body").find("tr").last().append(`<td class="niveau-requis"> ${competence.requiredNiveau}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compDc-value"> ${competence.name}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compDc-requis-value" class="niveau-requis"> ${competence.requiredNiveau}</td>`);
 
                         $("#comp-table-body").find("tr").last().append(`
                         <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${eDescription}">
@@ -1062,12 +1393,12 @@ function populateResTable(json) {
                     let xDescription = competence.niveaux[3].level + " : " + competence.niveaux[3].definition;
 
                     // APPEND A ROW
-                    $("#comp-table-body").append("<tr></tr>");
+                    $("#comp-table-body").append('<tr class="comp-sf"></tr>');
 
                     if (index === 0) {
                         $("#comp-table-body").find("tr").last().append(`<td rowspan="${competences_sf.length}"> Savoir-faire </td>`);
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.name}</td>`);
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.requiredNiveau}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compSf-value"> ${competence.name}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compSf-requis-value"> ${competence.requiredNiveau}</td>`);
 
                         $("#comp-table-body").find("tr").last().append(`
                         <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${eDescription}">
@@ -1124,8 +1455,8 @@ function populateResTable(json) {
 
                     } else {
 
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.name}</td>`);
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.requiredNiveau}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compSf-value"> ${competence.name}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compSf-requis-value"> ${competence.requiredNiveau}</td>`);
 
                         $("#comp-table-body").find("tr").last().append(`
                         <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${eDescription}">
@@ -1339,7 +1670,7 @@ function populateResTable(json) {
                     let index = parseInt(e.target.id.split("-")[1]);
 
                     let reqNiveau = competences_sf[index].requiredNiveau;
-                    
+
 
                     // REMOVE THE EFFECT OF THE PREVIOUS SELECTED NIVEAU
                     console.log(index);
@@ -1765,7 +2096,6 @@ function populateResTable(json) {
 
                 break;
 
-
             case "competences_se":
                 let competences_se = json[key];
 
@@ -1773,7 +2103,7 @@ function populateResTable(json) {
                 if (competences_se === null) {
                     continue;
                 }
-                
+
 
                 competences_se.forEach((competence, index) => {
 
@@ -1784,12 +2114,12 @@ function populateResTable(json) {
                     let xDescription = competence.niveaux[3].level + " : " + competence.niveaux[3].definition;
 
                     // APPEND A ROW
-                    $("#comp-table-body").append("<tr></tr>");
+                    $("#comp-table-body").append('<tr class="comp-se"></tr>');
 
                     if (index === 0) {
                         $("#comp-table-body").find("tr").last().append(`<td rowspan="${competences_se.length}"> Savoir-être </td>`);
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.name}</td>`);
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.requiredNiveau}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compSe-value"> ${competence.name}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compSe-requis-value"> ${competence.requiredNiveau}</td>`);
 
                         $("#comp-table-body").find("tr").last().append(`
                         <td data-bs-placement="bottom" data-bs-toggle="tooltip" title="${eDescription}">
@@ -1846,8 +2176,8 @@ function populateResTable(json) {
 
                     } else {
 
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.name}</td>`);
-                        $("#comp-table-body").find("tr").last().append(`<td> ${competence.requiredNiveau}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compSe-value"> ${competence.name}</td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td id="compSe-requis-value"> ${competence.requiredNiveau}</td>`);
 
                         $("#comp-table-body").find("tr").last().append(`
                         <td  data-bs-placement="bottom" data-bs-toggle="tooltip" title="${eDescription}">

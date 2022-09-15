@@ -13,14 +13,11 @@ const extractRootDomain = (url) => {
     return (isSecondLevelDomain ? elems[iMax - 2] + '.' : '') + elem1 + '.' + elem2;
 
 }
-const extractDomain = (url) => {
-    const elems = url.split("/");
-    return elems[0] + "//" + elems[2] + "/";
-}
 
-let currentUrl = window.location.href;
+currentUrl = window.location.href;
 
-let manager = JSON.parse(sessionStorage.getItem("manager"));
+let manager = JSON.parse(sessionStorage.getItem("user"));
+
 let managerMatricule =  manager.data.matricule;;
 
 let authorizedCol = ["id", "collaborateur","emploi","niveau", "associatedAssessment", "status"];
@@ -253,8 +250,8 @@ function getFichesDataFromJson(arrJson) {
         let arr = [];
 
         arr.push(e.id);
-        arr.pudh(e.collaborateur.matricule);
-        arr.pudh(e.collaborateur.firstName + " " + e.collaborateur.lastName);
+        arr.push(e.collaborateur.matricule);
+        arr.push(e.collaborateur.firstName + " " + e.collaborateur.lastName);
         arr.push(e.emploi.intitule);
         arr.push(e.emploi.level);
         arr.push(e.associatedAssessment.name);
