@@ -18,9 +18,9 @@ currentUrl = window.location.href;
 
 let manager = JSON.parse(sessionStorage.getItem("user"));
 
-let managerMatricule =  manager.data.matricule;;
+let managerMatricule = manager.data.matricule;;
 
-let authorizedCol = ["id", "collaborateur","emploi","niveau", "associatedAssessment", "status"];
+let authorizedCol = ["id", "collaborateur", "emploi", "niveau", "associatedAssessment", "status"];
 
 let ficheDatatable;
 
@@ -46,7 +46,8 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
         columnDefs: [
             { "width": "6%", "targets": 2 }
         ],
-        autoWidth: false
+        autoWidth: false,
+        ordering: false
     })
 
     // ADD EVENTLISTENERS TO VIEW BTN
@@ -60,74 +61,90 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
         }
 
         let btns = $(".view-btn").get();
-        let indexOfFiche = btns.indexOf(aElement);
+        // let indexOfFiche = btns.indexOf(aElement);
+        let indexOfFiche =  $(aElement).parents(".g-1").attr("id");
 
-        // GET THE ASSOCIATED FIHCE D EVALUATION
-        let fiche = listFiches[indexOfFiche];
-        console.log(fiche);
+        console.log(listFiches[indexOfFiche].status === "ÉVALUÉ");
+       
 
-        //SAVE FICHE OBJECT ON LOCAL SESSION
-        sessionStorage.setItem("ficheEvaluation", JSON.stringify(fiche));
+        // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAM MANAGER
+        if (listFiches[indexOfFiche].status === "ÉVALUÉ") {
 
-        // REDIRECT TO THE FICHE PAGE : /evaluation/evaluate?.....
+            // SHOW ALERT MODAL
+            showModal("error" , "Accès refusé", "Vous ne pouvez pas accéder aux fiches d'évaluations que vous avez évalués.  En cas de problème, contactez-nous", "")
 
-        let emploiName = encodeURIComponent(fiche.emploi.intitule);
-        let emploiLevel = fiche.emploi.level;
+        } else {
 
-        let doesResponsabilitesExist = false;
-        let doesMarqueursExist = false;
-        let doesExigencesExist = false;
-        let doesCompetencesDcExist = false;
-        let doesCompetencesSeExist = false;
-        let doesCompetencesSfExist = false;
+            // GET THE ASSOCIATED FIHCE D EVALUATION
+            let fiche = listFiches[indexOfFiche];
+            console.log(fiche);
 
+            //SAVE FICHE OBJECT ON LOCAL SESSION
+            sessionStorage.setItem("ficheEvaluation", JSON.stringify(fiche));
 
-        //GET THE CATEGORY ASSESSMENT_CONTENT PROPERTY
-        fiche.ficheContent.map((e, i) => {
-            switch (e) {
-                case "responsabilites":
-                    doesResponsabilitesExist = true;
-                    break;
+            // REDIRECT TO THE FICHE PAGE : /evaluation/evaluate?.....
 
-                case "exigences":
-                    doesExigencesExist = true;
-                    break;
+            let emploiName = encodeURIComponent(fiche.emploi.intitule);
+            let emploiLevel = fiche.emploi.level;
 
-                case "marqueurs":
-                    doesMarqueursExist = true;
-                    break;
-
-                case "competences-dc":
-                    doesCompetencesDcExist = true;
-                    break;
-
-                case "competences-sf":
-                    doesCompetencesSfExist = true;
-                    break;
-
-                case "competences-se":
-                    doesCompetencesSeExist = true;
-                    break;
+            let doesResponsabilitesExist = false;
+            let doesMarqueursExist = false;
+            let doesExigencesExist = false;
+            let doesCompetencesDcExist = false;
+            let doesCompetencesSeExist = false;
+            let doesCompetencesSfExist = false;
 
 
+            //GET THE CATEGORY ASSESSMENT_CONTENT PROPERTY
+            fiche.ficheContent.map((e, i) => {
+                switch (e) {
+                    case "responsabilites":
+                        doesResponsabilitesExist = true;
+                        break;
+
+                    case "exigences":
+                        doesExigencesExist = true;
+                        break;
+
+                    case "marqueurs":
+                        doesMarqueursExist = true;
+                        break;
+
+                    case "competences-dc":
+                        doesCompetencesDcExist = true;
+                        break;
+
+                    case "competences-sf":
+                        doesCompetencesSfExist = true;
+                        break;
+
+                    case "competences-se":
+                        doesCompetencesSeExist = true;
+                        break;
+
+
+                }
+            })
+
+            // BUILD URL 
+            let urlParams = {
+                "eName": emploiName,
+                "level": emploiLevel,
+                "marqueurs": doesMarqueursExist,
+                "exigences": doesExigencesExist,
+                "responsabilites": doesResponsabilitesExist,
+                "competences_dc": doesCompetencesDcExist,
+                "competences_se": doesCompetencesSeExist,
+                "competences_sf": doesCompetencesSfExist,
             }
-        })
+            let url = buildURL("evaluation/evaluate", urlParams);
 
-        // BUILD URL 
-        let urlParams = {
-            "eName": emploiName,
-            "level": emploiLevel,
-            "marqueurs": doesMarqueursExist,
-            "exigences": doesExigencesExist,
-            "responsabilites": doesResponsabilitesExist,
-            "competences_dc": doesCompetencesDcExist,
-            "competences_se": doesCompetencesSeExist,
-            "competences_sf": doesCompetencesSfExist,
+            window.open(extractDomain(currentUrl) + url)
+            // console.log(extractDomain(currentUrl) + url);
+
         }
-        let url = buildURL("evaluation/evaluate", urlParams);
 
-        window.open(extractDomain(currentUrl) + url)
-        // console.log(extractDomain(currentUrl) + url);
+
     })
 
 })
@@ -222,7 +239,7 @@ function getFichesColumnFromJson(json, authorizedCol) {
                 });
             }
 
-            
+
 
 
         } else {
@@ -279,7 +296,7 @@ function getFichesDataFromJson(arrJson) {
 
         // ACTION COL
         arr.push(`
-            <div class="g-1">
+            <div id="${i}" class="g-1">
                 <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
                     data-bs-original-title="Évaluer"><span
                         class="fe fe-edit fs-14"></span></a>
@@ -292,4 +309,56 @@ function getFichesDataFromJson(arrJson) {
     })
 
     return finalArr;
+}
+
+function showModal(type, header, content, action) {
+
+    let modalId, modalHeaderId, modalContentId;
+
+
+    switch (type) {
+        case "success":
+            modalId = "success";
+            modalHeaderId = "#modal-success-header";
+            modalContentId = "#modal-success-content";
+            break;
+
+        case "warning":
+            modalId = "warning";
+            modalHeaderId = "#modal-warning-header";
+            modalContentId = "#modal-warning-content";
+            break;
+
+        case "info":
+            modalId = "info";
+            modalHeaderId = "#modal-info-header";
+            modalContentId = "#modal-info-content";
+            break;
+
+        case "error":
+            modalId = "modaldemo5";
+            modalHeaderId = "#modal-error-header";
+            modalContentId = "#modal-error-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+
+        case "confirm":
+            modalId = "confirm";
+            modalHeaderId = "#modal-confirm-header";
+            modalContentId = "#modal-confirm-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+    }
+
+
+    var myModal = new bootstrap.Modal(document.getElementById(modalId));
+
+    // SET HEADER
+    $(modalHeaderId).html(header);
+
+    // SET CONTENT
+    $(modalContentId).html(content)
+
+    myModal.show();
+
 }
