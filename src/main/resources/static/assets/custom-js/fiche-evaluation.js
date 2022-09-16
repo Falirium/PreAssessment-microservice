@@ -6,10 +6,12 @@ let manager;
 if (sessionStorage.getItem("ficheEvaluation") === null) {
 
     // TODO:REDIRECT TO PAGE LIST PAGE
+    window.location.href(currentUrl(window.location.href) + "evaluation/list")
 
 
 } else {
 
+    // GET FICHE & MANAGER
     ficheEvaluation = JSON.parse(sessionStorage.getItem("ficheEvaluation"));
     manager = JSON.parse(sessionStorage.getItem("user"));
 
@@ -25,12 +27,14 @@ if (sessionStorage.getItem("ficheEvaluation") === null) {
     $("#date-eva-text").text(ficheEvaluation.dateEvaluation.split("T")[0]);
 }
 
+
 // SCORE VARIABLES
 let totalPoints = 0;
-let elementsNumbers = 0;
 let score = 0;
 let sur_points = 0;
 let sous_points = 0;
+
+let elementsNumbers = 0;
 
 let lastClickedIndexYes = -1;
 let lastClickedIndexNo = -1;
@@ -44,8 +48,40 @@ for (const param of params) {
 }
 console.log(urlParams);
 
-// POPULATE FIHCE EVALUATION
-getFicheEmploiPreview(urlParams);
+// CHECK IF FICHE IS ALREADY FILLED
+if (ficheEvaluation.re_manager1 != null) {
+
+    let manager1Answers = JSON.parse(ficheEvaluation.re_manager1);
+
+    // UPDATE THE SCORES & DISPLAY THEM
+    score = ficheEvaluation.score;
+    sur_points = ficheEvaluation.surPoints;
+    sous_points = ficheEvaluation.sousPoints;
+
+    $("#score").text(score.toString() + "%");
+    displaySousPoints();
+    displaySurPoints();
+
+
+    // PARSE THE THE FICHE 
+    getFicheEmploiPreview(urlParams).then((json) => {
+        populateResTable(json);
+    });
+
+
+    // FILL IT WITH RESPONSE OF MANAGER 1
+    parseManager1Result(manager1Answers);
+
+} else {
+
+    // POPULATE FIHCE EVALUATION
+    getFicheEmploiPreview(urlParams).then((json) => {
+        populateResTable(json);
+    });
+
+}
+
+
 
 
 // CHECK FOR AVAILABLE SECTIONS
@@ -235,6 +271,226 @@ function allFieldSelected() {
 
 }
 
+function parseManager1Result(json) {
+
+    // MARQUEURS
+    if (json.marqueurs.length != 0) {
+
+        json.marqueurs.map((marq, index) => {
+
+            $(".marqueurs").each((index, element) => {
+                let marqueurRow = $(element);
+
+
+                noRadioBtn.attr("checked", "checked");
+
+                if (marqueurRow.find("#marqueur-value").html() === marq.value) {
+
+                    let res = marq.response;
+
+                    let btns = marqueurRow.find("input[type='radio']")
+
+                    let noRadioBtn = $(btns[1]);
+                    let yesRadioBtn = $(btns[2]);
+
+                    // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
+                    if (res === 0) {
+                        noRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 1) {
+                        yesRadioBtn.attr("checked", "checked");
+                    }
+
+                }
+            })
+        })
+
+
+    }
+
+    // EXIGENCES
+    if (json.exigences.length != 0) {
+
+        json.exigences.map((exi, index) => {
+
+            $(".exigences").each((index, element) => {
+                let exigenceRow = $(element);
+
+                if (exigenceRow.find("#exigence-value").html() === exi.value) {
+
+                    let res = exi.response;
+
+                    let btns = marqueurRow.find("input[type='radio']")
+
+                    let noRadioBtn = $(btns[1]);
+                    let yesRadioBtn = $(btns[2]);
+
+                    // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
+                    if (res === 0) {
+                        noRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 1) {
+                        yesRadioBtn.attr("checked", "checked");
+                    }
+
+                }
+            })
+        })
+
+
+    }
+
+    // RESPONSABILITES
+    if (json.responsabilites.length != 0) {
+
+        json.responsabilites.map((res, index) => {
+
+            $(".responsabilites").each((index, element) => {
+                let responsabiliteRow = $(element);
+
+                if (responsabiliteRow.find("#exigence-value").html() === res.value) {
+
+                    let response = res.response;
+                    let btns = marqueurRow.find("input[type='radio']")
+
+                    let noRadioBtn = $(btns[1]);
+                    let yesRadioBtn = $(btns[2]);
+
+                    // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
+                    if (response === 0) {
+                        noRadioBtn.attr("checked", "checked");
+
+                    } else if (response === 1) {
+                        yesRadioBtn.attr("checked", "checked");
+                    }
+
+                }
+            })
+        })
+
+
+    }
+
+    // COMPETENCES_DC
+    if (json.competences_dc.length != 0) {
+
+        json.competences_dc.map((comp, index) => {
+
+            $(".competences_dc").each((index, element) => {
+                let compDcRow = $(element);
+
+                if (compDcRow.find("#compDc-value").html() === comp.value) {
+
+                    let res = comp.response;
+                    let btns = marqueurRow.find("input[type='radio']");
+
+                    let eRadioBtn = $(btns[0]);
+                    let mRadioBtn = $(btns[1]);
+                    let aRadioBtn = $(btns[2]);
+                    let xRadioBtn = $(btns[3]);
+
+
+                    // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
+                    if (res === 'E') {
+                        eRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 'M') {
+                        mRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 'A') {
+                        aRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 'X') {
+                        xRadioBtn.attr("checked", "checked");
+                    }
+
+                }
+            })
+        })
+
+
+    }
+
+    // COMPETENCES_SE
+    if (json.competences_se.length != 0) {
+
+        json.competences_se.map((comp, index) => {
+
+            $(".competences_se").each((index, element) => {
+                let compSeRow = $(element);
+
+                if (compSeRow.find("#compSe-value").html() === comp.value) {
+
+                    let res = comp.response;
+                    let btns = marqueurRow.find("input[type='radio']");
+
+                    let eRadioBtn = $(btns[0]);
+                    let mRadioBtn = $(btns[1]);
+                    let aRadioBtn = $(btns[2]);
+                    let xRadioBtn = $(btns[3]);
+
+
+                    // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
+                    if (res === 'E') {
+                        eRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 'M') {
+                        mRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 'A') {
+                        aRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 'X') {
+                        xRadioBtn.attr("checked", "checked");
+                    }
+
+                }
+            })
+        })
+
+
+    }
+
+    // COMPETENCES_SF
+    if (json.competences_sf.length != 0) {
+
+        json.competences_sf.map((comp, index) => {
+
+            $(".competences_sf").each((index, element) => {
+                let compSfRow = $(element);
+
+                if (compSfRow.find("#compSf-value").html() === comp.value) {
+
+                    let res = comp.response;
+                    let btns = marqueurRow.find("input[type='radio']");
+
+                    let eRadioBtn = $(btns[0]);
+                    let mRadioBtn = $(btns[1]);
+                    let aRadioBtn = $(btns[2]);
+                    let xRadioBtn = $(btns[3]);
+
+
+                    // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
+                    if (res === 'E') {
+                        eRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 'M') {
+                        mRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 'A') {
+                        aRadioBtn.attr("checked", "checked");
+
+                    } else if (res === 'X') {
+                        xRadioBtn.attr("checked", "checked");
+                    }
+
+                }
+            })
+        })
+
+
+    }
+}
 
 function takeCopy(json) {
     let result = {
@@ -2906,7 +3162,7 @@ function displaySurPoints() {
 async function getFicheEmploiPreview(params) {
     let url = "http://localhost:8080/preassessment/api/v1/ficheEvaluation/preview" + params;
 
-    fetch(url, {
+    return fetch(url, {
         method: 'GET'
     }).then((response) => {
         return response.json();
@@ -2916,9 +3172,6 @@ async function getFicheEmploiPreview(params) {
         //GET NUMBER OF INPUTS TO CALCULATE SCORE
         elementsNumbers = countsInputs(success);
         return success;
-    }).then((json) => {
-        console.log(json);
-        populateResTable(json);
     }).catch(error => console.log(error))
 }
 

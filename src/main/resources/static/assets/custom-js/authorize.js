@@ -1,6 +1,6 @@
 // CHECK FOR MANAGER ENTITY
 let currentUrl;
-if (sessionStorage.getItem("user") === null) {
+if (localStorage.getItem("user") === null) {
         currentUrl = window.location.href;
         window.location.replace(extractDomain(currentUrl));
     

@@ -45,13 +45,13 @@ getListOfEmplois().then((data) => {
         console.log(assessment);
 
         //SAVE ASSESSMENT ON LOCAL SESSION
-        sessionStorage.setItem("assessment", JSON.stringify(assessment));
+        localStorage.setItem("assessment", JSON.stringify(assessment));
 
         // REDIRECT TO THE ASSESSMENT PAGE 
         // let url = buildURL("evaluation/evaluate", urlParams);
 
         // window.open(extractDomain(currentUrl) + url)
-        // console.log(sessionStorage.getItem("assessment"));
+        // console.log(localStorage.getItem("assessment"));
     })
 
 })

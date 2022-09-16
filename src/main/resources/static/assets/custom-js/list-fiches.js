@@ -16,7 +16,7 @@ const extractRootDomain = (url) => {
 
 currentUrl = window.location.href;
 
-let manager = JSON.parse(sessionStorage.getItem("user"));
+let manager = JSON.parse(localStorage.getItem("user"));
 
 let managerMatricule = manager.data.matricule;;
 
@@ -64,23 +64,29 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
         // let indexOfFiche = btns.indexOf(aElement);
         let indexOfFiche =  $(aElement).parents(".g-1").attr("id");
 
-        console.log(listFiches[indexOfFiche].status === "ÉVALUÉ");
+        console.log(manager.type === 2 && listFiches[indexOfFiche].status === "CREATED");
        
 
         // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAM MANAGER
-        if (listFiches[indexOfFiche].status === "ÉVALUÉ") {
+        if ( (listFiches[indexOfFiche].status === "ÉVALUÉ" && manager.type === '1') || (listFiches[indexOfFiche].status === "TERMINÉ" && manager.type === '2') ) {
 
             // SHOW ALERT MODAL
             showModal("error" , "Accès refusé", "Vous ne pouvez pas accéder aux fiches d'évaluations que vous avez évalués.  En cas de problème, contactez-nous", "")
 
-        } else {
+        } else if (manager.type === '2' && listFiches[indexOfFiche].status === "CREATED") {
+            
+            // SHOW ALERT MODAL
+            showModal("error","Accès refusé", "Vous n'avez pas accès. Parce que le manager N+1 n'a pas encore évalué cette fiche");
+
+
+        } else{
 
             // GET THE ASSOCIATED FIHCE D EVALUATION
             let fiche = listFiches[indexOfFiche];
             console.log(fiche);
 
             //SAVE FICHE OBJECT ON LOCAL SESSION
-            sessionStorage.setItem("ficheEvaluation", JSON.stringify(fiche));
+            localStorage.setItem("ficheEvaluation", JSON.stringify(fiche));
 
             // REDIRECT TO THE FICHE PAGE : /evaluation/evaluate?.....
 

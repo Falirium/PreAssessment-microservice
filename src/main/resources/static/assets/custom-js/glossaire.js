@@ -43,8 +43,8 @@ btnSaveCompetences.addEventListener("click", (e) => {
 
 
 // WHEN THE LOCAL SESSION HAS A NON EMPTY COMPETENCE ARRAY
-if (sessionStorage.getItem("competences")) {
-    competenceArray = JSON.parse(sessionStorage.getItem("competences"));
+if (localStorage.getItem("competences")) {
+    competenceArray = JSON.parse(localStorage.getItem("competences"));
 
     console.log(competenceArray);
 
@@ -94,7 +94,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
         competenceEditIndex = -1;
 
         // SET THE SESSIONSTORAGE
-        sessionStorage.setItem("competences", JSON.stringify(competenceArray));
+        localStorage.setItem("competences", JSON.stringify(competenceArray));
 
         // RELOAD THE PAGE
         location.reload();
@@ -139,7 +139,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
 // btnConfirmDeleteNiveau.addEventListener("click", (e) => {
 
 //     // SET THE SESSIONSTORAGE
-//     sessionStorage.setItem("competences", JSON.stringify(competenceArray));
+//     localStorage.setItem("competences", JSON.stringify(competenceArray));
 
 //     // RELOAD THE PAGE
 //     location.reload();
