@@ -42,6 +42,7 @@ public class CompetenceCoontroller {
     public ResponseEntity<List<Competence>> createListOfCompetences(@RequestBody List<Competence> competences) {
         return ResponseEntity.status(HttpStatus.CREATED).body(competenceService.saveListOfCompetences(competences));
     }
+    
 
     
 }
