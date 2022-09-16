@@ -269,6 +269,8 @@ public class FicheEvaluationController {
         fe.setSousPoints(updatedFiche.getSousPoints());
         fe.setSurPoints(updatedFiche.getSurPoints());
         fe.setStatus(updatedFiche.getStatus());
+        fe.setRe_manager1(updatedFiche.getRe_manager1());
+        fe.setRe_manager2(updatedFiche.getRe_manager2());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ficheEvaluationService.saveFicheEvaluation(fe));
 

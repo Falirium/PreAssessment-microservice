@@ -70,22 +70,30 @@ $("#btn-fiche-validate").click(function (e) {
 
         ficheEvaluation.status = "ÉVALUÉ";
 
-        // TAKE A COPY OF THIS FICHE
+        // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
         let re = takeCopy(ficheEvaluation);
-        console.log(re);
+        // console.log(re);
+        // console.log(JSON.stringify(re));
+        ficheEvaluation.re_manager1 = JSON.stringify(re);
+        // ficheEvaluation.re_manager2 = null;
 
 
-        // // SAVE THE RESULT TO THE DB
-        // updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
-        //     console.log(result);
+        // SAVE THE RESULT TO THE DB
+        updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
+            console.log(result);
 
-        //     // SHOW SUCCESS MODAL
-
-
-        //     // REDIRECT TO EVALUATION LIST PAGE
+            // SHOW SUCCESS MODAL
+            showModal("success", "La fiche a été enregistré", "La fiche a été enregistré avec succès. Vous serez redirigé <strong>automatiquement</strong> vers la liste des fichiers pour continuer l'évaluation.", "")
 
 
-        // })
+            // REDIRECT TO EVALUATION LIST PAGE
+            setTimeout(function () {
+                currentUrl = window.location.href;
+                window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+            }, 1000)
+
+
+        })
 
     }
 
@@ -408,7 +416,7 @@ function takeCopy(json) {
     }
 
 
-    console.log(result)
+    // console.log(result)
     return result;
 
 }
@@ -417,7 +425,7 @@ async function updateFicheEvaluation(id, jsonFiche) {
     let url = "http://localhost:8080/preassessment/api/v1/ficheEvaluation/update/" + id;
 
     return fetch(url, {
-        header: 'PUT',
+        method: 'PUT',
         headers: {
             "Content-Type": "application/json"
         },
@@ -426,7 +434,7 @@ async function updateFicheEvaluation(id, jsonFiche) {
     }).then(
         response => response.json()
     ).then(
-        success => console.log(success)
+        success => success
     ).catch(
         error => console.log(error)
     )
@@ -475,10 +483,10 @@ function showModal(type, header, content, action) {
     var myModal = new bootstrap.Modal(document.getElementById(modalId));
 
     // SET HEADER
-    $(modalHeaderId).text(header);
+    $(modalHeaderId).html(header);
 
     // SET CONTENT
-    $(modalContentId).text(content)
+    $(modalContentId).html(content)
 
     myModal.show();
 

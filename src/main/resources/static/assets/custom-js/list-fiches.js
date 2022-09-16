@@ -263,7 +263,7 @@ function getFichesDataFromJson(arrJson) {
                 <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Non évalué</span>
             </div>
                 `)
-        } else if (e.status === "EVALUÉ") {
+        } else if (e.status === "ÉVALUÉ") {
             arr.push(`
                 <div class="mt-sm-1 d-block">
                 <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Évalué</span>
