@@ -1429,7 +1429,7 @@ function checkLastNiveauInputs() {
 
 
 async function getListCompetences() {
-    let url = "http://localhost:8080/preassessment/api/v1/competence/competences"
+    let url = "http://localhost:8080/preassessment/api/v1/competence/"
 
     fetch(url, { // Your POST endpoint
         method: 'GET',

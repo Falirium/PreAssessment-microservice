@@ -3,7 +3,7 @@ let ficheEvaluation;
 let manager;
 
 // CHECK IF FICHEEVALUATION IS AVAILABLE
-if (sessionStorage.getItem("ficheEvaluation") === null) {
+if (localStorage.getItem("ficheEvaluation") === null) {
 
     // TODO:REDIRECT TO PAGE LIST PAGE
     window.location.href(currentUrl(window.location.href) + "evaluation/list")
@@ -12,8 +12,8 @@ if (sessionStorage.getItem("ficheEvaluation") === null) {
 } else {
 
     // GET FICHE & MANAGER
-    ficheEvaluation = JSON.parse(sessionStorage.getItem("ficheEvaluation"));
-    manager = JSON.parse(sessionStorage.getItem("user"));
+    ficheEvaluation = JSON.parse(localStorage.getItem("ficheEvaluation"));
+    manager = JSON.parse(localStorage.getItem("user"));
 
     // SET FICHE EVALUATION INFOS
     $("#emploi-cible-text").text(ficheEvaluation.emploi.intitule);

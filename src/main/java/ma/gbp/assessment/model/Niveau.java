@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -49,11 +50,18 @@ public class Niveau {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    
     private String intitule;
+
     private String filiere;
+ 
     private String sousFiliere;
+    
     private Date dateMaj;
+
+    @Lob
     private String vocation;
+    
     private int level;
 
     @Type(type = "jsonb")

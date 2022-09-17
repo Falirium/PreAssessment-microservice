@@ -1,5 +1,5 @@
 // GET MANAGER OR CONSULTANT INFO
-let user = sessionStorage.getItem("user");
+let user = localStorage.getItem("user");
 
 if (user === "admin") {
     // IS ADMIN
@@ -18,11 +18,9 @@ if (user === "admin") {
 
 //ADD EVENT LISTENER ON SIGNOUT
 $("#signout").click(function() {
-    if (sessionStorage.getItem("manager") != null) {
-        sessionStorage.removeItem("manager");
-    } else if (sessionStorage.getItem("consultant") != null) {
-        sessionStorage.removeItem("consultant");
-    }
+    
+    // CLEAR EVERY DATA STORED IN LOCAL_STORAGE
+    localStorage.clear();
 
     // REDIRECT TO LOGINPAGE
     window.location.replace(extractDomain(window.location.href));
