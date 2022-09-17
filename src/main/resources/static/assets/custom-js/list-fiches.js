@@ -20,7 +20,7 @@ let manager = JSON.parse(localStorage.getItem("user"));
 
 let managerMatricule = manager.data.matricule;;
 
-let authorizedCol = ["id", "collaborateur", "emploi", "niveau", "associatedAssessment", "status"];
+let authorizedCol = ["id", "collaborateur", "evaluateurOne", "emploi", "niveau", "associatedAssessment", "status"];
 
 let ficheDatatable;
 
@@ -62,24 +62,24 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
 
         let btns = $(".view-btn").get();
         // let indexOfFiche = btns.indexOf(aElement);
-        let indexOfFiche =  $(aElement).parents(".g-1").attr("id");
+        let indexOfFiche = $(aElement).parents(".g-1").attr("id");
 
         console.log(manager.type === 2 && listFiches[indexOfFiche].status === "CREATED");
-       
+
 
         // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAM MANAGER
-        if ( (listFiches[indexOfFiche].status === "ÉVALUÉ" && manager.type === '1') || (listFiches[indexOfFiche].status === "TERMINÉ" && manager.type === '2') ) {
+        if ((listFiches[indexOfFiche].status === "ÉVALUÉ" && manager.type === '1') || (listFiches[indexOfFiche].status === "TERMINÉ" && manager.type === '2')) {
 
             // SHOW ALERT MODAL
-            showModal("error" , "Accès refusé", "Vous ne pouvez pas accéder aux fiches d'évaluations que vous avez évalués.  En cas de problème, contactez-nous", "")
+            showModal("error", "Accès refusé", "Vous ne pouvez pas accéder aux fiches d'évaluations que vous avez évalués.  En cas de problème, contactez-nous", "")
 
         } else if (manager.type === '2' && listFiches[indexOfFiche].status === "CREATED") {
-            
+
             // SHOW ALERT MODAL
-            showModal("error","Accès refusé", "Vous n'avez pas accès. Parce que le manager N+1 n'a pas encore évalué cette fiche");
+            showModal("error", "Accès refusé", "Vous n'avez pas accès. Parce que le manager N+1 n'a pas encore évalué cette fiche");
 
 
-        } else{
+        } else {
 
             // GET THE ASSOCIATED FIHCE D EVALUATION
             let fiche = listFiches[indexOfFiche];
@@ -181,29 +181,7 @@ async function getListOfFichesByMatricule(matricule) {
 function getFichesColumnFromJson(json, authorizedCol) {
     let colArr = [];
 
-    // for (var key of Object.keys(json)) {
-    //     if (authorizedCol.includes(key)) {
-    //         let value;
-    //         switch (key) {
-    //             case "collaborateur":
-    //                 value = "collaborateur";
-    //                 break;
-    //             case "emploi":
-    //                 value = "emploi ciblé"
-    //                 break;
-    //             case "associatedAssessment":
-    //                 value = "assessment";
-    //                 break;
-    //             case "status":
-    //                 value = "status"
-    //                 break;
 
-    //         }
-    //         colArr.push({
-    //             "title": value
-    //         });
-
-    // }
 
     // ADD CUSTOM COLUMNS
 
@@ -223,6 +201,10 @@ function getFichesColumnFromJson(json, authorizedCol) {
                 case "emploi":
                     value = "emploi ciblé"
                     break;
+                case "evaluateurOne":
+                    value = "evaluateurOne"
+                    break;
+                
                 case "associatedAssessment":
                     value = "assessment";
                     break;
@@ -238,6 +220,12 @@ function getFichesColumnFromJson(json, authorizedCol) {
                     "title": "Matriculle"
                 }, {
                     "title": "Collaborateur"
+                });
+            } else if (value === "evaluateurOne") {
+                colArr.push({
+                    "title": "Matriculle - Manager"
+                }, {
+                    "title": "Manager"
                 });
             } else {
                 colArr.push({
@@ -275,6 +263,8 @@ function getFichesDataFromJson(arrJson) {
         arr.push(e.id);
         arr.push(e.collaborateur.matricule);
         arr.push(e.collaborateur.firstName + " " + e.collaborateur.lastName);
+        arr.push(e.evaluateurOne.matricule);
+        arr.push(e.evaluateurOne.firstName + " " + e.evaluateurOne.lastName);
         arr.push(e.emploi.intitule);
         arr.push(e.emploi.level);
         arr.push(e.associatedAssessment.name);

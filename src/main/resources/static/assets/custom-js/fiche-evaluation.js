@@ -142,9 +142,14 @@ function allFieldSelected() {
     // REMOVE DANGER BACKGROUNDS FRON TD ELEMENTS
     $("td").removeClass("btn-danger-light");
 
+    let isChecked = true;
+    let firstUncheckedRow = null;
+
     for (var j = 0; j < radioNames.length; j++) {
         let radioName = radioNames[j];
         console.log(radioName);
+
+
 
         switch (radioName) {
             case "custom-switch-radio-":
@@ -153,6 +158,7 @@ function allFieldSelected() {
                     if (!$("input[name=" + radioName + i + "]").is(":checked")) {
                         console.log(i);
 
+                        
 
                         // GET THE PROBLEM RADIO + ADD ERROR MESSAGE
                         let notSelectedRadioContainer = $($("input[name=" + radioName + i + "]")[0]).parents("td").first();
@@ -163,12 +169,14 @@ function allFieldSelected() {
                         notSelectedRadioContainer.next().addClass("btn-danger-light");
                         // console.log(notSelectedRadioContainer);
 
+                        // SAVE THE FIRT UNCHECKED ROW
+                        if (firstUncheckedRow === null) {
+                            firstUncheckedRow = notSelectedRadioContainer;
+                        }
 
-                        $('html, body').animate({
-                            scrollTop: notSelectedRadioContainer.offset().top - 100
-                        }, 500);
 
-                        return false;
+
+                        isChecked = false;
                     }
                 }
                 break;
@@ -191,12 +199,14 @@ function allFieldSelected() {
                         notSelectedRadioContainer.next().next().next().addClass("btn-danger-light");
 
 
-                        // console.log(notSelectedRadioContainer);
-                        $('html, body').animate({
-                            scrollTop: notSelectedRadioContainer.offset().top - 100
-                        }, 500);
+                        // SAVE THE FIRT UNCHECKED ROW
+                        if (firstUncheckedRow === null) {
+                            firstUncheckedRow = notSelectedRadioContainer;
+                        }
 
-                        return false;
+                        
+
+                        isChecked = false;
                     }
                 }
                 break;
@@ -219,13 +229,15 @@ function allFieldSelected() {
                         notSelectedRadioContainer.next().next().next().addClass("btn-danger-light");
 
 
+                        // SAVE THE FIRT UNCHECKED ROW
+                        if (firstUncheckedRow === null) {
+                            firstUncheckedRow = notSelectedRadioContainer;
+                        }
+
                         // console.log(notSelectedRadioContainer);
 
-                        $('html, body').animate({
-                            scrollTop: notSelectedRadioContainer.offset().top - 100
-                        }, 500);
-                        return false;
-
+                    
+                        isChecked = false;
                     }
                 }
                 break;
@@ -247,13 +259,15 @@ function allFieldSelected() {
                         notSelectedRadioContainer.next().next().addClass("btn-danger-light");
                         notSelectedRadioContainer.next().next().next().addClass("btn-danger-light");
 
+                        // SAVE THE FIRT UNCHECKED ROW
+                        if (firstUncheckedRow === null) {
+                            firstUncheckedRow = notSelectedRadioContainer;
+                        }
 
                         // console.log(notSelectedRadioContainer);
-                        $('html, body').animate({
-                            scrollTop: notSelectedRadioContainer.offset().top - 100
-                        }, 500);
+                        
 
-                        return false;
+                        isChecked = false;
                     }
                 }
                 break;
@@ -262,7 +276,16 @@ function allFieldSelected() {
 
     }
 
-    return true;
+    // SCROLL TO THE FORST UNCKECKED ROW
+    if (firstUncheckedRow != null) {
+        $('html, body').animate({
+            scrollTop: firstUncheckedRow.offset().top - 100
+        }, 500);
+    }
+
+    console.log(isChecked);
+
+    return isChecked;
 
 
 
