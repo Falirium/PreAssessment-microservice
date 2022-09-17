@@ -169,7 +169,10 @@ $("#btn-emploi-save").click(function () {
 
 
         // POST THE RESULT TO THE DATABASE
-        postEmploi(generateNiveauxFromEmploi(emploiJSON));
+        postEmploi(generateNiveauxFromEmploi(emploiJSON)).then((success) => {
+            
+            showModal("success", "L'emploi a été ajouté", "la fiche d'emploi avec ces niveaux de sénioritées a été ajouté avec succès à la base de données. ", "");
+        });
 
     }
 
@@ -1465,7 +1468,7 @@ async function getListCompetences() {
 async function postEmploi(emploiArr) {
     let url = "http://localhost:8080/preassessment/api/v1/emploi/niveau/niveaux"
 
-    fetch(url, { // Your POST endpoint
+    return fetch(url, { // Your POST endpoint
         method: 'POST',
         headers: {
             // Content-Type may need to be completely **omitted**
@@ -1479,8 +1482,10 @@ async function postEmploi(emploiArr) {
         success => {
 
             // SHOW SUCCESS MODEL
-            var myModal = new bootstrap.Modal(document.getElementById('success'));
-            myModal.show();
+            // var myModal = new bootstrap.Modal(document.getElementById('success'));
+            // myModal.show();
+
+            return success;
 
 
         } // Handle the success response object
@@ -1545,6 +1550,57 @@ function getArrFromJsonArr(jsonArr) {
 }
 
 
+function showModal(type, header, content, action) {
+
+    let modalId, modalHeaderId, modalContentId;
+
+
+    switch (type) {
+        case "success":
+            modalId = "success";
+            modalHeaderId = "#modal-success-header";
+            modalContentId = "#modal-success-content";
+            break;
+
+        case "warning":
+            modalId = "warning";
+            modalHeaderId = "#modal-warning-header";
+            modalContentId = "#modal-warning-content";
+            break;
+
+        case "info":
+            modalId = "info";
+            modalHeaderId = "#modal-info-header";
+            modalContentId = "#modal-info-content";
+            break;
+
+        case "error":
+            modalId = "modaldemo5";
+            modalHeaderId = "#modal-error-header";
+            modalContentId = "#modal-error-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+
+        case "confirm":
+            modalId = "confirm";
+            modalHeaderId = "#modal-confirm-header";
+            modalContentId = "#modal-confirm-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+    }
+
+
+    var myModal = new bootstrap.Modal(document.getElementById(modalId));
+
+    // SET HEADER
+    $(modalHeaderId).text(header);
+
+    // SET CONTENT
+    $(modalContentId).text(content)
+
+    myModal.show();
+
+}
 
 
 

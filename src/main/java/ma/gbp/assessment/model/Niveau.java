@@ -59,7 +59,7 @@ public class Niveau {
     
     private Date dateMaj;
 
-    @Lob
+    @Column(columnDefinition = "TEXT", length = 2048)
     private String vocation;
     
     private int level;
