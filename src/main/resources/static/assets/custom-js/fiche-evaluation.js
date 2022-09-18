@@ -44,33 +44,62 @@ const params = new URLSearchParams(window.location.search);
 let urlParams = "?";
 for (const param of params) {
     urlParams = urlParams + param[0] + "=" + param[1] + "&";
-    console.log(param);
+    // console.log(param);
 }
 console.log(urlParams);
 
+// CHECK FOR AVAILABLE SECTIONS
+let radioBtnCompteur = 0;
+let compBtnCompteur = 0;
+let compSfBtnCompteur = 0;
+let compSeBtnCompteur = 0;
+
 // CHECK IF FICHE IS ALREADY FILLED
-if (ficheEvaluation.re_manager1 != null) {
+if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) {
 
-    let manager1Answers = JSON.parse(ficheEvaluation.re_manager1);
+    // THIS VARIABLE HOLDS THE LAST VERSION OF ANSWERS : FOR BOTH MANAGER 1 AND MANAGER2
+    let ficheAnswers;
 
-    // UPDATE THE SCORES & DISPLAY THEM
-    score = ficheEvaluation.score;
-    sur_points = ficheEvaluation.surPoints;
-    sous_points = ficheEvaluation.sousPoints;
 
-    $("#score").text(score.toString() + "%");
-    displaySousPoints();
-    displaySurPoints();
+    if (ficheEvaluation.re_manager1 != null && manager.type === "1" && ficheEvaluation.re_manager1 == null) {
+
+        ficheAnswers = JSON.parse(ficheEvaluation.re_manager1);
+
+    } else if (ficheEvaluation.re_manager1 != null && manager.type === "2" && ficheEvaluation.re_manager2 == null) {
+
+        ficheAnswers = JSON.parse(ficheEvaluation.re_manager1);
+
+    } else if (ficheEvaluation.re_manager1 != null && manager.type === "2" && ficheEvaluation.re_manager2 != null) {
+
+        ficheAnswers = JSON.parse(ficheEvaluation.re_manager2);
+    }
+
 
 
     // PARSE THE THE FICHE 
     getFicheEmploiPreview(urlParams).then((json) => {
         populateResTable(json);
+
+        // FILL IT WITH RESPONSE OF MANAGER 1
+        parseManagerResult(ficheAnswers);
+
+
+        // UPDATE THE SCORES & DISPLAY THEM
+        score = ficheEvaluation.score;
+        sur_points = ficheEvaluation.surPoints;
+        sous_points = ficheEvaluation.sousPoints;
+        totalPoints = (score / 100) * elementsNumbers;
+
+        $("#score").text(score.toString() + "%");
+        displaySousPoints();
+        displaySurPoints();
     });
 
 
-    // FILL IT WITH RESPONSE OF MANAGER 1
-    parseManager1Result(manager1Answers);
+
+
+
+
 
 } else {
 
@@ -84,35 +113,48 @@ if (ficheEvaluation.re_manager1 != null) {
 
 
 
-// CHECK FOR AVAILABLE SECTIONS
-let radioBtnCompteur = 0;
-let compBtnCompteur = 0;
-let compSfBtnCompteur = 0;
-let compSeBtnCompteur = 0;
+
 
 
 // VALIDATE BTN 
 $("#btn-fiche-validate").click(function (e) {
+
+    // WE HAVE TWO SCENARIOS : MANAGER1 VALIDAES , MANAGER2 VALIDATES
+
 
     // VERIFY IF ALL THE FIELS ARE SELECTED
     // console.log(allFieldSelected());
     if (!allFieldSelected()) {
 
     } else {
+
+
         // UPDATE THE SCORES
         ficheEvaluation.score = score;
         ficheEvaluation.sousPoints = sous_points;
         ficheEvaluation.surPoints = sur_points;
 
-        ficheEvaluation.status = "ÉVALUÉ";
+        // CHECK WHICH MANAGER IS CONNECTED
+        if (manager.type === "1") {
 
-        // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
-        let re = takeCopy(ficheEvaluation);
-        // console.log(re);
-        // console.log(JSON.stringify(re));
-        ficheEvaluation.re_manager1 = JSON.stringify(re);
-        // ficheEvaluation.re_manager2 = null;
+            ficheEvaluation.status = "ÉVALUÉ";
 
+            // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
+            let re = takeCopy(ficheEvaluation);
+            // console.log(re);
+            // console.log(JSON.stringify(re));
+            ficheEvaluation.re_manager1 = JSON.stringify(re);
+
+
+        } else if (manager.type === "2") {
+
+            ficheEvaluation.status = "TERMINÉ";
+
+            // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
+            let re = takeCopy(ficheEvaluation);
+            ficheEvaluation.re_manager2 = JSON.stringify(re);
+
+        }
 
         // SAVE THE RESULT TO THE DB
         updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
@@ -123,10 +165,10 @@ $("#btn-fiche-validate").click(function (e) {
 
 
             // REDIRECT TO EVALUATION LIST PAGE
-            setTimeout(function () {
-                currentUrl = window.location.href;
-                window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-            }, 1000)
+            // setTimeout(function () {
+            //     currentUrl = window.location.href;
+            //     window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+            // }, 1000)
 
 
         })
@@ -158,7 +200,7 @@ function allFieldSelected() {
                     if (!$("input[name=" + radioName + i + "]").is(":checked")) {
                         console.log(i);
 
-                        
+
 
                         // GET THE PROBLEM RADIO + ADD ERROR MESSAGE
                         let notSelectedRadioContainer = $($("input[name=" + radioName + i + "]")[0]).parents("td").first();
@@ -204,7 +246,7 @@ function allFieldSelected() {
                             firstUncheckedRow = notSelectedRadioContainer;
                         }
 
-                        
+
 
                         isChecked = false;
                     }
@@ -236,7 +278,7 @@ function allFieldSelected() {
 
                         // console.log(notSelectedRadioContainer);
 
-                    
+
                         isChecked = false;
                     }
                 }
@@ -265,7 +307,7 @@ function allFieldSelected() {
                         }
 
                         // console.log(notSelectedRadioContainer);
-                        
+
 
                         isChecked = false;
                     }
@@ -294,7 +336,9 @@ function allFieldSelected() {
 
 }
 
-function parseManager1Result(json) {
+function parseManagerResult(json) {
+
+    console.log(json);
 
     // MARQUEURS
     if (json.marqueurs.length != 0) {
@@ -343,7 +387,7 @@ function parseManager1Result(json) {
 
                     let res = exi.response;
 
-                    let btns = marqueurRow.find("input[type='radio']")
+                    let btns = exigenceRow.find("input[type='radio']")
 
                     let noRadioBtn = $(btns[1]);
                     let yesRadioBtn = $(btns[2]);
@@ -374,7 +418,7 @@ function parseManager1Result(json) {
                 if (responsabiliteRow.find("#exigence-value").html() === res.value) {
 
                     let response = res.response;
-                    let btns = marqueurRow.find("input[type='radio']")
+                    let btns = responsabiliteRow.find("input[type='radio']")
 
                     let noRadioBtn = $(btns[1]);
                     let yesRadioBtn = $(btns[2]);
@@ -395,17 +439,19 @@ function parseManager1Result(json) {
     }
 
     // COMPETENCES_DC
-    if (json.competences_dc.length != 0) {
+    console.log("comp - dc");
+    if (json.competences.competences_dc.length != 0) {
 
-        json.competences_dc.map((comp, index) => {
+        json.competences.competences_dc.map((comp, index) => {
 
-            $(".competences_dc").each((index, element) => {
+            console.log(comp);
+            $(".comp-dc").each((index, element) => {
                 let compDcRow = $(element);
 
                 if (compDcRow.find("#compDc-value").html() === comp.value) {
 
                     let res = comp.response;
-                    let btns = marqueurRow.find("input[type='radio']");
+                    let btns = compDcRow.find("input[type='radio']");
 
                     let eRadioBtn = $(btns[0]);
                     let mRadioBtn = $(btns[1]);
@@ -417,14 +463,23 @@ function parseManager1Result(json) {
                     if (res === 'E') {
                         eRadioBtn.attr("checked", "checked");
 
+                        // ADD THE FOLLOWINW ATTRIBUTE SO WE CAN KNOW WICH SELECTION IS SELECTED
+                        eRadioBtn.attr("data-checked", "true");
+
                     } else if (res === 'M') {
                         mRadioBtn.attr("checked", "checked");
+
+                        mRadioBtn.attr("data-checked", "true");
 
                     } else if (res === 'A') {
                         aRadioBtn.attr("checked", "checked");
 
+                        aRadioBtn.attr("data-checked", "true");
+
                     } else if (res === 'X') {
                         xRadioBtn.attr("checked", "checked");
+
+                        xRadioBtn.attr("data-checked", "true");
                     }
 
                 }
@@ -435,17 +490,17 @@ function parseManager1Result(json) {
     }
 
     // COMPETENCES_SE
-    if (json.competences_se.length != 0) {
+    if (json.competences.competences_se.length != 0) {
 
-        json.competences_se.map((comp, index) => {
+        json.competences.competences_se.map((comp, index) => {
 
-            $(".competences_se").each((index, element) => {
+            $(".comp-se").each((index, element) => {
                 let compSeRow = $(element);
 
                 if (compSeRow.find("#compSe-value").html() === comp.value) {
 
                     let res = comp.response;
-                    let btns = marqueurRow.find("input[type='radio']");
+                    let btns = compSeRow.find("input[type='radio']");
 
                     let eRadioBtn = $(btns[0]);
                     let mRadioBtn = $(btns[1]);
@@ -457,14 +512,23 @@ function parseManager1Result(json) {
                     if (res === 'E') {
                         eRadioBtn.attr("checked", "checked");
 
+                        // ADD THE FOLLOWINW ATTRIBUTE SO WE CAN KNOW WICH SELECTION IS SELECTED
+                        eRadioBtn.attr("data-checked", "true");
+
                     } else if (res === 'M') {
                         mRadioBtn.attr("checked", "checked");
+
+                        mRadioBtn.attr("data-checked", "true");
 
                     } else if (res === 'A') {
                         aRadioBtn.attr("checked", "checked");
 
+                        aRadioBtn.attr("data-checked", "true");
+
                     } else if (res === 'X') {
                         xRadioBtn.attr("checked", "checked");
+
+                        xRadioBtn.attr("data-checked", "true");
                     }
 
                 }
@@ -475,17 +539,17 @@ function parseManager1Result(json) {
     }
 
     // COMPETENCES_SF
-    if (json.competences_sf.length != 0) {
+    if (json.competences.competences_sf.length != 0) {
 
-        json.competences_sf.map((comp, index) => {
+        json.competences.competences_sf.map((comp, index) => {
 
-            $(".competences_sf").each((index, element) => {
+            $(".comp-sf").each((index, element) => {
                 let compSfRow = $(element);
 
                 if (compSfRow.find("#compSf-value").html() === comp.value) {
 
                     let res = comp.response;
-                    let btns = marqueurRow.find("input[type='radio']");
+                    let btns = compSfRow.find("input[type='radio']");
 
                     let eRadioBtn = $(btns[0]);
                     let mRadioBtn = $(btns[1]);
@@ -497,14 +561,23 @@ function parseManager1Result(json) {
                     if (res === 'E') {
                         eRadioBtn.attr("checked", "checked");
 
+                        // ADD THE FOLLOWINW ATTRIBUTE SO WE CAN KNOW WICH SELECTION IS SELECTED
+                        eRadioBtn.attr("data-checked", "true");
+
                     } else if (res === 'M') {
                         mRadioBtn.attr("checked", "checked");
+
+                        mRadioBtn.attr("data-checked", "true");
 
                     } else if (res === 'A') {
                         aRadioBtn.attr("checked", "checked");
 
+                        aRadioBtn.attr("data-checked", "true");
+
                     } else if (res === 'X') {
                         xRadioBtn.attr("checked", "checked");
+
+                        xRadioBtn.attr("data-checked", "true");
                     }
 
                 }
@@ -775,7 +848,7 @@ function populateResTable(json) {
     console.log(json);
     // GET TABLE BODY 
     for (var key of Object.keys(json)) {
-        console.log(key);
+        // console.log(key);
         switch (key) {
             case "responsabilites":
                 //console.log("responsa");
