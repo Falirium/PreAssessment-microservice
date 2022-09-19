@@ -349,27 +349,33 @@ function parseManagerResult(json) {
                 let marqueurRow = $(element);
 
 
-        
+
 
                 if (marqueurRow.find("#marqueur-value").html() === marq.value) {
 
                     let res = marq.response;
-                    
+
 
                     let btns = marqueurRow.find("input[type='radio']")
-                   
+
 
                     let noRadioBtn = $(btns[0]);
                     let yesRadioBtn = $(btns[1]);
 
-   
+
 
                     // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
                     if (res == 0) {
                         noRadioBtn.attr("checked", "checked");
 
+                        // ADD THE ATTRIBUTE DATA-CHECKED
+                        noRadioBtn.attr("data-checked", "true");
+
                     } else if (res == 1) {
                         yesRadioBtn.attr("checked", "checked");
+
+                        // ADD THE ATTRIBUTE DATA-CHECKED
+                        yesRadioBtn.attr("data-checked", "true");
                     }
 
                 }
@@ -400,8 +406,14 @@ function parseManagerResult(json) {
                     if (res == 0) {
                         noRadioBtn.attr("checked", "checked");
 
+                        // ADD THE ATTRIBUTE DATA-CHECKED
+                        noRadioBtn.attr("data-checked", "true");
+
                     } else if (res == 1) {
                         yesRadioBtn.attr("checked", "checked");
+
+                        // ADD THE ATTRIBUTE DATA-CHECKED
+                        yesRadioBtn.attr("data-checked", "true");
                     }
 
                 }
@@ -431,8 +443,14 @@ function parseManagerResult(json) {
                     if (response == 0) {
                         noRadioBtn.attr("checked", "checked");
 
+                        // ADD THE ATTRIBUTE DATA-CHECKED
+                        noRadioBtn.attr("data-checked", "true");
+
                     } else if (response == 1) {
                         yesRadioBtn.attr("checked", "checked");
+
+                        // ADD THE ATTRIBUTE DATA-CHECKED
+                        yesRadioBtn.attr("data-checked", "true");
                     }
 
                 }
@@ -467,7 +485,7 @@ function parseManagerResult(json) {
                     if (res === 'E') {
                         eRadioBtn.attr("checked", "checked");
 
-                        // ADD THE FOLLOWINW ATTRIBUTE SO WE CAN KNOW WICH SELECTION IS SELECTED
+                        // ADD THE FOLLOWING ATTRIBUTE SO WE CAN KNOW WICH SELECTION IS SELECTED
                         eRadioBtn.attr("data-checked", "true");
 
                     } else if (res === 'M') {
