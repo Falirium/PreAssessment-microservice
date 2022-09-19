@@ -261,6 +261,17 @@ public class FicheEvaluationController {
         return ResponseEntity.status(HttpStatus.OK).body(fichesEvaluations);
     }
 
+    @GetMapping(path = "/assessment/{assessmentId}")
+    public ResponseEntity<List<FicheEvaluation>> getListEvaluationsByAssessment(@PathVariable String assessmentId) {
+        Assessment assessment = assessmentService.getAssessment(assessmentId);
+
+        if (assessment == null) {
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Assessment Not Found");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(assessment.getFichesEvaluations());
+    }
+
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<FicheEvaluation> updateFicheEvaluation(@PathVariable Long id, @RequestBody FicheEvaluation updatedFiche) {
         FicheEvaluation fe = ficheEvaluationService.getFicheEvaluationById(id);
