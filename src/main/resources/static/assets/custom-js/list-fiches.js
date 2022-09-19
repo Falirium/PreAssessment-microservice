@@ -35,10 +35,16 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
 
 
     listFiches = data;
-    // INITIALIZE DATATABLE
 
-    let dataSet = getFichesDataFromJson(data);
-    let col = getFichesColumnFromJson(data[0], authorizedCol);
+    // INITIALIZE DATATABLE
+    let fiteredAuthorizedCol;
+
+    if (manager.type === '1') {
+        fiteredAuthorizedCol = authorizedCol.filter((col, index) => "evaluateurOne" != col );
+    } 
+
+    let dataSet = getFichesDataFromJson(data,fiteredAuthorizedCol);
+    let col = getFichesColumnFromJson(data[0], fiteredAuthorizedCol);
 
     ficheDatatable = $("#tb1").DataTable({
         data: dataSet,
@@ -64,22 +70,14 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
         // let indexOfFiche = btns.indexOf(aElement);
         let indexOfFiche = $(aElement).parents(".g-1").attr("id");
 
-        console.log(manager.type === 2 && listFiches[indexOfFiche].status === "CREATED");
+        // console.log(manager.type === 2 && listFiches[indexOfFiche].status === "CREATED");
 
 
         // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAM MANAGER
-        if ((listFiches[indexOfFiche].status === "ÉVALUÉ" && manager.type === '1') || (listFiches[indexOfFiche].status === "TERMINÉ" && manager.type === '2')) {
 
-            // SHOW ALERT MODAL
-            showModal("error", "Accès refusé", "Vous ne pouvez pas accéder aux fiches d'évaluations que vous avez évalués.  En cas de problème, contactez-nous", "")
+        if (( manager.type === '1' && (listFiches[indexOfFiche].status === "ÉVALUÉ-0" || listFiches[indexOfFiche].status === "CREATED")) || (manager.type === '2' && (listFiches[indexOfFiche].status === "ÉVALUÉ-1" || listFiches[indexOfFiche].status === "TERMINÉ-0" )) ) {
 
-        } else if (manager.type === '2' && listFiches[indexOfFiche].status === "CREATED") {
-
-            // SHOW ALERT MODAL
-            showModal("error", "Accès refusé", "Vous n'avez pas accès. Parce que le manager N+1 n'a pas encore évalué cette fiche");
-
-
-        } else {
+            console.log( "access authorized");
 
             // GET THE ASSOCIATED FIHCE D EVALUATION
             let fiche = listFiches[indexOfFiche];
@@ -147,6 +145,59 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
 
             window.open(extractDomain(currentUrl) + url)
             // console.log(extractDomain(currentUrl) + url);
+            
+        } else {
+            console.log( "access denied");
+
+            if ( manager.type === '1') {
+                let errorBody ;
+
+                if (listFiches[indexOfFiche].status === "ÉVALUÉ-1") {
+
+                    errorBody = `Désolé, vous ne pouvez pas accéder ou modifier les fiches d'évaluations que vous avez envoyés à votre manager`;
+
+                } else if (listFiches[indexOfFiche].status.includes("TERMINÉ")) {
+
+                    errorBody = `Désolé, vous ne pouvez pas accéder aux les fiches d'évaluations qui ont été évalués par votre manager.`
+                }
+        
+
+                showModal("error", "Accès Refusé", errorBody, "");
+
+            } else if ( manager.type === '2') {
+
+                let errorBody ;
+
+                if (listFiches[indexOfFiche].status === "ÉVALUÉ-0" || listFiches[indexOfFiche].status === "CREATED") {
+
+                    errorBody = `Désolé, vous ne pouvez pas accéder aux fiches d'évaluations qui n'ont pas été validées par le manager N+1.`;
+
+                } else if (listFiches[indexOfFiche].status === "TERMINÉ-1") {
+
+                    errorBody = `Désolé, vous ne pouvez pas accéder ou modifier les fiches d'évaluations que vous avez envoyés aux consultants DRH.`;
+                }
+        
+
+                showModal("error", "Accès Refusé", errorBody, "");
+
+            }
+        }   
+
+
+        if ((listFiches[indexOfFiche].status === "ÉVALUÉ" && manager.type === '1') || (listFiches[indexOfFiche].status === "TERMINÉ" && manager.type === '2')) {
+
+            // SHOW ALERT MODAL
+            showModal("error", "Accès refusé", "Vous ne pouvez pas accéder aux fiches d'évaluations que vous avez évalués.  En cas de problème, contactez-nous", "")
+
+        } else if (manager.type === '2' && listFiches[indexOfFiche].status === "CREATED") {
+
+            // SHOW ALERT MODAL
+            showModal("error", "Accès refusé", "Vous n'avez pas accès. Parce que le manager N+1 n'a pas encore évalué cette fiche");
+
+
+        } else {
+
+            
 
         }
 
@@ -188,7 +239,7 @@ function getFichesColumnFromJson(json, authorizedCol) {
 
     authorizedCol.map((col, index) => {
         let value;
-        console.log(col);
+        // console.log(col);
         console.log(json.hasOwnProperty(col));
         if (json.hasOwnProperty(col)) {
             switch (col) {
@@ -204,7 +255,7 @@ function getFichesColumnFromJson(json, authorizedCol) {
                 case "evaluateurOne":
                     value = "evaluateurOne"
                     break;
-                
+
                 case "associatedAssessment":
                     value = "assessment";
                     break;
@@ -213,7 +264,7 @@ function getFichesColumnFromJson(json, authorizedCol) {
                     break;
             }
 
-            console.log(value);
+            // console.log(value);
 
             if (value === "collaborateur") {
                 colArr.push({
@@ -223,7 +274,7 @@ function getFichesColumnFromJson(json, authorizedCol) {
                 });
             } else if (value === "evaluateurOne") {
                 colArr.push({
-                    "title": "Matriculle - Manager"
+                    "title": "Matriculle (Manager)"
                 }, {
                     "title": "Manager"
                 });
@@ -254,41 +305,65 @@ function getFichesColumnFromJson(json, authorizedCol) {
     return colArr;
 }
 
-function getFichesDataFromJson(arrJson) {
+function getFichesDataFromJson(arrJson, authorizedCol) {
     let finalArr = [];
     arrJson.map((e, i) => {
-        console.log(i);
+        // console.log(i);
         let arr = [];
 
-        arr.push(e.id);
-        arr.push(e.collaborateur.matricule);
-        arr.push(e.collaborateur.firstName + " " + e.collaborateur.lastName);
-        arr.push(e.evaluateurOne.matricule);
-        arr.push(e.evaluateurOne.firstName + " " + e.evaluateurOne.lastName);
-        arr.push(e.emploi.intitule);
-        arr.push(e.emploi.level);
-        arr.push(e.associatedAssessment.name);
+        authorizedCol.map((authorized, index) => {
 
-        // Status attribute has special style
-        if (e.status === "CREATED") {
-            arr.push(`
-            <div class="mt-sm-1 d-block">
-                <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Non évalué</span>
-            </div>
-                `)
-        } else if (e.status === "ÉVALUÉ") {
-            arr.push(`
-                <div class="mt-sm-1 d-block">
-                <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Évalué</span>
-            </div>
-                `)
-        } else if (e.status === "TERMINÉ") {
-            arr.push(`
-                <div class="mt-sm-1 d-block">
-                <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Terminé</span>
-            </div>
-                `)
-        }
+            switch (authorized) {
+                case "id":
+                    arr.push(e.id);
+                    break;
+                case "collaborateur":
+                    arr.push(e.collaborateur.matricule);
+                    arr.push(e.collaborateur.firstName + " " + e.collaborateur.lastName);
+                    break;
+                case "evaluateurOne":
+                    arr.push(e.evaluateurOne.matricule);
+                    arr.push(e.evaluateurOne.firstName + " " + e.evaluateurOne.lastName);
+                    break;
+                case "emploi":
+                    arr.push(e.emploi.intitule);
+                    break;
+                case "niveau":
+                    arr.push(e.emploi.level);
+                    break;
+                case "associatedAssessment":
+                    arr.push(e.associatedAssessment.name);
+                    break;
+                    
+                case "status":
+                    console.log("HERE STATUS",authorized );
+                    // Status attribute has special style
+                    if (e.status === "CREATED") {
+                        arr.push(`
+                        <div class="mt-sm-1 d-block">
+                            <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Non évalué</span>
+                        </div>
+                            `)
+                    } else if (e.status.includes("ÉVALUÉ")) {
+                        arr.push(`
+                        <div class="mt-sm-1 d-block">
+                            <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Évalué</span>
+                        </div>
+                            `)
+                    } else if (e.status.includes("TERMINÉ")) {
+                        arr.push(`
+                        <div class="mt-sm-1 d-block">
+                            <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Terminé</span>
+                         </div>
+                        `)
+                    }
+                    console.log("fin STATUS");
+                    break;
+                
+            }
+        })
+
+       
 
         // ACTION COL
         arr.push(`

@@ -117,8 +117,17 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
 
 
 // VALIDATE BTN 
-$("#btn-fiche-validate").click(function (e) {
+$("#btn-fiche-validate").click({
+    finalValidation : false
+},saveFicheEvaluationHandler)
 
+// SEND THE RESULT OF THIS
+$("#btn-fiche-send").click({
+    finalValidation : true
+} ,saveFicheEvaluationHandler)
+
+
+function saveFicheEvaluationHandler(e) {
     // WE HAVE TWO SCENARIOS : MANAGER1 VALIDAES , MANAGER2 VALIDATES
 
 
@@ -137,7 +146,13 @@ $("#btn-fiche-validate").click(function (e) {
         // CHECK WHICH MANAGER IS CONNECTED
         if (manager.type === "1") {
 
-            ficheEvaluation.status = "ÉVALUÉ";
+            if (e.data.finalValidation) {
+                ficheEvaluation.status = "ÉVALUÉ-1";
+            } else {
+                ficheEvaluation.status = "ÉVALUÉ-0";
+            }
+
+            
 
             // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
             let re = takeCopy(ficheEvaluation);
@@ -148,7 +163,15 @@ $("#btn-fiche-validate").click(function (e) {
 
         } else if (manager.type === "2") {
 
-            ficheEvaluation.status = "TERMINÉ";
+            if (e.data.finalValidation) {
+                ficheEvaluation.status = "TERMINÉ-1";
+
+            } else {
+                ficheEvaluation.status = "TERMINÉ-0";
+
+            }
+
+            
 
             // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
             let re = takeCopy(ficheEvaluation);
@@ -165,19 +188,17 @@ $("#btn-fiche-validate").click(function (e) {
 
 
             // REDIRECT TO EVALUATION LIST PAGE
-            // setTimeout(function () {
-            //     currentUrl = window.location.href;
-            //     window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-            // }, 1000)
+            setTimeout(function () {
+                currentUrl = window.location.href;
+                window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+            }, 1500)
 
 
         })
 
     }
+}
 
-
-
-})
 function allFieldSelected() {
     let radioNames = ["custom-switch-radio-", "comp-switch-radio-", "comp-se-switch-radio-", "comp-sf-switch-radio-"];
 

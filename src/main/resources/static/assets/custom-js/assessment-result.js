@@ -24,6 +24,7 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
     displayBlankEvaluations(count.blank, count.total);
     displayInProgressEvaluations(count.inProgress, count.total);
     displayCompletedEvaluations(count.completed, count.total);
+    displayTotalFiches(count.total);
 
     // DISPLAY THE LIST OF FICHES
 
@@ -84,6 +85,10 @@ function displayCompletedEvaluations(number, total) {
     $("#progress-bar-completed").attr("style", `width: ${width}%;`);
 }
 
+function displayTotalFiches(total) {
+    $("#total-fiches").html(total);
+}
+ 
 function iterateOverEvaluations(arrJson) {
 
     let numberOfBlank = 0;
