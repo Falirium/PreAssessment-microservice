@@ -349,22 +349,26 @@ function parseManagerResult(json) {
                 let marqueurRow = $(element);
 
 
-                noRadioBtn.attr("checked", "checked");
+        
 
                 if (marqueurRow.find("#marqueur-value").html() === marq.value) {
 
                     let res = marq.response;
+                    
 
                     let btns = marqueurRow.find("input[type='radio']")
+                   
 
-                    let noRadioBtn = $(btns[1]);
-                    let yesRadioBtn = $(btns[2]);
+                    let noRadioBtn = $(btns[0]);
+                    let yesRadioBtn = $(btns[1]);
+
+   
 
                     // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
-                    if (res === 0) {
+                    if (res == 0) {
                         noRadioBtn.attr("checked", "checked");
 
-                    } else if (res === 1) {
+                    } else if (res == 1) {
                         yesRadioBtn.attr("checked", "checked");
                     }
 
@@ -383,20 +387,20 @@ function parseManagerResult(json) {
             $(".exigences").each((index, element) => {
                 let exigenceRow = $(element);
 
-                if (exigenceRow.find("#exigence-value").html() === exi.value) {
+                if (exigenceRow.find("#exi-value").html() === exi.value) {
 
                     let res = exi.response;
 
                     let btns = exigenceRow.find("input[type='radio']")
 
-                    let noRadioBtn = $(btns[1]);
-                    let yesRadioBtn = $(btns[2]);
+                    let noRadioBtn = $(btns[0]);
+                    let yesRadioBtn = $(btns[1]);
 
                     // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
-                    if (res === 0) {
+                    if (res == 0) {
                         noRadioBtn.attr("checked", "checked");
 
-                    } else if (res === 1) {
+                    } else if (res == 1) {
                         yesRadioBtn.attr("checked", "checked");
                     }
 
@@ -415,19 +419,19 @@ function parseManagerResult(json) {
             $(".responsabilites").each((index, element) => {
                 let responsabiliteRow = $(element);
 
-                if (responsabiliteRow.find("#exigence-value").html() === res.value) {
+                if (responsabiliteRow.find("#res-value").html() === res.value) {
 
                     let response = res.response;
                     let btns = responsabiliteRow.find("input[type='radio']")
 
-                    let noRadioBtn = $(btns[1]);
-                    let yesRadioBtn = $(btns[2]);
+                    let noRadioBtn = $(btns[0]);
+                    let yesRadioBtn = $(btns[1]);
 
                     // TOGGLE THE MATCHED BTN ( 0 --> NO, 1 --> YES )
-                    if (response === 0) {
+                    if (response == 0) {
                         noRadioBtn.attr("checked", "checked");
 
-                    } else if (response === 1) {
+                    } else if (response == 1) {
                         yesRadioBtn.attr("checked", "checked");
                     }
 
