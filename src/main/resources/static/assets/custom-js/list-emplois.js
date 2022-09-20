@@ -147,7 +147,12 @@ function getEmploisDataFromJson(arrJson) {
         arr.push(e.level);
         arr.push(e.filiere);
         arr.push(e.sousFiliere);
-        arr.push(e.dateMaj.split("T")[0]);
+        if (e.dateMaj != null) {
+            arr.push(e.dateMaj.split("T")[0]);
+        } else {
+            arr.push("No date");
+        }
+        
 
         // ACTION COL
         arr.push(`
