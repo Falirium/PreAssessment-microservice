@@ -275,6 +275,26 @@ public class AssessmentController {
                 return ResponseEntity.status(HttpStatus.OK).body(assessmentTempService.saveAssessmentTemp(newSavedAssessment));
         }
 
+        @PutMapping("/temp")
+        public ResponseEntity<AssessmentTemp> updateAssessmentTemp(@RequestBody AssessmentTemp tempAssessment) {
+
+                // CHECK IF THE ASSESSMENT IS ALREADY EXITED
+                AssessmentTemp updatedAssessment = assessmentTempService.getSavedAssessmentById(tempAssessment.getId());
+
+                if ( updatedAssessment == null ) {
+                        
+                        throw new CustomErrorException(HttpStatus.NOT_FOUND, "Assessment Not Found");
+
+                } else {
+
+                        // SET NEW VALUES OF PROPERTIES
+                        updatedAssessment.setName(tempAssessment.getName());
+                        updatedAssessment.setContent(tempAssessment.getContent());
+                }
+
+                return ResponseEntity.status(HttpStatus.OK).body(assessmentTempService.saveAssessmentTemp(updatedAssessment));
+        }
+
         @GetMapping("/temp/{id}")
         public ResponseEntity<AssessmentTemp> getAssesmentTempById(@PathVariable Long id) {
 
@@ -293,5 +313,6 @@ public class AssessmentController {
         public ResponseEntity<List<AssessmentTemp>> getAllAssessmentsTemp() {
                 return ResponseEntity.status(HttpStatus.OK).body(assessmentTempService.getAllSavedAssessments());
         }
+        
 
 }

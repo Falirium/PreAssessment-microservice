@@ -413,10 +413,11 @@ btnSaveCategory.addEventListener('click', () => {
             tokenSeparators: [',']
         })
 
-        // ADD EVENT LISTENER
+        // ADD EVENT LISTENER TO NAME OF CATEGORY
         $("#name-categorie").change(function (e) {
             let isNew = true;
-            console.log("change")
+            console.log("change");
+
 
             // var keycode = (e.keyCode ? e.keyCode : e.which);
             // console.log(keycode);
@@ -437,6 +438,9 @@ btnSaveCategory.addEventListener('click', () => {
                 // SHOW A MODAL TO CONFIRM IF YOU WANT TO ADD THIS CATEGORY
                 //showModal("confirm", "Ajout d'une nouvelle catégorie !", 'Vous allez ajouter une nouvelle catégorie, veuillez confirmer votre choix en cliquant sur "Oui" bouton', "category")
                 listOfNewCategories.push($("#name-categorie").select2('data')[0].text);
+
+                // DELETE THE DISABLE PROPERTY FROM THE INPUT
+                $("#evaluation-content").removeProp("disabled");
 
                 $("#evaluation-content").val(null).trigger("change");
             }
