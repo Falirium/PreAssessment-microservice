@@ -1274,7 +1274,7 @@ function generateColumnsForDatatable(arr) {
 
 function getCategoriesForSelect2(arr) {
     console.log(arr);
-    let result = [];
+    let result = [""];
     let id = 1
     arr.map((cat, index) => {
         result.push({
