@@ -1,5 +1,8 @@
 
-console.log("list-assessments.js")
+console.log("list-assessments.js");
+
+// REMOVE ANY SAVED ASSESSMENT ID;
+removeAssessmentFromStorage();
 
 
 
@@ -67,7 +70,7 @@ getListOfTempAssessments().then((data) => {
             // let url = buildURL("evaluation/evaluate", urlParams);
             let currentUrl = window.location.href;
 
-            window.open(extractDomain(currentUrl) + "assessment/edit");
+            window.location.href = extractDomain(currentUrl) + "assessment/edit";
             // console.log(extractDomain(currentUrl) + "assessment/add");
             // console.log(localStorage.getItem("assessmentId"));
         })
@@ -257,4 +260,10 @@ function getAssessmentsDataFromJson(arrJson) {
     })
 
     return finalArr;
+}
+
+function removeAssessmentFromStorage() {
+    if (localStorage.getItem("assessmentId") != null) {
+        localStorage.removeItem("assessmentId");
+    }
 }
