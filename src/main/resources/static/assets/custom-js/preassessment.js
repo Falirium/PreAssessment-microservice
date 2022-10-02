@@ -75,6 +75,9 @@ let listEmploi = []
 const form = document.querySelector("assessment-form");
 let assessmentPropertyContainer = document.querySelectorAll(".assessment-property-container");
 
+
+
+// EVENT LISTENERS ON TARGETED DIRECTION FIELD
 Array.from(assessmentPropertyContainer).forEach((propertyContainer) => {
 
     $("#input-started-date").removeClass("is-invalid");
@@ -114,6 +117,7 @@ Array.from(assessmentPropertyContainer).forEach((propertyContainer) => {
 
 // Special Event listener for Select2:select element 
 $(function () {
+
     $("#input-regions-campagne").select2();
 
     $("#input-regions-campagne").change(function (e) {
@@ -123,7 +127,8 @@ $(function () {
         console.log(getSelect2Selections(selected));
     })
 
-    $("#btn-assessment-save").click(function (e) {
+    // EVENT LISTENER WHEN WE SAVE AN ASSESSMENT
+    $("#btn-assessment-lanch").click(function (e) {
 
         // CHECK IF THERE IS SOME UNCATEGORIED COLLABORATEUR
         if (checkForUncategorizedCollaborateur()) {
@@ -164,10 +169,85 @@ $(function () {
 
     })
 
+    // EVENT LISTENER TO SAVE THE ASSESSMENT 
+    $("#btn-assessment-save").click(function (e) {
+
+        let assessmentVariablesContent = {
+
+            "targetedDirection": requestBodyAssessment.targetedDirection,
+            "status": requestBodyAssessment.status,
+            "startedAt": requestBodyAssessment.startedAt,
+            "finishesAt": requestBodyAssessment.finishesAt,
+            "categoriesRequestBody": categoriesRequestBody,
+            "classificationColumns": classificationColumns,
+            "populationArr": populationArr,
+            "categorizedPopulationArr": categorizedPopulationArr,
+            "listOfNewCategories": listOfNewCategories,
+            "listEmploi": listEmploi
+        };
+
+        let savedAssessment = {
+            "name": requestBodyAssessment.name,
+            "content": JSON.stringify(assessmentVariablesContent)
+        };
+
+        console.log(savedAssessment);
+
+        // CHECK IF THE ASSESSMENT IS CREATEDFOR TE FIRST TIME OR IT IS A MODIFICATION
+        if (localStorage.getItem("assessmentId") != null) {
+
+            savedAssessment.id = parseInt(localStorage.getItem("assessmentId"));
+
+             // SAVE THIS TO ASSESSMENT-TEMPORARY MODEL
+             postToAssessmentTemp(savedAssessment, 'PUT').then((success) => {
+
+                // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
+                showModal("success", "Assessment est bien sauvegardé", "L'assessment a été sauvegardé avec succès. Vous pouvez éditer et modifier cette évaluation plus tard à partir de la liste des assessments sur le tableau de bord.")
+
+                console.log(success);
+
+                // REMOVE ANY ASSESSMENT-ID
+                removeAssessmentFromStorage();
+
+                // REDIRECT TO THE LIST OF ASSESSMENTS
+                setTimeout(function () {
+                    let currentUrl = window.location.href;
+
+                    window.open(extractDomain(currentUrl) + "assessment/list");
+                }, 5000);
+
+            }).catch((error) => {
+                console.log(error);
+            })
+
+        } else {
+            
+            // SAVE THIS TO ASSESSMENT-TEMPORARY MODEL
+            postToAssessmentTemp(savedAssessment, 'POST').then((success) => {
+
+                // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
+                showModal("success", "Assessment est bien sauvegardé", "L'assessment a été sauvegardé avec succès. Vous pouvez éditer et modifier cette évaluation plus tard à partir de la liste des assessments sur le tableau de bord.")
+
+                // console.log(success); 
+
+                // REMOVE ANY ASSESSMENT-ID
+                removeAssessmentFromStorage();
+
+                // REDIRECT TO THE LIST OF ASSESSMENTS
+                setTimeout(function () {
+                    let currentUrl = window.location.href;
+
+                    window.open(extractDomain(currentUrl) + "assessment/list");
+                }, 5000);
+
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
 
 
 
-
+    })
 
     $("#evaluation-content").select2();
     $("#select-classification").select2();
@@ -176,11 +256,13 @@ $(function () {
     getListOfCategories();
 
 
-
-
 })
 
-
+function removeAssessmentFromStorage() {
+    if (localStorage.getItem("assessmentId") != null) {
+        localStorage.removeItem("assessmentId");
+    }
+}
 
 
 btnAddCriteria.addEventListener('click', () => {
@@ -189,6 +271,8 @@ btnAddCriteria.addEventListener('click', () => {
 })
 
 
+
+// EVENT LISTENER WHEN WE ADD NEW CATEGORY TO THE TABLE
 btnSaveCategory.addEventListener('click', () => {
 
     if (!checkInputsValidity()) {
@@ -405,6 +489,7 @@ btnSaveCategory.addEventListener('click', () => {
 
 })
 
+// EVENT LISTENER WHEN WE ADD A LIST OF POPULATION
 
 inputFileUploader.addEventListener('change', (e) => {
     let input = document.getElementById('assessment-excel-file');
@@ -446,99 +531,6 @@ inputFileUploader.addEventListener('change', (e) => {
         populateWithClassificationColumns();
 
 
-        // POPULATE EMPLOI SECTION
-        // for (var i = 0; i < listEmploi.length; i++) {
-
-        //     let arr = listEmploi[i].split("_");
-
-        //     //DEFINE EMPLOI NAME + EMPLOI LEVEL
-        //     let emploiName = arr[0];
-        //     let emploiLevel = arr[1];
-
-        //     let doesResponsabilitesExist = false;
-        //     let doesMarqueursExist = false;
-        //     let doesExigencesExist = false;
-        //     let doesCompetencesDcExist = false;
-        //     let doesCompetencesSeExist = false;
-        //     let doesCompetencesSfExist = false;
-
-        //     // CREATE THE DROPDOWN CONTAINER
-        //     $(".emploi-cible-list").last().append(`
-        //     <div class="dropdown">
-        //         <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown">
-        //                 <i class="fe fe-calendar me-2"></i>` + listEmploi[i] + `
-        //             </button>
-        //         <div class="dropdown-menu fiche-eva-category">
-
-        //         </div>
-        //     </div>
-        //     `);
-
-        //     // ITERATE OVER THE CATEGOREIS
-        //     for (var j = 0; j < categoriesRequestBody.length; j++) {
-
-        //         let category = categoriesRequestBody[j];
-
-        //         //GET THE CATEGORY ASSESSMENT_CONTENT PROPERTY
-        //         category.contentAssessment.map((e, i) => {
-        //             switch (e) {
-        //                 case "responsabilites":
-        //                     doesResponsabilitesExist = true;
-        //                     break;
-
-        //                 case "exigences":
-        //                     doesExigencesExist = true;
-        //                     break;
-
-        //                 case "marqueurs":
-        //                     doesMarqueursExist = true;
-        //                     break;
-
-        //                 case "competences-dc":
-        //                     doesCompetencesDcExist = true;
-        //                     break;
-
-        //                 case "competences-sf":
-        //                     doesCompetencesSfExist = true;
-        //                     break;
-
-        //                 case "competences-se":
-        //                     doesCompetencesSeExist = true;
-        //                     break;
-
-
-        //             }
-        //         })
-
-        //         // BUILD URL 
-        //         let urlParams = {
-        //             "eName": emploiName,
-        //             "level": emploiLevel,
-        //             "marqueurs": doesMarqueursExist,
-        //             "exigences": doesExigencesExist,
-        //             "responsabilites": doesResponsabilitesExist,
-        //             "competences_dc": doesCompetencesDcExist,
-        //             "competences_se": doesCompetencesSeExist,
-        //             "competences_sf": doesCompetencesSfExist,
-        //         }
-        //         let url = buildURL("/assessment/add/fiche", urlParams);
-
-        //         // APPEND DROPDOWN MENU
-        //         $(".fiche-eva-category").last().append(`
-        //             <a class="dropdown-item" href="` + url + `">` + category.name + `</a>
-        //         `)
-        //     }
-
-
-
-
-
-
-
-        //     // $(".emploi-cible-list").append(`<button class="btn btn-secondary" href="">` + listEmploi[i] + `</button>`);
-        // }
-        //populateEmploiSection(listEmploi);
-
     }).catch((error) => {
         console.log(error);
 
@@ -555,6 +547,7 @@ $("#btn-suivant-category-section").click(function () {
     populateEmploiSection(listEmploi);
 })
 
+// EVENT LISTENER TO CATEGORIZE THE POPULATION BASED ON LIST OF CATEGORIES SAVED IN THE TABLE
 $("#btn-categorize").click(function (e) {
 
     // SHOW ERROR MODAL WHEN CATEGORIES TABLE ARE NOT FILLLED OR ONLY ONE CATEGORY IS CREATED
@@ -573,7 +566,7 @@ $("#btn-categorize").click(function (e) {
         })
 
         if (typeof (categorizationTable) === "undefined") {
-            console.log("fiesr time");
+            console.log("first time");
             categorizationTable = $("#tb2").DataTable(
                 {
                     data: dataSet,
@@ -929,18 +922,6 @@ async function getListOfCategories() {
     )
 }
 
-// $('#confirm-yes-btn[data-action="category"]').click(function () {
-//     //console.log("kldfsdf");
-
-//     // DELETE THE SELECTED CAT FROM CATEGORIES_BODY_REQUEST
-
-
-//     // REDRAW THE CATEGORY TABLE
-
-
-
-// })
-
 
 async function postAssessment(jsonArr) {
     let url = "http://localhost:8080/preassessment/api/v1/assessment/"
@@ -952,6 +933,23 @@ async function postAssessment(jsonArr) {
         },
         body: JSON.stringify(jsonArr)
 
+    }).then(
+        response => response.json()
+    ).then(
+        success => console.log(success)
+    ).catch(
+        error => console.log(error)
+    )
+}
+
+async function postToAssessmentTemp(json, requestType) {
+    let url = "http://localhost:8080/preassessment/api/v1/assessment/temp";
+    return fetch(url, {
+        method: requestType,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(json)
     }).then(
         response => response.json()
     ).then(
@@ -1111,123 +1109,124 @@ function getClassificationColumn(obj) {
 }
 
 
-function parseToTable(json) {
+// function parseToTable(json) {
 
-    console.log("from parseToTable method");
-    console.log(json);
-    // const table = document.getElementsByClassName('table table-striped');
-    // console.log(table);
-    let tableHeader = document.querySelector("#assessment-population-thead");
-    let tableBody = document.querySelector("#assessment-population-tbody");
+//     console.log("from parseToTable method");
+//     console.log(json);
+//     // const table = document.getElementsByClassName('table table-striped');
+//     // console.log(table);
+//     let tableHeader = document.querySelector("#assessment-population-thead");
+//     let tableBody = document.querySelector("#assessment-population-tbody");
 
-    // Delete any content header and body
-    tableHeader.innerHTML = "";
-    tableBody.innerHTML = "";
+//     // Delete any content header and body
+//     tableHeader.innerHTML = "";
+//     tableBody.innerHTML = "";
 
-    // EXTRACT VALUE FOR HTML HEADER. 
+//     // EXTRACT VALUE FOR HTML HEADER. 
 
-    var col = [];
-    for (var i = 0; i < json.length; i++) {
-        for (var key in json[i]) {
-            if (col.indexOf(key) === -1) {
-                col.push(key);
-            }
-        }
-    }
+//     var col = [];
+//     for (var i = 0; i < json.length; i++) {
+//         for (var key in json[i]) {
+//             if (col.indexOf(key) === -1) {
+//                 col.push(key);
+//             }
+//         }
+//     }
 
-    // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+//     // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
 
-    var tr = tableHeader.insertRow(-1);                   // TABLE ROW.
+//     var tr = tableHeader.insertRow(-1);                   // TABLE ROW.
 
-    for (var i = 0; i < col.length; i++) {
-        var th = document.createElement("th");      // TABLE HEADER.
+//     for (var i = 0; i < col.length; i++) {
+//         var th = document.createElement("th");      // TABLE HEADER.
 
-        th.innerHTML = col[i];
-        tr.appendChild(th);
+//         th.innerHTML = col[i];
+//         tr.appendChild(th);
 
-        th.classList.add("wd-15p", "border-bottom-0");
-    }
+//         th.classList.add("wd-15p", "border-bottom-0");
+//     }
 
-    // ADD JSON DATA TO THE TABLE AS ROWS.
-    for (var i = 0; i < json.length; i++) {
+//     // ADD JSON DATA TO THE TABLE AS ROWS.
+//     for (var i = 0; i < json.length; i++) {
 
-        tr = tableBody.insertRow(-1);
+//         tr = tableBody.insertRow(-1);
 
-        for (var j = 0; j < col.length; j++) {
-            var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = json[i][col[j]];
-        }
-    }
-
-
-    // ADD DATABALE LIBRARY SCRIPTS
-    // loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", false);
-    // loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", false);
-    // loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", false);
-    // loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", false);
-    // loadJS("/assets/plugins/datatable/js/jszip.min.js", false);
-    // loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", false);
-    // loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", false);
-    // loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", false);
-    // loadJS("/assets/plugins/datatable/js/buttons.print.min.js", false);
-    // loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", false);
-    // loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", false);
-    // loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", false);
-    // loadJS("/assets/js/table-data.js", false);
+//         for (var j = 0; j < col.length; j++) {
+//             var tabCell = tr.insertCell(-1);
+//             tabCell.innerHTML = json[i][col[j]];
+//         }
+//     }
 
 
-    // INITIALTE DATATABLE
-    $("#tb1").DataTable();
+//     // ADD DATABALE LIBRARY SCRIPTS
+//     // loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", false);
+//     // loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", false);
+//     // loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", false);
+//     // loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", false);
+//     // loadJS("/assets/plugins/datatable/js/jszip.min.js", false);
+//     // loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", false);
+//     // loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", false);
+//     // loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", false);
+//     // loadJS("/assets/plugins/datatable/js/buttons.print.min.js", false);
+//     // loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", false);
+//     // loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", false);
+//     // loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", false);
+//     // loadJS("/assets/js/table-data.js", false);
 
-    // POPULATE LIST OF CRITERIA
-    populateWithClassificationColumns();
 
-}
+//     // INITIALTE DATATABLE
+//     $("#tb1").DataTable();
+
+//     // POPULATE LIST OF CRITERIA
+//     populateWithClassificationColumns();
+
+// }
 
 //THIS FUNCTION MMITATES THE ROLE OF PARSETOTABLE() BUT WITH EXCEL JS LIBRARY
-function parseToPopulationTable(arr) {
 
-    let tableHeader = document.querySelector("#assessment-population-thead");
-    let tableBody = document.querySelector("#assessment-population-tbody");
+// function parseToPopulationTable(arr) {
 
-    // Delete any content header and body
-    tableHeader.innerHTML = "";
-    tableBody.innerHTML = "";
+//     let tableHeader = document.querySelector("#assessment-population-thead");
+//     let tableBody = document.querySelector("#assessment-population-tbody");
 
-    for (let i = 0; i <= arr.length; i++) {
-        // INSERT VALUES TO THE HEADER
-        if (i === 0) {
-            var tr = tableHeader.insertRow(-1);                   // TABLE ROW.
+//     // Delete any content header and body
+//     tableHeader.innerHTML = "";
+//     tableBody.innerHTML = "";
 
-            for (var j = 0; j < arr[i][j]; j++) {
-                var th = document.createElement("th");      // TABLE HEADER.
+//     for (let i = 0; i <= arr.length; i++) {
+//         // INSERT VALUES TO THE HEADER
+//         if (i === 0) {
+//             var tr = tableHeader.insertRow(-1);                   // TABLE ROW.
 
-                th.innerHTML = arr[i][j];
-                tr.appendChild(th);
+//             for (var j = 0; j < arr[i][j]; j++) {
+//                 var th = document.createElement("th");      // TABLE HEADER.
 
-                th.classList.add("wd-15p", "border-bottom-0");
-            }
-        } else {
-            // INSERT VALUES TO BODY
-            tr = tableBody.insertRow(-1);
+//                 th.innerHTML = arr[i][j];
+//                 tr.appendChild(th);
 
-            for (var j = 0; j < arr[i][j]; j++) {
-                var tabCell = tr.insertCell(-1);
-                tabCell.innerHTML = arr[i][j];
-            }
-        }
+//                 th.classList.add("wd-15p", "border-bottom-0");
+//             }
+//         } else {
+//             // INSERT VALUES TO BODY
+//             tr = tableBody.insertRow(-1);
 
-    }
+//             for (var j = 0; j < arr[i][j]; j++) {
+//                 var tabCell = tr.insertCell(-1);
+//                 tabCell.innerHTML = arr[i][j];
+//             }
+//         }
 
-    // // INITIALTE DATATABLE
-    // $("#tb1").DataTable();
+//     }
 
-    // POPULATE LIST OF CRITERIA
-    populateWithClassificationColumns();
+//     // // INITIALTE DATATABLE
+//     // $("#tb1").DataTable();
+
+//     // POPULATE LIST OF CRITERIA
+//     populateWithClassificationColumns();
 
 
 
-}
+// }
 
 // function loadJS(FILE_URL, async = true) {
 //     let scriptEle = document.createElement("script");
@@ -1751,59 +1750,55 @@ $("#confirm-yes-btn").click(function (e) {
 })
 
 
-function removeFromCategoryTable(category) {
+// function addToCategoryTable(category) {
+//     let tableBody = document.querySelector("#category-table-body");
 
-}
+//     // Add new row
+//     let tr = tableBody.insertRow(-1);
 
-function addToCategoryTable(category) {
-    let tableBody = document.querySelector("#category-table-body");
+//     let nameCell = tr.insertCell(-1);
+//     nameCell.innerHTML = category.name;
 
-    // Add new row
-    let tr = tableBody.insertRow(-1);
+//     let typeAssessment = tr.insertCell(-1);
+//     typeAssessment.innerHTML = category.typeAssessment;
 
-    let nameCell = tr.insertCell(-1);
-    nameCell.innerHTML = category.name;
-
-    let typeAssessment = tr.insertCell(-1);
-    typeAssessment.innerHTML = category.typeAssessment;
-
-    let actionsCell = tr.insertCell(-1);
-    actionsCell.innerHTML = `
-        <div class="g-3">
-            <a id="cat-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
-            <a id="cat-table-btn-view" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                data-bs-original-title="View"><span class="fe fe-eye fs-14"></span></a>
-            <a id="cat-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
-                data-bs-original-title="Delete"><span
-                    class="fe fe-trash-2 fs-14"></span></a>
-        </div> 
-        `;
+//     let actionsCell = tr.insertCell(-1);
+//     actionsCell.innerHTML = `
+//         <div class="g-3">
+//             <a id="cat-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
+//                 data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
+//             <a id="cat-table-btn-view" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
+//                 data-bs-original-title="View"><span class="fe fe-eye fs-14"></span></a>
+//             <a id="cat-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
+//                 data-bs-original-title="Delete"><span
+//                     class="fe fe-trash-2 fs-14"></span></a>
+//         </div> 
+//         `;
 
 
-}
+// }
 
-function findCategory(categoryName) {
-    return categoriesRequestBody.filter((category) => {
-        return category.name === categoryName;
-    })
-}
-
-
-function addCategoryToJon(newCategory) {
-    categoriesRequestBody.push(newCategory);
-}
-
-function parseToCategoryContainer(category, index) {
-    let categoryContainer = document.querySelector("#category-container");
-
-    categoryContainer.querySelector("#name-categorie").value = category.name;
+// function findCategory(categoryName) {
+//     return categoriesRequestBody.filter((category) => {
+//         return category.name === categoryName;
+//     })
+// }
 
 
-    let criteriasContainer = categoryContainer.querySelector("#");
+// function addCategoryToJon(newCategory) {
+//     categoriesRequestBody.push(newCategory);
+// }
 
-    // for (var i = 0; i < )
-}
+// function parseToCategoryContainer(category, index) {
+//     let categoryContainer = document.querySelector("#category-container");
+
+//     categoryContainer.querySelector("#name-categorie").value = category.name;
+
+
+//     let criteriasContainer = categoryContainer.querySelector("#");
+
+//     // for (var i = 0; i < )
+// }
 
 function getSelect2Selections(arr) {
     return arr.map((e, index) => {

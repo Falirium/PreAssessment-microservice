@@ -17,21 +17,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.querydsl.core.types.Predicate;
 
+import ma.gbp.assessment.exception.CustomErrorException;
 import ma.gbp.assessment.message.EmploiRequest;
 import ma.gbp.assessment.message.FicheEvaluationPreview;
 import ma.gbp.assessment.model.Assessment;
 import ma.gbp.assessment.model.AssessmentCategory;
+import ma.gbp.assessment.model.AssessmentTemp;
 import ma.gbp.assessment.model.Category;
 import ma.gbp.assessment.model.Collaborateur;
 import ma.gbp.assessment.model.FicheEvaluation;
 import ma.gbp.assessment.model.ManagerOne;
 import ma.gbp.assessment.model.ManagerTwo;
 import ma.gbp.assessment.model.Niveau;
+import ma.gbp.assessment.repository.AsessmentTempRepository;
 import ma.gbp.assessment.repository.FicheEvaluationRepository;
 import ma.gbp.assessment.repository.NiveauRepository;
 import ma.gbp.assessment.request.AssessmentReqBody;
 import ma.gbp.assessment.service.AssessmentCategoryService;
 import ma.gbp.assessment.service.AssessmentService;
+import ma.gbp.assessment.service.AssessmentTempService;
 import ma.gbp.assessment.service.CategoryService;
 import ma.gbp.assessment.service.CollaborateurService;
 import ma.gbp.assessment.service.FicheEvaluationService;
@@ -44,6 +48,8 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
+
+import javassist.expr.NewArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +87,9 @@ public class AssessmentController {
 
         @Autowired
         private CategoryService categoryService;
+
+        @Autowired
+        private AssessmentTempService assessmentTempService;
 
         @GetMapping("/")
         public ResponseEntity<List<Assessment>> getAssessments() {
@@ -223,7 +232,7 @@ public class AssessmentController {
                 newAssessment.setAssessmentCategories(savedAssessmentCat);
                 newAssessment.setEmplois(savedEmplois);
 
-                return ResponseEntity.status(HttpStatus.CREATED).body(newAssessment);
+                return ResponseEntity.status(HttpStatus.CREATED).body(assessmentService.save(newAssessment));
         }
 
         @GetMapping("/{id}")
@@ -244,6 +253,45 @@ public class AssessmentController {
                 assessment.setExcelFile(updatedAssessment.getExcelFile());
 
                 return ResponseEntity.status(HttpStatus.OK).body(assessmentService.save(assessment));
+        }
+
+        @PostMapping("/temp")
+        public ResponseEntity<AssessmentTemp> saveAssessmentTemp(@RequestBody AssessmentTemp tempAssessment) {
+
+                // CHECK IF THE ASSESSMENT IS ALREADY EXITED
+                AssessmentTemp newSavedAssessment = assessmentTempService.getSavedAssessmentByName(tempAssessment.getName());
+
+                if ( newSavedAssessment == null ) {
+                        
+                        newSavedAssessment = tempAssessment;
+
+                } else {
+
+                        // SET NEW VALUES OF PROPERTIES
+                        newSavedAssessment.setName(tempAssessment.getName());
+                        newSavedAssessment.setContent(tempAssessment.getContent());
+                }
+
+                return ResponseEntity.status(HttpStatus.OK).body(assessmentTempService.saveAssessmentTemp(newSavedAssessment));
+        }
+
+        @GetMapping("/temp/{id}")
+        public ResponseEntity<AssessmentTemp> getAssesmentTempById(@PathVariable Long id) {
+
+                // CHECK IF THE ELEMENT EXISTS
+                AssessmentTemp tempAssessment = assessmentTempService.getSavedAssessmentById(id);
+
+                if ( tempAssessment == null ) {
+                        throw new CustomErrorException(HttpStatus.NOT_FOUND, "Assessment Not Found");
+                } else {
+                        return ResponseEntity.status(HttpStatus.OK).body(tempAssessment);
+                }
+
+        }
+
+        @GetMapping("/temp/list")
+        public ResponseEntity<List<AssessmentTemp>> getAllAssessmentsTemp() {
+                return ResponseEntity.status(HttpStatus.OK).body(assessmentTempService.getAllSavedAssessments());
         }
 
 }

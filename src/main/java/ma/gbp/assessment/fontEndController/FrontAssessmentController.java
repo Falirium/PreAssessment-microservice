@@ -157,9 +157,9 @@ public class FrontAssessmentController {
 
 
 
-    @GetMapping(path = "/edit/{id}")
+    @GetMapping(path = "/edit")
     public String editAssessment() {
-        return null;
+        return "edit-assessment";
     }
 
     @GetMapping(path = "/{id}")

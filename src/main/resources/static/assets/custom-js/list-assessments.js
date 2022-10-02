@@ -3,7 +3,7 @@ console.log("list-assessments.js")
 
 
 
-let authorizedCol = ["id", "name","startedAt","finishesAt", "status"];
+let authorizedCol = ["id", "name", "startedAt", "finishesAt", "status"];
 
 let assessmentDatatable;
 
@@ -11,48 +11,69 @@ let assessmentDatatable;
 let listAssessments;
 
 // GET LIST OF ASSESSMENTS
-getListOfAssessments().then((data) => {
+getListOfTempAssessments().then((data) => {
 
-
+    // APPEND THE TEMP RESULTS TO  TEMP OF ASSESSMENTS  FIRST
     listAssessments = data;
-    // INITIALIZE DATATABLE
+    console.log(listAssessments);
 
-    let dataSet = getAssessmentsDataFromJson(data);
-    let col = getAssessmentColumnFromJson(data[0], authorizedCol);
 
-    assessmentDatatable = $("#tbs2").DataTable({
-        data: dataSet,
-        columns: col
+
+
+}).then((data) => {
+
+    getListOfAssessments().then((temp) => {
+
+        //console.log(temp);
+
+        // APPEND THE PUBLISHED LIST OF ASSESSMENTS
+        listAssessments.push(...temp);
+
+        console.log(listAssessments);
+
+
+        // INITIALIZE DATATABLE
+
+        let dataSet = getAssessmentsDataFromJson(listAssessments);
+        let col = getAssessmentColumnFromJson(listAssessments[0], authorizedCol);
+
+        assessmentDatatable = $("#tbs2").DataTable({
+            data: dataSet,
+            columns: col
+        })
+
+        // ADD EVENTLISTENERS TO VIEW BTN
+
+        $(".view-btn").click(function (e) {
+
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let btns = $(".view-btn").get();
+            let indexOfAssessment = btns.indexOf(aElement);
+
+            // GET THE ASSOCIATED ASSESSMENT
+            let assessment = listAssessments[indexOfAssessment];
+            console.log(assessment);
+
+            //SAVE ASSESSMENT ON LOCAL SESSION
+            localStorage.setItem("assessmentId", assessment.id);
+
+            // REDIRECT TO THE ASSESSMENT PAGE 
+            // let url = buildURL("evaluation/evaluate", urlParams);
+            let currentUrl = window.location.href;
+
+            window.open(extractDomain(currentUrl) + "assessment/edit");
+            // console.log(extractDomain(currentUrl) + "assessment/add");
+            // console.log(localStorage.getItem("assessmentId"));
+        })
+
+
     })
-
-    // ADD EVENTLISTENERS TO VIEW BTN
-
-    $(".view-btn").click(function (e) {
-
-        let aElement;
-        if (e.target.tagName === "SPAN") {
-            aElement = e.target.parentElement;
-        } else {
-            aElement = e.target;
-        }
-
-        let btns = $(".view-btn").get();
-        let indexOfAssessment = btns.indexOf(aElement);
-
-        // GET THE ASSOCIATED ASSESSMENT
-        let assessment = listAssessments[indexOfAssessment];
-        console.log(assessment);
-
-        //SAVE ASSESSMENT ON LOCAL SESSION
-        localStorage.setItem("assessment", JSON.stringify(assessment));
-
-        // REDIRECT TO THE ASSESSMENT PAGE 
-        // let url = buildURL("evaluation/evaluate", urlParams);
-
-        // window.open(extractDomain(currentUrl) + url)
-        console.log(localStorage.getItem("assessment"));
-    })
-
 })
 
 function buildURL(prefix, params) {
@@ -66,7 +87,19 @@ function buildURL(prefix, params) {
 }
 
 async function getListOfAssessments() {
-    let url = "http://localhost:8080/preassessment/api/v1/assessment/" ;
+    let url = "http://localhost:8080/preassessment/api/v1/assessment/";
+    return fetch(url, {
+        method: 'GET'
+    }).then(response => response.json())
+        .then(success => {
+            console.log(success);
+            return success;
+        }).catch((error) => {
+            console.log(error);
+        })
+}
+async function getListOfTempAssessments() {
+    let url = "http://localhost:8080/preassessment/api/v1/assessment/temp/list";
     return fetch(url, {
         method: 'GET'
     }).then(response => response.json())
@@ -108,7 +141,7 @@ function getAssessmentColumnFromJson(json, authorizedCol) {
 
             console.log(value);
 
-            
+
 
             colArr.push({
                 "title": value
@@ -139,25 +172,26 @@ function getAssessmentsDataFromJson(arrJson) {
         console.log(i);
         let arr = [];
 
-        arr.push(e.id.split("-")[0]);
-        arr.push(e.name);
-        arr.push(e.startedAt.split("T")[0]);
-        arr.push(e.finishesAt.split("T")[0]);
-
-        // Status attribute has special style
-        if (e.status === "CREATED") {
-            arr.push(`
+        // HADI GHER ZA3TA OSF
+        if (typeof (e.id) === 'string') {
+            arr.push(e.id.split("-")[0]);
+            arr.push(e.name);
+            arr.push(e.startedAt.split("T")[0]);
+            arr.push(e.finishesAt.split("T")[0]);
+            // Status attribute has special style
+            if (e.status === "CREATED") {
+                arr.push(`
             <div class="mt-sm-1 d-block">
              <span class="badge bg-purple-transparent rounded-pill text-purple p-2 px-3"> Enregistré </span>
             </div>
                 `)
-        } else if (e.status === "LANCHED") {
-            let todayDate = new Date();
-            let finishingDate = new Date(e.finishesAt.split("T")[0]);
+            } else if (e.status === "LANCHED") {
+                let todayDate = new Date();
+                let finishingDate = new Date(e.finishesAt.split("T")[0]);
 
-            if ( finishingDate < todayDate ) {
+                if (finishingDate < todayDate) {
 
-                arr.push(`
+                    arr.push(`
                 <div class="mt-sm-1 d-block">
                     <span class="badge bg-primary-transparent rounded-pill text-primary p-2 px-3"> Lancé </span>
                 </div>
@@ -166,9 +200,9 @@ function getAssessmentsDataFromJson(arrJson) {
                 </div>
                     `)
 
-            } else {
+                } else {
 
-                arr.push(`
+                    arr.push(`
                 <div class="mt-sm-1 d-block">
                     <span class="badge bg-primary-transparent rounded-pill text-primary p-2 px-3"> Lancé </span>
                 </div>
@@ -177,10 +211,10 @@ function getAssessmentsDataFromJson(arrJson) {
                 </div>
                     `)
 
-            }
-            
-        } else if (e.status === "COMPLETED") {
-            arr.push(`
+                }
+
+            } else if (e.status === "COMPLETED") {
+                arr.push(`
             <div class="mt-sm-1 d-block">
                 <span class="badge bg-primary-transparent rounded-pill text-primary p-2 px-3"> Lancé </span>
             </div>
@@ -188,7 +222,25 @@ function getAssessmentsDataFromJson(arrJson) {
                 <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3"> Terminé </span>
             </div>
                 `)
+            }
+        } else {
+            arr.push(e.id);
+            arr.push(e.name);
+            arr.push("--------");
+            arr.push("--------");
+
+            arr.push(`
+            <div class="mt-sm-1 d-block">
+             <span class="badge bg-purple-transparent rounded-pill text-purple p-2 px-3"> Enregistré </span>
+            </div>
+                `)
+
+
         }
+
+
+
+
 
         // ACTION COL
         arr.push(`
