@@ -147,21 +147,50 @@ $(function () {
             })
             postCategories(newCategories).then((catArr) => {
 
+                // SAVE ASSESSMENT TO DB
                 console.log("POST ASSESSMENT");
-                postAssessment(requestBodyAssessment);
 
-                // SHOW SUCCESS MODAL
-                showModal("success", "Assessment enregistré ", "L'évaluation a été enregistrée avec succès. L'étape suivante consiste à lancer l'assessment. ", "");
+                // CHANGE THE STATUS OF THE ASSESSMENT TO "LANCHED"
+                requestBodyAssessment.status = "LANCHED";
+
+                // DELETE THE ASSOCIATED ASSESSMENT TEMP 
+                let assessmentName = requestBodyAssessment.name;
+                deleteTempAssessment(assessmentName).then((success) => {
+
+                    // CHECK IF SUCCESS  == 1
+                    if (success != 1) {
+
+                        // SHOW ERROR MODAL
+
+                    } else {
+
+                        //  SEND POST REQUEST TO SAVE ASSESSMENT AND ALL OTHER ENTITIES
+                        postAssessment(requestBodyAssessment).then((assessment) => {
+
+                            // SHOW SUCCESS MODAL
+                            showModal("success", "Assessment enregistré ", "L'évaluation a été enregistrée avec succès. L'étape suivante consiste à lancer l'assessment. ", "");
+
+                            // REDIRECT TO THE LIST OF ASSESSMENTS
+                            setTimeout(function () {
+                                let currentUrl = window.location.href;
+
+                                window.open(extractDomain(currentUrl) + "assessment/list");
+                            }, 3000);
+
+
+
+                        });
+
+                    }
+                })
+
+
+
+
+
             });
 
-            // SEND POST REQUEST TO SAVE ASSESSMENT AND ALL OTHER ENTITIES
-
-
-
-            //SAVE ASSESSMENT TO DB
-            console.log(requestBodyAssessment);
-
-            // IF IT IS SAVED, SHOW SUCCESS MODAL
+        
         }
 
 
@@ -198,8 +227,8 @@ $(function () {
 
             savedAssessment.id = parseInt(localStorage.getItem("assessmentId"));
 
-             // SAVE THIS TO ASSESSMENT-TEMPORARY MODEL
-             postToAssessmentTemp(savedAssessment, 'PUT').then((success) => {
+            // SAVE THIS TO ASSESSMENT-TEMPORARY MODEL
+            postToAssessmentTemp(savedAssessment, 'PUT').then((success) => {
 
                 // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
                 showModal("success", "Assessment est bien sauvegardé", "L'assessment a été sauvegardé avec succès. Vous pouvez éditer et modifier cette évaluation plus tard à partir de la liste des assessments sur le tableau de bord.")
@@ -214,14 +243,14 @@ $(function () {
                     let currentUrl = window.location.href;
 
                     window.open(extractDomain(currentUrl) + "assessment/list");
-                }, 5000);
+                }, 3000);
 
             }).catch((error) => {
                 console.log(error);
             })
 
         } else {
-            
+
             // SAVE THIS TO ASSESSMENT-TEMPORARY MODEL
             postToAssessmentTemp(savedAssessment, 'POST').then((success) => {
 
@@ -926,11 +955,28 @@ async function getListOfCategories() {
     )
 }
 
+async function deleteTempAssessment(assessmentName) {
+    let url = "http://localhost:8080/preassessment/api/v1/assessment/temp/" + encodeURIComponent(assessmentName)
+
+    return fetch(url, {
+        method: 'DELETE'
+
+    }).then(
+        response => response.json()
+    ).then(
+       ( success) =>{ 
+        console.log(success);
+        return success;    
+    }
+    ).catch(
+        error => console.log(error)
+    )
+}
 
 async function postAssessment(jsonArr) {
     let url = "http://localhost:8080/preassessment/api/v1/assessment/"
 
-    fetch(url, {
+    return fetch(url, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -940,7 +986,11 @@ async function postAssessment(jsonArr) {
     }).then(
         response => response.json()
     ).then(
-        success => console.log(success)
+        (success) =>{ 
+            console.log(success);
+            return success;
+        
+        }
     ).catch(
         error => console.log(error)
     )

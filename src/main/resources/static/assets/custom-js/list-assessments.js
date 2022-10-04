@@ -41,8 +41,7 @@ getListOfTempAssessments().then((data) => {
         let col = getAssessmentColumnFromJson(listAssessments[0], authorizedCol);
 
         assessmentDatatable = $("#tbs2").DataTable({
-            data: dataSet,
-            columns: col
+            data: dataSet
         })
 
         // ADD EVENTLISTENERS TO VIEW BTN
@@ -116,6 +115,11 @@ async function getListOfTempAssessments() {
 
 function getAssessmentColumnFromJson(json, authorizedCol) {
     let colArr = [];
+
+    console.log(json, typeof(json));
+    if (typeof(json) === 'undefined') {
+        return colArr;
+    }
 
 
 

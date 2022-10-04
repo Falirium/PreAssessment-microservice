@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ma.gbp.assessment.model.AssessmentTemp;
 import ma.gbp.assessment.repository.AsessmentTempRepository;
@@ -28,5 +29,11 @@ public class AssessmentTempService {
 
     public AssessmentTemp saveAssessmentTemp(AssessmentTemp at) {
         return asessmentTempRepository.save(at);
+    }
+
+    @Transactional
+    public long deleteAssessmentTempByName(String assessmentName) {
+        // AssessmentTemp tempAssessment = asessmentTempRepository.findByName(assessmentName);
+        return asessmentTempRepository.deleteByName(assessmentName);
     }
 }

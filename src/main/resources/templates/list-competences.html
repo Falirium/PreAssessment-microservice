@@ -30,10 +30,12 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title col-sm-6">Liste des compétences</h4>
-                       
+
                     </div>
                     <div class="card-body">
-                        
+                        <a th:href="@{/emploi/competence/add}" class="btn btn-primary mb-4" role="button"
+                                    aria-pressed="true">Ajouter une matrice de compétences</a>
+
                         <div class="form-group">
                             <label for="input-glossaire-emploi" class="form-label">Glossaire des compétences
                             </label>
@@ -122,7 +124,7 @@
         </div>
         <!-- ROW-1 END -->
 
-        
+
 
         <!-- MODAL ALERT MESSAGE -->
         <div class="modal fade" id="modaldemo5">
@@ -232,13 +234,13 @@
 
     <!-- SCRIPT -->
     <th:block layout:fragment="script">
-        
+
         <!-- BACK-TO-TOP -->
         <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
 
         <!-- JQUERY JS -->
         <script th:src="@{/assets/js/jquery.min.js}"></script>
-        
+
         <!-- AUTHORIZE -->
         <script th:src="@{/assets/custom-js/authorize.js}"></script>
 
@@ -308,11 +310,11 @@
 
         <!-- EXCELJS -->
         <script th:src="@{/assets/plugins/exceljs/exceljs.min.js}"></script>
-        
+
         <!-- LIST COMPETENCES -->
         <script th:src="@{/assets/custom-js/list-competences.js}"></script>
 
-        
+
 
 
     </th:block>

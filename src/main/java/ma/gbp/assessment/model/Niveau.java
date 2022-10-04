@@ -77,6 +77,7 @@ public class Niveau {
     private List<String> marqueurs;
 
     @ManyToMany(mappedBy = "emplois")
+    @JsonIgnore
     private List<Assessment> assessments;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {

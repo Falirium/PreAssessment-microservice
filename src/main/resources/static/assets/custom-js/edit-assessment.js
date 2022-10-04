@@ -11,6 +11,9 @@ if (localStorage.getItem('assessmentId') != null) {
         // ASSIGN VALUES TO VARIABLES
         populateAssessmentVariables(assessmentValues);
 
+        // POPULATE THE IMPORTATNT SECTION OF REQUEST-ASSESSMENT-BODY PARTS : MANAGERS, COLLABORATUERS ......
+        populateRequestBodyAssessmentExtended();
+
         // PARSE THE ASSESSMENT
         parseAssessmentFieldsForEdit();
     })
@@ -105,4 +108,45 @@ function parseAssessmentFieldsForEdit() {
     );
 
 
+}
+
+
+function populateRequestBodyAssessmentExtended() {
+
+    // UPDATE ASSESSMENT JSON VARIABLE WITH NEW VALUES AFTER INITILILIZATION
+    requestBodyAssessment.targetEmplois = [];
+    requestBodyAssessment.assessmentCategories = [];
+    requestBodyAssessment.collaborateurs = [];
+    requestBodyAssessment.managers1 = [];
+    requestBodyAssessment.managers2 = [];
+    requestBodyAssessment.fichesEvaluations = [];
+
+    requestBodyAssessment.targetEmplois = generateTargetedEmplois();
+    requestBodyAssessment.assessmentCategories = generateAssessmentCategory();
+
+    let managers1 = [];
+    let managers2 = [];
+    for (var i = 0; i < categorizedPopulationArr.length; i++) {
+        if (i != 0) {
+
+            let row = categorizedPopulationArr[i];
+            requestBodyAssessment.collaborateurs.push(generateCollaborateur(row));
+            managers1.push(generateManager1(row));
+            managers2.push(generateManager2(row));
+            requestBodyAssessment.fichesEvaluations.push(generateFicheEvaluation(row));
+
+        }
+    }
+    requestBodyAssessment.managers1 = [...new Set(
+        managers1
+            .map(element => element.matricule)
+            .map((mat) => {
+                return managers1.find(e => e.matricule === mat)
+            }))];
+    requestBodyAssessment.managers2 = [...new Set(
+        managers2
+            .map(element => element.matricule)
+            .map((mat) => {
+                return managers2.find(e => e.matricule === mat)
+            }))];
 }

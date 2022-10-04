@@ -9,4 +9,5 @@ import ma.gbp.assessment.model.AssessmentTemp;
 public interface AsessmentTempRepository extends JpaRepository<AssessmentTemp, Long>{
     
     AssessmentTemp findByName(String assessmentName);
+    long deleteByName(String assessmentName);
 }
