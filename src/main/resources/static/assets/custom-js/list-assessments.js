@@ -278,10 +278,11 @@ function getAssessmentsDataFromJson(arrJson) {
                 `)
             }
         } else {
+            let assessmentTempContent = JSON.parse(e.content); 
             arr.push(e.id);
             arr.push(e.name);
-            arr.push("--------");
-            arr.push("--------");
+            arr.push(assessmentTempContent.startedAt);
+            arr.push(assessmentTempContent.finishesAt);
 
             arr.push(`
             <div class="mt-sm-1 d-block">
