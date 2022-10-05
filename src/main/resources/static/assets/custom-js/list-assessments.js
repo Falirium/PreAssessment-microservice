@@ -45,7 +45,47 @@ getListOfTempAssessments().then((data) => {
         })
 
         // ADD EVENTLISTENERS TO VIEW BTN
+        $(".edit-btn").click(function (e) {
 
+            let aElement;
+            if (e.target.tagName === "SPAN") {
+                aElement = e.target.parentElement;
+            } else {
+                aElement = e.target;
+            }
+
+            let btns = $(".edit-btn").get();
+            let indexOfAssessment = btns.indexOf(aElement);
+
+            // GET THE ASSOCIATED ASSESSMENT
+            let assessment = listAssessments[indexOfAssessment];
+            console.log(assessment);
+
+            // CHECK IF THE ASSESSMENT IS LANCHED OR NOT
+            if (assessment.hasOwnProperty('status')) {
+
+                // SHOW ERROR MESSAGE 
+                showModal("error", "Accès refusé", "Vous ne pouvez pas modifier l'assessment après son lancement.");
+
+            } else {
+
+                //SAVE ASSESSMENT ON LOCAL SESSION
+                localStorage.setItem("assessmentId", assessment.id);
+
+                // REDIRECT TO THE ASSESSMENT PAGE 
+                // let url = buildURL("evaluation/evaluate", urlParams);
+                let currentUrl = window.location.href;
+
+                window.location.href = extractDomain(currentUrl) + "assessment/edit";
+                // console.log(extractDomain(currentUrl) + "assessment/add");
+                // console.log(localStorage.getItem("assessmentId"));
+            }
+
+
+        })
+
+
+        // ADD EVENT LINTENER TO CONSULTER BTN
         $(".view-btn").click(function (e) {
 
             let aElement;
@@ -62,18 +102,25 @@ getListOfTempAssessments().then((data) => {
             let assessment = listAssessments[indexOfAssessment];
             console.log(assessment);
 
-            //SAVE ASSESSMENT ON LOCAL SESSION
-            localStorage.setItem("assessmentId", assessment.id);
+            if (!assessment.hasOwnProperty('status')) {
 
-            // REDIRECT TO THE ASSESSMENT PAGE 
-            // let url = buildURL("evaluation/evaluate", urlParams);
-            let currentUrl = window.location.href;
+                // SHOW ERROR MESSAGE
+                showModal("error", "Accès refusé", "Vous ne pouvez pas voir les résultats d'un assessment qui n'est pas encore lancée.");
 
-            window.location.href = extractDomain(currentUrl) + "assessment/edit";
-            // console.log(extractDomain(currentUrl) + "assessment/add");
-            // console.log(localStorage.getItem("assessmentId"));
+            } else {
+
+                //SAVE ASSESSMENT ON LOCAL SESSION
+                localStorage.setItem("assessmentId", assessment.id);
+
+                // REDIRECT TO THE ASSESSMENT PAGE 
+                // let url = buildURL("evaluation/evaluate", urlParams);
+                let currentUrl = window.location.href;
+
+                window.location.href = extractDomain(currentUrl) + "assessment/" + assessment.id;
+                // console.log(extractDomain(currentUrl) + "assessment/add");
+                // console.log(localStorage.getItem("assessmentId"));
+            }
         })
-
 
     })
 })
@@ -116,8 +163,8 @@ async function getListOfTempAssessments() {
 function getAssessmentColumnFromJson(json, authorizedCol) {
     let colArr = [];
 
-    console.log(json, typeof(json));
-    if (typeof(json) === 'undefined') {
+    console.log(json, typeof (json));
+    if (typeof (json) === 'undefined') {
         return colArr;
     }
 
@@ -251,10 +298,13 @@ function getAssessmentsDataFromJson(arrJson) {
 
         // ACTION COL
         arr.push(`
-            <div class="g-1">
-                <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
-                    data-bs-original-title="Voir les résultas"><span
+            <div class="g-2">
+                <a class="btn text-primary btn-sm edit-btn" data-bs-toggle="tooltip"
+                    data-bs-original-title="Éditer l'assessment"><span
                         class="fe fe-edit fs-14"></span></a>
+                <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
+                        data-bs-original-title="Voir les résultas"><span
+                            class="fe fe-eye fs-14"></span></a>
             </div>
             `)
 
@@ -270,4 +320,56 @@ function removeAssessmentFromStorage() {
     if (localStorage.getItem("assessmentId") != null) {
         localStorage.removeItem("assessmentId");
     }
+}
+
+function showModal(type, header, content, action) {
+
+    let modalId, modalHeaderId, modalContentId;
+
+
+    switch (type) {
+        case "success":
+            modalId = "success";
+            modalHeaderId = "#modal-success-header";
+            modalContentId = "#modal-success-content";
+            break;
+
+        case "warning":
+            modalId = "warning";
+            modalHeaderId = "#modal-warning-header";
+            modalContentId = "#modal-warning-content";
+            break;
+
+        case "info":
+            modalId = "info";
+            modalHeaderId = "#modal-info-header";
+            modalContentId = "#modal-info-content";
+            break;
+
+        case "error":
+            modalId = "modaldemo5";
+            modalHeaderId = "#modal-error-header";
+            modalContentId = "#modal-error-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+
+        case "confirm":
+            modalId = "confirm";
+            modalHeaderId = "#modal-confirm-header";
+            modalContentId = "#modal-confirm-content";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+    }
+
+
+    var myModal = new bootstrap.Modal(document.getElementById(modalId));
+
+    // SET HEADER
+    $(modalHeaderId).text(header);
+
+    // SET CONTENT
+    $(modalContentId).text(content)
+
+    myModal.show();
+
 }
