@@ -36,7 +36,18 @@ btnAddFile.addEventListener("click", (e) => {
 // SAVE THE LIST INTO THE DATABASE
 
 btnSaveCompetences.addEventListener("click", (e) => {
-    postListOfCompetence(competenceArray);
+    postListOfCompetence(competenceArray).then((success) => {
+
+        // SHOW SUCCESS MODEL        
+        showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+
+        // REDIRECT TO THE LIST OF ASSESSMENTS
+        setTimeout(function () {
+            let currentUrl = window.location.href;
+
+            window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+        }, 1000);
+    });
 })
 
 
@@ -122,7 +133,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
         competenceArray.push(competenceGlassaireJson);
 
     }
-    
+
 
     // INITIALIZE THE INPUTS
     nomCompGlossaire.value = "";
@@ -471,7 +482,7 @@ function loadJS(FILE_URL, async) {
 async function postListOfCompetence() {
     let url = "http://localhost:8080/preassessment/api/v1/competence/competences"
 
-    fetch(url, { // Your POST endpoint
+    return fetch(url, { // Your POST endpoint
         method: 'POST',
         headers: {
             // Content-Type may need to be completely **omitted**
@@ -484,8 +495,7 @@ async function postListOfCompetence() {
     ).then(
         success => {
 
-            // SHOW SUCCESS MODEL        
-            showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+            return success;
 
 
 

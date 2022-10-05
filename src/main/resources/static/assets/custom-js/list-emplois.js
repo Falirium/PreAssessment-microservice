@@ -21,8 +21,8 @@ getListOfEmplois().then((data) => {
     let col = getEmploiColumnFromJson(data[0], authorizedCol);
 
     emploiDatatable = $("#tbs2").DataTable({
-        data: dataSet,
-        columns: col
+        data: dataSet
+        // columns: col
     })
 
     // ADD EVENTLISTENERS TO VIEW BTN
@@ -82,6 +82,10 @@ async function getListOfEmplois() {
 function getEmploiColumnFromJson(json, authorizedCol) {
     let colArr = [];
 
+
+    if(typeof(json) === 'undefined') {
+        return [];
+    }
 
 
     authorizedCol.map((col, index) => {

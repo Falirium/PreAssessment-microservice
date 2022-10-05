@@ -33,132 +33,23 @@
                     <div class="card-body">
                         <div class="">
                             <a th:href="@{/emploi/add}" class="btn btn-primary mb-4" role="button"
-                                aria-pressed="true">Ajouter une nouvelle</a>
+                                aria-pressed="true">Ajouter une fiche d'emploi</a>
                             <table class="table table-bordered border-bottom" id="tbs2">
-                                <!-- <thead>
+                                <thead>
                                     <tr>
-                                        <th class="wd-15p border-bottom-0">Id</th>
-                                        <th class="wd-15p border-bottom-0">Name</th>
-                                        <th class="wd-20p border-bottom-0">Date de début</th>
-                                        <th class="wd-15p border-bottom-0">Date de fin</th>
-                                        <th class="wd-10p border-bottom-0">Statut</th>
-                                        <th class="wd-25p border-bottom-0">Action</th>
+                                        <th class="wd-auto border-bottom-0">Id</th>
+                                        <th class="wd-auto border-bottom-0">intitule</th>
+                                        <th class="wd-auto border-bottom-0">niveau</th>
+                                        <th class="wd-auto border-bottom-0">filière</th>
+                                        <th class="wd-auto border-bottom-0">sous filière</th>
+                                        <th class="wd-auto border-bottom-0">dernière Maj</th>
+                                        <th class="wd-auto border-bottom-0">actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>#98765490</td>
-                                        <td>IMAD_2022</td>
-                                        <td>2018/03/12</td>
-                                        <td>2018/03/12</td>
-                                        <td>
-                                            <div class="mt-sm-1 d-block">
-                                                <span
-                                                    class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Terminé</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="g-2">
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="Editer"><span
-                                                        class="fe fe-edit fs-14"></span></a>
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="View"><span
-                                                        class="fe fe-eye fs-14"></span></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#98765490</td>
-                                        <td>AMOINE_2022</td>
-                                        <td>2018/03/12</td>
-                                        <td>2018/03/12</td>
-                                        <td>
-                                            <div class="mt-sm-1 d-block">
-                                                <span
-                                                    class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Terminé</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="g-2">
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="Editer"><span
-                                                        class="fe fe-edit fs-14"></span></a>
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="View"><span
-                                                        class="fe fe-eye fs-14"></span></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#98765490</td>
-                                        <td>SANAE_2022</td>
-                                        <td>2018/03/12</td>
-                                        <td>2018/03/12</td>
-                                        <td>
-                                            <div class="mt-sm-1 d-block">
-                                                <span
-                                                    class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Annulé</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="g-2">
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="Editer"><span
-                                                        class="fe fe-edit fs-14"></span></a>
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="View"><span
-                                                        class="fe fe-eye fs-14"></span></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#98765490</td>
-                                        <td>CARLOS_2022</td>
-                                        <td>2018/03/12</td>
-                                        <td>2018/03/12</td>
-                                        <td>
-                                            <div class="mt-sm-1 d-block">
-                                                <span
-                                                    class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Terminé</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="g-2">
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="Editer"><span
-                                                        class="fe fe-edit fs-14"></span></a>
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="View"><span
-                                                        class="fe fe-eye fs-14"></span></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#98765490</td>
-                                        <td>WAFAE_2022</td>
-                                        <td>2018/03/12</td>
-                                        <td>2018/03/12</td>
-                                        <td>
-                                            <div class="mt-sm-1 d-block">
-                                                <span
-                                                    class="badge bg-warninf-transparent rounded-pill text-warning p-2 px-3">En
-                                                    cours</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="g-2">
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="Editer"><span
-                                                        class="fe fe-edit fs-14"></span></a>
-                                                <a class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-original-title="View"><span
-                                                        class="fe fe-eye fs-14"></span></a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    
 
-                                </tbody> -->
+                                </tbody>
                             </table>
                         </div>
                     </div>

@@ -130,12 +130,15 @@ $(function () {
     // EVENT LISTENER WHEN WE SAVE AN ASSESSMENT
     $("#btn-assessment-lanch").click(function (e) {
 
+        // TWO SENARIOS : LANCH AN ASSESSMENT WITHOUT BEING SAVED - LANCH AN ASSESSMENT THAT IS SAVED
+        let alreadySavedAssessment = (localStorage.getItem("assessmentId") === null ) ? false : true;
+
         // CHECK IF THERE IS SOME UNCATEGORIED COLLABORATEUR
         if (checkForUncategorizedCollaborateur()) {
             showModal("warning", "Vous ne pouvez pas sauvegarder cette évaluation", "Certains employés ne sont pas catégorisés ; veuillez retourner à la phase de catégorisation et les inclure", "")
         } else {
 
-            // //SAVE NEW CATEGORIES TO DB  then SAVE ASSESSMENT-CATEGORIES
+            //SAVE NEW CATEGORIES TO DB  then SAVE ASSESSMENT-CATEGORIES
             let newCategories = [];
             categoriesRequestBody.map((cat, index) => {
                 if (listOfNewCategories.includes(cat.name)) {
@@ -153,12 +156,13 @@ $(function () {
                 // CHANGE THE STATUS OF THE ASSESSMENT TO "LANCHED"
                 requestBodyAssessment.status = "LANCHED";
 
+
                 // DELETE THE ASSOCIATED ASSESSMENT TEMP 
                 let assessmentName = requestBodyAssessment.name;
                 deleteTempAssessment(assessmentName).then((success) => {
 
                     // CHECK IF SUCCESS  == 1
-                    if (success != 1) {
+                    if (success != 1 && alreadySavedAssessment) {
 
                         // SHOW ERROR MODAL
 
@@ -242,8 +246,8 @@ $(function () {
                 setTimeout(function () {
                     let currentUrl = window.location.href;
 
-                    window.open(extractDomain(currentUrl) + "assessment/list");
-                }, 3000);
+                    window.location.href = extractDomain(currentUrl) + "assessment/list";
+                }, 1000);
 
             }).catch((error) => {
                 console.log(error);
@@ -255,7 +259,7 @@ $(function () {
             postToAssessmentTemp(savedAssessment, 'POST').then((success) => {
 
                 // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
-                showModal("success", "Assessment est bien sauvegardé", "L'assessment a été sauvegardé avec succès. Vous pouvez éditer et modifier cette évaluation plus tard à partir de la liste des assessments sur le tableau de bord.")
+                showModal("success", "Assessment est lancé", "L'assessment a été lancé avec succès. Vous allez maintenant suivre l'état d'avancement de cet assessment depuis son tableau de bord.")
 
                 // console.log(success); 
 
@@ -266,8 +270,8 @@ $(function () {
                 setTimeout(function () {
                     let currentUrl = window.location.href;
 
-                    window.open(extractDomain(currentUrl) + "assessment/list");
-                }, 5000);
+                    window.location.href = extractDomain(currentUrl) + "assessment/list";
+                }, 1000);
 
             }).catch((error) => {
                 console.log(error);

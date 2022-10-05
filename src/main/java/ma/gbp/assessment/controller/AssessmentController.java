@@ -26,6 +26,7 @@ import ma.gbp.assessment.model.AssessmentCategory;
 import ma.gbp.assessment.model.AssessmentTemp;
 import ma.gbp.assessment.model.Category;
 import ma.gbp.assessment.model.Collaborateur;
+import ma.gbp.assessment.model.Employee;
 import ma.gbp.assessment.model.FicheEvaluation;
 import ma.gbp.assessment.model.ManagerOne;
 import ma.gbp.assessment.model.ManagerTwo;
@@ -100,7 +101,7 @@ public class AssessmentController {
         @PostMapping("/")
         public ResponseEntity<Assessment> saveAssessment(@RequestBody AssessmentReqBody assessmentReqBody) {
 
-                // SAVE ASSESSMENT
+                // CREATE AN INSTANCE OF ASSESSMENT
                 Assessment newAssessment = assessmentService.save(new Assessment(
                                 assessmentReqBody.getName(),
                                 assessmentReqBody.getTargetedDirection(),
@@ -116,38 +117,84 @@ public class AssessmentController {
                 List<Niveau> savedEmplois = new ArrayList<Niveau>();
 
                 // SAVE MANAGERS 2
-                List<ManagerTwo> savedManagers2 = managerTwoService
-                                .saveListOfManagers(assessmentReqBody.getManagers2());
-                savedListManagers2 = savedManagers2;
+                // List<ManagerTwo> savedManagers2 = managerTwoService
+                // .saveListOfManagers(assessmentReqBody.getManagers2());
+                // savedListManagers2 = savedManagers2;
+
+                for (ManagerTwo manager2 : assessmentReqBody.getManagers2()) {
+
+                        ManagerTwo savedManager2 = new ManagerTwo();
+
+                        // VERIFY IF THE MANAGER2 EXISTS
+                        if (doesEmployeeExist(manager2.getFirstName(), manager2.getLastName(), 2)) {
+
+                                savedManager2 = managerTwoService.getManagerByFirstAndLastName(manager2.getFirstName(), manager2.getLastName());
+                        } else {
+
+                                // SAVE IT AS A NEW ENTITY
+                                savedManager2 = managerTwoService.saveManager(new ManagerTwo(
+                                                manager2.getFirstName(),
+                                                manager2.getLastName(),
+                                                manager2.getMatricule()));
+
+                
+                        }
+
+                         // ADD DIRECTLY TO THE LIST
+                         savedListManagers2.add(savedManager2);
+                }
 
                 // SAVE MANAGERS 1
                 for (ManagerOne manager1 : assessmentReqBody.getManagers1()) {
-                        ManagerOne savedManager1 = managerOneService.saveManager(new ManagerOne(
-                                        manager1.getFirstName(),
-                                        manager1.getLastName(),
-                                        manager1.getMatricule()));
 
-                        ManagerTwo associatedManagerTwo = managerTwoService.getManagerByFirstAndLastName(
-                                        manager1.getManager().getFirstName(), manager1.getManager().getLastName());
+                        ManagerOne savedManager1 = new ManagerOne();
 
-                        // SET THE RELATIONSHIP
+                        // WHEN MANAGER 1 DOES NOT EXIST ---> CREATE A NEW ONE
+                        if (doesEmployeeExist(manager1.getFirstName(), manager1.getLastName(), 1)) {
 
-                        savedManager1.setManager(associatedManagerTwo);
+                                savedManager1 = managerOneService.getManagerOneByMatricule(manager1.getMatricule());
+                        } else {
 
-                        savedManager1 = managerOneService.saveManager(savedManager1);
+                                savedManager1 = managerOneService.saveManager(new ManagerOne(
+                                                manager1.getFirstName(),
+                                                manager1.getLastName(),
+                                                manager1.getMatricule()));
 
+                                ManagerTwo associatedManagerTwo = managerTwoService.getManagerByFirstAndLastName(
+                                                manager1.getManager().getFirstName(),
+                                                manager1.getManager().getLastName());
+
+                                // SET THE RELATIONSHIP
+
+                                savedManager1.setManager(associatedManagerTwo);
+
+                                savedManager1 = managerOneService.saveManager(savedManager1);
+                        }
+
+                        // ADD DIRECTLY TO THE LIST
                         savedListManagers1.add(savedManager1);
                 }
 
                 // SAVE COLLABORATEURS
                 for (Collaborateur coll : assessmentReqBody.getCollaborateurs()) {
-                        Collaborateur savedCollaborateur = collaborateurService.saveCollaborateur(new Collaborateur(
-                                        coll.getFirstName(),
-                                        coll.getLastName(),
-                                        coll.getMatricule(),
-                                        coll.getTopDirection(),
-                                        coll.getDirection(),
-                                        coll.getRole()));
+
+                        Collaborateur savedCollaborateur = new Collaborateur();
+
+                        if (doesEmployeeExist(coll.getFirstName(), coll.getLastName(), 0)) {
+
+                                savedCollaborateur = collaborateurService.getCollByFirstAndLastName(coll.getFirstName(),
+                                                coll.getLastName());
+
+                        } else {
+                                savedCollaborateur = collaborateurService.saveCollaborateur(new Collaborateur(
+                                                coll.getFirstName(),
+                                                coll.getLastName(),
+                                                coll.getMatricule(),
+                                                coll.getTopDirection(),
+                                                coll.getDirection(),
+                                                coll.getRole()));
+
+                        }
 
                         ManagerOne associatedManager = managerOneService.getManagerByFirstAndLastName(
                                         coll.getManagerOne().getFirstName(), coll.getManagerOne().getLastName());
@@ -171,8 +218,7 @@ public class AssessmentController {
                                                         ficheEvaluation.getCreatedAt(),
                                                         ficheEvaluation.getDateEvaluation(),
                                                         "CREATED",
-                                                        ficheEvaluation.getFicheContent())
-                                                        );
+                                                        ficheEvaluation.getFicheContent()));
 
                         // SET RELATIONSHIPS
                         ManagerOne associatedManagerOne = managerOneService.getManagerByFirstAndLastName(
@@ -215,8 +261,7 @@ public class AssessmentController {
 
                 }
 
-
-                // SAVE EMPLOIS
+                // GET EMPLOIS ENTITIES FROM DB
                 for (Niveau niveau : assessmentReqBody.getTargetEmplois()) {
                         Niveau associatedNiveau = niveauService.getNiveauByNameAndByLevel(niveau.getIntitule(),
                                         niveau.getLevel());
@@ -260,10 +305,11 @@ public class AssessmentController {
         public ResponseEntity<AssessmentTemp> saveAssessmentTemp(@RequestBody AssessmentTemp tempAssessment) {
 
                 // CHECK IF THE ASSESSMENT IS ALREADY EXITED
-                AssessmentTemp newSavedAssessment = assessmentTempService.getSavedAssessmentByName(tempAssessment.getName());
+                AssessmentTemp newSavedAssessment = assessmentTempService
+                                .getSavedAssessmentByName(tempAssessment.getName());
 
-                if ( newSavedAssessment == null ) {
-                        
+                if (newSavedAssessment == null) {
+
                         newSavedAssessment = tempAssessment;
 
                 } else {
@@ -273,7 +319,8 @@ public class AssessmentController {
                         newSavedAssessment.setContent(tempAssessment.getContent());
                 }
 
-                return ResponseEntity.status(HttpStatus.OK).body(assessmentTempService.saveAssessmentTemp(newSavedAssessment));
+                return ResponseEntity.status(HttpStatus.OK)
+                                .body(assessmentTempService.saveAssessmentTemp(newSavedAssessment));
         }
 
         @PutMapping("/temp")
@@ -282,8 +329,8 @@ public class AssessmentController {
                 // CHECK IF THE ASSESSMENT IS ALREADY EXITED
                 AssessmentTemp updatedAssessment = assessmentTempService.getSavedAssessmentById(tempAssessment.getId());
 
-                if ( updatedAssessment == null ) {
-                        
+                if (updatedAssessment == null) {
+
                         throw new CustomErrorException(HttpStatus.NOT_FOUND, "Assessment Not Found");
 
                 } else {
@@ -293,7 +340,8 @@ public class AssessmentController {
                         updatedAssessment.setContent(tempAssessment.getContent());
                 }
 
-                return ResponseEntity.status(HttpStatus.OK).body(assessmentTempService.saveAssessmentTemp(updatedAssessment));
+                return ResponseEntity.status(HttpStatus.OK)
+                                .body(assessmentTempService.saveAssessmentTemp(updatedAssessment));
         }
 
         @GetMapping("/temp/{id}")
@@ -302,7 +350,7 @@ public class AssessmentController {
                 // CHECK IF THE ELEMENT EXISTS
                 AssessmentTemp tempAssessment = assessmentTempService.getSavedAssessmentById(id);
 
-                if ( tempAssessment == null ) {
+                if (tempAssessment == null) {
                         throw new CustomErrorException(HttpStatus.NOT_FOUND, "Assessment Not Found");
                 } else {
                         return ResponseEntity.status(HttpStatus.OK).body(tempAssessment);
@@ -318,8 +366,29 @@ public class AssessmentController {
         @DeleteMapping("/temp/{name}")
         public ResponseEntity<Long> deleteTempAssessmentById(@PathVariable String name) {
 
-                return ResponseEntity.status(HttpStatus.OK).body(assessmentTempService.deleteAssessmentTempByName(name));
-        } 
-        
+                return ResponseEntity.status(HttpStatus.OK)
+                                .body(assessmentTempService.deleteAssessmentTempByName(name));
+        }
+
+        private boolean doesEmployeeExist(String mFirstName, String mLastName, int mLevel) {
+
+                Employee m = new Employee();
+
+                if (mLevel == 1) {
+                        m = managerOneService.getManagerByFirstAndLastName(mFirstName, mLastName);
+
+                } else if (mLevel == 2) {
+                        m = managerTwoService.getManagerByFirstAndLastName(mFirstName, mLastName);
+                } else {
+                        // CASE FOR COLLABORATEURS
+                        m = collaborateurService.getCollByFirstAndLastName(mFirstName, mLastName);
+                }
+
+                if (m == null) {
+                        return false;
+                } else {
+                        return true;
+                }
+        }
 
 }
