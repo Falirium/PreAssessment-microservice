@@ -1,7 +1,15 @@
 
 
 let fileExcel = document.querySelector("#input-file");
+
 let competenceArray = [];
+let matriceCompetenceJson = {
+    "name" : "",
+    "createdAt" : null,
+    "updatedAt" : null,
+    "competences" : []
+
+};
 
 let competenceNameArray = [];
 let competenceDefArray = [];
@@ -24,7 +32,7 @@ parseCompetencesToTable(competenceArray);
 const btnAddGlossaire = document.querySelector("#btn-add-competence");
 // const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
 const btnAddFile = document.querySelector("#btn-add-file");
-const btnSaveCompetences = document.querySelector("#btn-competence-save");
+const btnSaveMatrice = document.querySelector("#btn-competence-save");
 
 
 btnAddFile.addEventListener("click", (e) => {
@@ -63,21 +71,50 @@ function showFileInputModal() {
 }
 
 
+// EVENT LISTNER ON NAME INPUT
+$("#input-name-matrice").change(function(e) {
+    matriceCompetenceJson.name = e.target.value;
+    console.log(matriceCompetenceJson.name);
+})
+
+// EVENT LISTNER ON CREATED DATE INPUT
+$("#input-create-date").change(function(e) {
+    matriceCompetenceJson.createdAt = e.target.value;
+    console.log(matriceCompetenceJson.createdAt);
+})
+
 // SAVE THE LIST INTO THE DATABASE
 
-btnSaveCompetences.addEventListener("click", (e) => {
-    postListOfCompetence(competenceArray).then((success) => {
+btnSaveMatrice.addEventListener("click", (e) => {
 
-        // SHOW SUCCESS MODEL        
-        showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+    // STEP 1 : VERIFY IF ALL THE FIELD ARE FILLED
 
-        // REDIRECT TO THE LIST OF ASSESSMENTS
-        setTimeout(function () {
-            let currentUrl = window.location.href;
 
-            window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
-        }, 1000);
-    });
+    // STEP 2 : SAVE NEW LISTS OF COMPETENCES
+    if ( fieldsAreChecked() ) {
+
+        // UPDATE MATRICE-COMPETENCE JSON
+        let timeNow = new Date();
+        matriceCompetenceJson.updatedAt = timeNow.toISOString().split('T')[0];
+        matriceCompetenceJson.competences = competenceArray;
+
+        console.log(matriceCompetenceJson);
+
+
+        // postMatriceCompetences(matriceCompetenceJson).then((success) => {
+
+        //     // SHOW SUCCESS MODEL        
+        //     showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+    
+        //     // REDIRECT TO THE LIST OF ASSESSMENTS
+        //     setTimeout(function () {
+        //         let currentUrl = window.location.href;
+    
+        //         window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+        //     }, 1000);
+        // });
+    }
+    
 })
 
 
@@ -498,6 +535,32 @@ function getGlossaireOfCompentence(names, defs, levels) {
     })
 }
 
+// THIS FUNCTION IS TO CHECK IF ALL FIELDS ARE NOT EMPTY 
+function fieldsAreChecked() {
+
+    if ( $("#input-name-matrice").val().trim() === "" || $("#input-create-date").val() === "" || competenceArray.length === 0) {
+
+        showModal("error", "Action non terminée", "Certains champs ne sont pas remplis et sont nécessaires pour compléter l'enregistrement de la matrice.");
+
+        // HIGHLIGHT THE EMPTY FIELDS
+        if ($("#input-name-matrice").val().trim() === "" ) {
+
+            $("#input-name-matrice").addClass("is-invalid");
+
+        } 
+        
+        if ($("#input-create-date").val() === "") {
+
+            $("#input-create-date").addClass("is-invalid");
+
+        }
+
+        return false;
+    }
+
+    return true;
+}
+
 // THIS FUNCTION PARSES DATA OF COMPETENCEARRAY TO THE DATATABLE + IT ADDS EVENT LISTENERS TO ACTION BTNS
 function parseCompetencesToTable(dataArr) {
 
@@ -777,8 +840,10 @@ function loadJS(FILE_URL, async) {
     });
 }
 
-async function postListOfCompetence() {
-    let url = "http://localhost:8080/preassessment/api/v1/competence/competences"
+async function postMatriceCompetences(json) {
+    // let url = "http://localhost:8080/preassessment/api/v1/competence/competences"
+    let url = "http://localhost:8080/preassessment/api/v1/competence/matrice"
+
 
     return fetch(url, { // Your POST endpoint
         method: 'POST',
@@ -787,7 +852,7 @@ async function postListOfCompetence() {
             // or you may need something
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(competenceArray) // This is your file object
+        body: JSON.stringify(json) // This is your file object
     }).then(
         response => response.json() // if the response is a JSON object
     ).then(
