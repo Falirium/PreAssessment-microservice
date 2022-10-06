@@ -228,9 +228,6 @@ function getCompetencesDataFromJson(arrJson) {
     let finalArr = [];
     arrJson.map((e, i) => {
         //console.log(i);
-
-
-
         e.niveaux.map((niveau, index) => {
 
             let arr = [];
@@ -253,12 +250,6 @@ function getCompetencesDataFromJson(arrJson) {
 
             finalArr.push(arr);
         })
-
-
-
-
-
-
 
     })
 
@@ -283,157 +274,6 @@ function defNiveaux2Array(arrJson) {
     })
 
     return arr;
-}
-
-
-function parseGlossaireToTable(glossaire) {
-    let tableBody = document.querySelector("#glossaire-table-body");
-
-
-    // Initilize the table body
-
-    tableBody.innerHTML = ``;
-    for (var j = 0; j < glossaire.length; j++) {
-
-
-        for (var i = 0; i < glossaire[j]["niveaux"].length; i++) {
-
-            if (typeof (glossaire[j]["niveaux"][i]) !== 'undefined') {
-
-                // console.log(glossaire[j]["niveaux"][i]);
-
-                let tr = tableBody.insertRow(-1);
-
-                // if (i === 0) {
-                //     let nameCell = tr.insertCell(-1);
-                //     nameCell.setAttribute("rowspan", "4");
-                //     nameCell.innerHTML = glossaire[j].name;
-
-                //     let niveauCell = tr.insertCell(-1);
-                //     niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
-
-                //     let defCell = tr.insertCell(-1);
-                //     defCell.innerHTML = glossaire[j]["niveaux"][i].definition;
-                //     let actionCell = tr.insertCell(-1);
-                //     actionCell.setAttribute("rowspan", "4");
-                //     actionCell.innerHTML = `
-                //         <div class="g-2">
-                //             <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                //                 data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
-                //             <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
-                //                 data-bs-original-title="Delete"><span
-                //                     class="fe fe-trash-2 fs-14"></span></a>
-                //         </div> 
-                //     `;
-
-                // } else {
-                //     let niveauCell = tr.insertCell(-1);
-                //     niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
-
-                //     let defCell = tr.insertCell(-1);
-                //     defCell.innerHTML = glossaire[j]["niveaux"][i].definition;
-                // }
-                let idCell = tr.insertCell(-1);
-                idCell.innerHTML = glossaire[j].id;
-
-                let nameCell = tr.insertCell(-1);
-                nameCell.innerHTML = glossaire[j].name;
-
-                let niveauCell = tr.insertCell(-1);
-                niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
-
-                let defCell = tr.insertCell(-1);
-                defCell.innerHTML = glossaire[j]["niveaux"][i]["definition"];
-                let actionCell = tr.insertCell(-1);
-                actionCell.innerHTML = `
-                            <div class="g-2">
-                                <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                    data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
-                                <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
-                                    data-bs-original-title="Delete"><span
-                                        class="fe fe-trash-2 fs-14"></span></a>
-                            </div> 
-                        `;
-            }
-        }
-    }
-
-    // Click event listeners 
-    let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
-    let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
-
-    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-        deleteBtn.addEventListener("click", (e) => {
-
-            // WHEN THE SPAN ELEMENT IS FIRED
-
-            let aElement;
-            if (e.target.tagName === "SPAN") {
-                aElement = e.target.parentElement;
-            } else {
-                aElement = e.target;
-            }
-
-            let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-
-
-            let competenceIndex = Math.floor(glossaireIndex / 4);
-            let levelIndex = glossaireIndex % 4;
-            listCompetences.splice(glossaireIndex, 1);
-
-            //console.log(listCompetences[competenceIndex].name, listCompetences[competenceIndex]["niveaux"][levelIndex])
-
-
-
-            showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
-
-
-
-
-        })
-    });
-
-    Array.from(allEditCatBtns).forEach((editBtn) => {
-        editBtn.addEventListener("click", (e) => {
-
-            // WHEN THE SPAN ELEMENT IS FIRED
-
-            let aElement;
-            if (e.target.tagName === "SPAN") {
-                aElement = e.target.parentElement;
-            } else {
-                aElement = e.target;
-            }
-
-            let glossaireIndex = [...allEditCatBtns].indexOf(aElement);
-
-
-
-            let competenceIndex = Math.floor(glossaireIndex / 4);
-            let levelIndex = glossaireIndex % 4;
-            console.log(competenceIndex);
-
-            $("#input-nom-competence-glossaire").val(listCompetences[competenceIndex].name);
-
-            $("#input-def-competence-e").val(listCompetences[competenceIndex]["niveaux"][0]["definition"]);
-            $("#input-def-competence-m").val(listCompetences[competenceIndex]["niveaux"][1]["definition"]);
-            $("#input-def-competence-a").val(listCompetences[competenceIndex]["niveaux"][2]["definition"]);
-            $("#input-def-competence-x").val(listCompetences[competenceIndex]["niveaux"][3]["definition"]);
-
-
-            competenceEditIndex = competenceIndex;
-
-
-
-
-            // parseGlossaireToTable(listCompetences, niveau);
-
-        })
-    })
-
-
-
 }
 
 function showModal(type, header, content, action) {

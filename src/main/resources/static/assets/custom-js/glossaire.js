@@ -7,30 +7,60 @@ let competenceNameArray = [];
 let competenceDefArray = [];
 let competenceLevelsDefArray = [];
 
+let fileHasBeenProcessed = false;
+
+
 let competenceEditIndex = -1;
+let competenceDeleteIndex = -1;
 
 let counter = 1;
 
 let competenceTable;
 
+// INITIALIZE THE DATATABLE
+parseCompetencesToTable(competenceArray);
 
-const btnAddGlossaire = document.querySelector("#btn-add-glossaire");
+
+const btnAddGlossaire = document.querySelector("#btn-add-competence");
 // const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
 const btnAddFile = document.querySelector("#btn-add-file");
 const btnSaveCompetences = document.querySelector("#btn-competence-save");
 
 
 btnAddFile.addEventListener("click", (e) => {
-    let tbody = document.querySelector("tbody");
-    console.log(tbody.innerHTML === "");
-    if (tbody.innerHTML === "") {
-        var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
-        myModal.show();
-    } else {
-        showModal("warning", "Attention !", 'Vous ne pouvez pas ajouter une nouvelle liste de compétences sans sauvegarder la liste sur la table. Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.')
+    // let tbody = document.querySelector("tbody");
+    // console.log(tbody.innerHTML === "");
+    // if (tbody.innerHTML === "") {
+    //     var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
+    //     myModal.show();
+    // } else {
+    //     showModal("warning", "Attention !", 'Vous ne pouvez pas ajouter une nouvelle liste de compétences sans sauvegarder la liste sur la table. Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.')
 
+    // }
+
+
+    // BEHANVIOUR : ADD A LIST OF COMPETENCE FROM AN EXCEL FILE TO THE LIST ON THE TABLE
+
+    // CHECK IF THE DATA-TABLE IS ALREADY INITILIZED
+
+    if (fileExcel.files.length != 0 && fileHasBeenProcessed) {
+
+        // SHOW A WARNING MODAL
+        showModal("warning", "Attention !", 'Vous ne pouvez pas ajouter une nouvelle liste de compétences sans sauvegarder la liste sur la table. Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.')
+    } else {
+
+        // STEP 1 : SHOW INPUT FILE MODAL
+        // STEP 2 : GET DATA  FROM THE FILE AND PUSH IT TO COMPETENCE-ARRAY
+        // STEP 3 : RE-INITILIZE THE DATATABLE WITH NEW DATA
+        showFileInputModal();
     }
+
 })
+
+function showFileInputModal() {
+    var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
+    myModal.show();
+}
 
 
 // SAVE THE LIST INTO THE DATABASE
@@ -91,8 +121,9 @@ btnAddGlossaire.addEventListener("click", (e) => {
             "definition": competenceArray[competenceEditIndex]["definition"],
             "niveaux": []
         }
+        
         defCompGlaossaire.forEach((def, index) => {
-            console.log(niveauCompGlassaire[index].value, def.value, index)
+            // console.log(niveauCompGlassaire[index].value, def.value, index)
             competenceArray[competenceEditIndex]["niveaux"].push({
                 "level": niveauCompGlassaire[index].value,
                 "definition": def.value
@@ -104,13 +135,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
         // INITIALIZE THE INDEX
         competenceEditIndex = -1;
 
-        // SET THE SESSIONSTORAGE
-        localStorage.setItem("competences", JSON.stringify(competenceArray));
-
-        // RELOAD THE PAGE
-        location.reload();
-
-
+        
     } else {
 
         let competenceGlassaireJson = {
@@ -142,20 +167,36 @@ btnAddGlossaire.addEventListener("click", (e) => {
     })
 
 
-
-    console.log(competenceArray);
-    parseGlossaireToTable(competenceArray);
+    // PARSE THE DATA TO THE TABLE
+    parseCompetencesToTable(competenceArray);
+    
 })
 
-// btnConfirmDeleteNiveau.addEventListener("click", (e) => {
+// CLICK EVENT LISTENER ON DELETE BTN FOR ERROR MODAL
+$("#confirm-delete-btn").click(function(e) {
 
-//     // SET THE SESSIONSTORAGE
-//     localStorage.setItem("competences", JSON.stringify(competenceArray));
+    let action = $("#confirm-delete-btn").attr("data-action");
 
-//     // RELOAD THE PAGE
-//     location.reload();
+    if ( action === "competence" ) {
 
-// })
+        // CHECK IF THE INDEX 
+        if (competenceDeleteIndex != -1) {
+
+            competenceArray.splice(competenceDeleteIndex,1);
+
+
+            // INITIALIZE THE INDEX
+            competenceDeleteIndex = -1;
+
+            // PARSE THE UPDATED DATA TO THE TABLE
+            parseCompetencesToTable(competenceArray);
+        } else {
+
+
+        }
+    }
+
+})
 
 
 
@@ -326,6 +367,7 @@ function parseGlossaireToTable(glossaire) {
 
 }
 
+// THIS FUNCTION GETS DATA FROM EXCEL FILE AND RETURNS A PROMISE THAT PREPARE FINAL ARRAY HOLDING ALL THE COMPETENCES
 async function parseExcelFile2(inputElement) {
     var files = inputElement.files || [];
     if (!files.length) return;
@@ -421,20 +463,16 @@ async function parseExcelFile2(inputElement) {
                 // //HIDE LOADER
                 $("#btn-add-file").removeClass("btn-loading");
 
-                // DISPLAY THE TABLE
-                parseGlossaireToTable(competenceArray);
+                // PARSE COMPETENCE DATA TO THE DATATABLE
+                parseCompetencesToTable(competenceArray);
+
+                // UPDATE A VARIABLE
+                fileHasBeenProcessed = true;
             })
-            .then(function () {
-                // INITIALIZE DATATABLE ON TABLE 
-                $("#tbs3").DataTable({
-                    "pageLength": 4,
-                    "lengthMenu": [4, 8, 16, 20, 24, 'All']
-                });
-
-
-            }).catch(error => {
+            .catch(error => {
                 // SHOW MODAL ERROR
-                showModal("error", "Mauvais format de fichier", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard.", "");
+                console.error(error);
+                showModal("error", "Erreur d'éxecution", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard. Si le problème persiste, veuillez contacter votre consultant DRH.", "");
 
                 // //HIDE LOADER
                 $("#btn-add-file").removeClass("btn-loading");
@@ -443,6 +481,7 @@ async function parseExcelFile2(inputElement) {
     reader.readAsArrayBuffer(file);
 }
 
+// THIS FUNCTION GETS THE FINAL FORMAT OF THE ARRAY HOLDING ALL THE COMPETENCES ----> USED TO POST ARRAYS
 function getGlossaireOfCompentence(names, defs, levels) {
     names.map((e, index) => {
         let competenceJson = {
@@ -457,6 +496,265 @@ function getGlossaireOfCompentence(names, defs, levels) {
 
         competenceArray.push(competenceJson);
     })
+}
+
+// THIS FUNCTION PARSES DATA OF COMPETENCEARRAY TO THE DATATABLE + IT ADDS EVENT LISTENERS TO ACTION BTNS
+function parseCompetencesToTable(dataArr) {
+
+    // DESTROY THE PREVIOUS TABLE
+    if (competenceTable != null) {
+        competenceTable.destroy();
+    }
+    
+    
+
+    // PROCESS THE DATA
+    let dataSet = processCompetenceData4DataTable(dataArr);
+
+    // INITIALIZE THE DATA TABALE
+    // return new Promise((resolve, reject) => {
+
+
+    // });
+    competenceTable = $("#tbs3").DataTable({
+        data: dataSet,
+        pageLength: 4,
+        lengthMenu: [4, 8, 16, 20, 24, 'All']
+    });
+
+
+    competenceTable.on('draw.dt', function () {
+
+
+        console.log("finished drawing");
+        // ADD EVENT LISTENERS TO ACTIONS BTNS OF DATATABLE
+
+        let allDeleteCatBtns = $(".glo-table-btn-delete").get();
+
+        // console.log($(".glo-table-btn-delete"));
+
+        $(".glo-table-btn-delete").each(function (index, deleteBtn) {
+            console.log(index, deleteBtn);
+
+            // REMOVE PREVIOUS EVENTHANDLER
+            $(deleteBtn).off('click');
+
+            // SET NEW CLICK EVENT LISTENER
+            $(deleteBtn).click(function (e) {
+
+                // WHEN THE SPAN ELEMENT IS FIRED
+
+                let aElement;
+                if (e.target.tagName === "SPAN") {
+                    aElement = e.target.parentElement;
+                } else {
+                    aElement = e.target;
+                }
+
+                let competenceName = $(aElement).parents("td").siblings().slice(0, 1).text();
+
+                let compFromArr = getCompetenceInfoFromArr(competenceName);
+
+                competenceDeleteIndex = compFromArr.index;
+                // console.log(compFromArr.competence, competenceArray[compFromArr.index]);
+
+                // let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
+
+
+
+                // let competenceIndex = Math.floor(glossaireIndex / 4);
+                // let levelIndex = glossaireIndex % 4;
+                // competenceArray.splice(glossaireIndex, 1);
+
+                // console.log(competenceIndex);
+
+                // console.log(competenceArray[competenceIndex].name, competenceArray[competenceIndex]["niveaux"][levelIndex])
+
+
+
+                showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
+            })
+
+        })
+
+        let allEditCatBtns = $(".glo-table-btn-edit").get();
+
+
+        $(".glo-table-btn-edit").each(function (index, editBtn) {
+            console.log(index, editBtn);
+
+            // REMOVE PREVIOUS EVENTHANDLER
+            $(editBtn).off('click');
+
+            // SET NEW CLICK EVENT LISTENER
+            $(editBtn).click(function (e) {
+
+                // WHEN THE SPAN ELEMENT IS FIRED
+
+                let aElement;
+                if (e.target.tagName === "SPAN") {
+                    aElement = e.target.parentElement;
+                } else {
+                    aElement = e.target;
+                }
+
+                let competenceName = $(aElement).parents("td").siblings().slice(0, 1).text();
+
+                let compFromArr = getCompetenceInfoFromArr(competenceName);
+                console.log(competenceName, compFromArr);
+
+
+                // PARSE VALUES OF CLICKED COMPETENCE ON THE INPUTS
+                $("#input-nom-competence-glossaire").val(compFromArr.competence.name);
+
+                $("#input-def-competence-e").val(compFromArr.competence.niveaux[0]["definition"]);
+                $("#input-def-competence-m").val(compFromArr.competence.niveaux[1]["definition"]);
+                $("#input-def-competence-a").val(compFromArr.competence.niveaux[2]["definition"]);
+                $("#input-def-competence-x").val(compFromArr.competence.niveaux[3]["definition"]);
+
+
+                competenceEditIndex = compFromArr.index;
+
+            })
+        });
+
+        // Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
+        //     deleteBtn.addEventListener("click", (e) => {
+
+        //         // WHEN THE SPAN ELEMENT IS FIRED
+
+        //         let aElement;
+        //         if (e.target.tagName === "SPAN") {
+        //             aElement = e.target.parentElement;
+        //         } else {
+        //             aElement = e.target;
+        //         }
+
+        //         let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
+
+
+
+        //         let competenceIndex = Math.floor(glossaireIndex / 4);
+        //         let levelIndex = glossaireIndex % 4;
+        //         competenceArray.splice(glossaireIndex, 1);
+
+        //         console.log(competenceArray[competenceIndex].name, competenceArray[competenceIndex]["niveaux"][levelIndex])
+
+
+
+        //         // showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
+
+
+
+
+        //     })
+        // });
+
+        // Array.from(allEditCatBtns).forEach((editBtn) => {
+        //     editBtn.addEventListener("click", (e) => {
+
+        //         // WHEN THE SPAN ELEMENT IS FIRED
+
+        //         let aElement;
+        //         if (e.target.tagName === "SPAN") {
+        //             aElement = e.target.parentElement;
+        //         } else {
+        //             aElement = e.target;
+        //         }
+
+        //         let glossaireIndex = [...allEditCatBtns].indexOf(aElement);
+
+
+
+        //         let competenceIndex = Math.floor(glossaireIndex / 4);
+        //         let levelIndex = glossaireIndex % 4;
+        //         console.log(competenceArray[competenceIndex].name, competenceArray[competenceIndex]["niveaux"]);
+
+        //         $("#input-nom-competence-glossaire").val(competenceArray[competenceIndex].name);
+
+        //         $("#input-def-competence-e").val(competenceArray[competenceIndex]["niveaux"][0]["definition"]);
+        //         $("#input-def-competence-m").val(competenceArray[competenceIndex]["niveaux"][1]["definition"]);
+        //         $("#input-def-competence-a").val(competenceArray[competenceIndex]["niveaux"][2]["definition"]);
+        //         $("#input-def-competence-x").val(competenceArray[competenceIndex]["niveaux"][3]["definition"]);
+
+
+        //         competenceEditIndex = competenceIndex;
+
+
+
+        //         // parseGlossaireToTable(competenceArray, niveau);
+
+        //     })
+        // })
+    })
+
+
+
+
+}
+
+function getCompetenceInfoFromArr(compName) {
+
+
+    // MAP OVVER COMPETENCE JSON ARR
+    for (var i = 0; i < competenceArray.length; i++) {
+        let competence = competenceArray[i];
+        if (competence.name === compName) {
+            return {
+                "index": i,
+                "competence": competence
+            }
+        }
+
+    }
+    return {
+        "index": -1,
+        "competence": null
+    }
+}
+
+// THIS FUNCTION RETURNS THE PROPER FORMAT OF ARRAY THAT WILL BE DISPLAYED ON THE DATATABLE
+function processCompetenceData4DataTable(arr) {
+
+    let finallArr = [];
+
+    if (arr.length === 0) {
+        return [];
+    }
+
+    arr.map((e, i) => {
+
+        // ITERATE OVER EACH NIVEAUX
+        e.niveaux.map((niveau, index) => {
+
+            let mid = [];
+
+            // PUSH DATA FOLLOWING THIS ORDER : NAME --> LEVEL --> DEFINITION --> ACTION
+            mid.push(e.name);
+            mid.push(niveau.level);
+            mid.push(niveau.definition);
+            mid.push(`
+            <div class="g-2">
+                <a id="" class=" glo-table-btn-edit btn text-primary btn-sm" data-bs-toggle="tooltip"
+                    data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
+                <a id="" class="glo-table-btn-delete btn text-danger btn-sm" data-bs-toggle="tooltip"
+                    data-bs-original-title="Delete"><span
+                        class="fe fe-trash-2 fs-14"></span></a>
+            </div> 
+        
+        `);
+
+            finallArr.push(mid);
+
+        })
+
+
+
+
+    })
+
+    return finallArr;
+
 }
 
 function loadJS(FILE_URL, async) {
@@ -533,7 +831,7 @@ function showModal(type, header, content, action) {
             modalId = "modaldemo5";
             modalHeaderId = "#modal-error-header";
             modalContentId = "#modal-error-content";
-            $("#confirm-yes-btn").attr("data-action", action);
+            $("#confirm-delete-btn").attr("data-action", action);
             break;
 
         case "confirm":
