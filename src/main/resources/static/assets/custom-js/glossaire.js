@@ -4,13 +4,15 @@ let fileExcel = document.querySelector("#input-file");
 
 let competenceArray = [];
 let matriceCompetenceJson = {
-    "name" : "",
-    "createdAt" : null,
-    "updatedAt" : null,
-    "competences" : []
+    "name": "",
+    "createdAt": null,
+    "updatesAt": null,
+    "competences": []
 
 };
 
+
+// THESE VARIABLES ARE MIDDLEWARES FOR PARSING DATA FROM EXCEL TO COMPETENCEARR
 let competenceNameArray = [];
 let competenceDefArray = [];
 let competenceLevelsDefArray = [];
@@ -72,13 +74,13 @@ function showFileInputModal() {
 
 
 // EVENT LISTNER ON NAME INPUT
-$("#input-name-matrice").change(function(e) {
+$("#input-name-matrice").change(function (e) {
     matriceCompetenceJson.name = e.target.value;
     console.log(matriceCompetenceJson.name);
 })
 
 // EVENT LISTNER ON CREATED DATE INPUT
-$("#input-create-date").change(function(e) {
+$("#input-create-date").change(function (e) {
     matriceCompetenceJson.createdAt = e.target.value;
     console.log(matriceCompetenceJson.createdAt);
 })
@@ -91,30 +93,54 @@ btnSaveMatrice.addEventListener("click", (e) => {
 
 
     // STEP 2 : SAVE NEW LISTS OF COMPETENCES
-    if ( fieldsAreChecked() ) {
+    if (fieldsAreChecked()) {
 
         // UPDATE MATRICE-COMPETENCE JSON
         let timeNow = new Date();
-        matriceCompetenceJson.updatedAt = timeNow.toISOString().split('T')[0];
+        matriceCompetenceJson.updatesAt = timeNow.toISOString().split('T')[0];
         matriceCompetenceJson.competences = competenceArray;
 
         console.log(matriceCompetenceJson);
 
+        // 2 SCENARIOS : SAVE NEW ENTITY OR UPDATE AN EXISTANT ENTITY
+        if (localStorage.getItem("matriceCompetence") != null) {
 
-        // postMatriceCompetences(matriceCompetenceJson).then((success) => {
+            updateMatriceCompetence(matriceCompetenceJson).then((success) => {
 
-        //     // SHOW SUCCESS MODEL        
-        //     showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
-    
-        //     // REDIRECT TO THE LIST OF ASSESSMENTS
-        //     setTimeout(function () {
-        //         let currentUrl = window.location.href;
-    
-        //         window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
-        //     }, 1000);
-        // });
+                // SHOW SUCCESS MODEL        
+                showModal("success", "La liste des compétences a été modifiée avec succès", "Les modifications sur la liste des compétences ont été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+
+                // REDIRECT TO THE LIST OF ASSESSMENTS
+                setTimeout(function () {
+                    let currentUrl = window.location.href;
+
+                    window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+                }, 1000);
+            });
+
+            // REMOVE THE MATRICE FROM LOCAL STORAGE
+            localStorage.removeItem("matriceCompetence");
+
+
+        } else {
+
+            postMatriceCompetences(matriceCompetenceJson).then((success) => {
+
+                // SHOW SUCCESS MODEL        
+                showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+
+                // REDIRECT TO THE LIST OF ASSESSMENTS
+                setTimeout(function () {
+                    let currentUrl = window.location.href;
+
+                    window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+                }, 1000);
+            });
+
+        }
+
     }
-    
+
 })
 
 
@@ -158,7 +184,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
             "definition": competenceArray[competenceEditIndex]["definition"],
             "niveaux": []
         }
-        
+
         defCompGlaossaire.forEach((def, index) => {
             // console.log(niveauCompGlassaire[index].value, def.value, index)
             competenceArray[competenceEditIndex]["niveaux"].push({
@@ -172,7 +198,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
         // INITIALIZE THE INDEX
         competenceEditIndex = -1;
 
-        
+
     } else {
 
         let competenceGlassaireJson = {
@@ -206,20 +232,20 @@ btnAddGlossaire.addEventListener("click", (e) => {
 
     // PARSE THE DATA TO THE TABLE
     parseCompetencesToTable(competenceArray);
-    
+
 })
 
 // CLICK EVENT LISTENER ON DELETE BTN FOR ERROR MODAL
-$("#confirm-delete-btn").click(function(e) {
+$("#confirm-delete-btn").click(function (e) {
 
     let action = $("#confirm-delete-btn").attr("data-action");
 
-    if ( action === "competence" ) {
+    if (action === "competence") {
 
         // CHECK IF THE INDEX 
         if (competenceDeleteIndex != -1) {
 
-            competenceArray.splice(competenceDeleteIndex,1);
+            competenceArray.splice(competenceDeleteIndex, 1);
 
 
             // INITIALIZE THE INDEX
@@ -538,17 +564,17 @@ function getGlossaireOfCompentence(names, defs, levels) {
 // THIS FUNCTION IS TO CHECK IF ALL FIELDS ARE NOT EMPTY 
 function fieldsAreChecked() {
 
-    if ( $("#input-name-matrice").val().trim() === "" || $("#input-create-date").val() === "" || competenceArray.length === 0) {
+    if ($("#input-name-matrice").val().trim() === "" || $("#input-create-date").val() === "" || competenceArray.length === 0) {
 
         showModal("error", "Action non terminée", "Certains champs ne sont pas remplis et sont nécessaires pour compléter l'enregistrement de la matrice.");
 
         // HIGHLIGHT THE EMPTY FIELDS
-        if ($("#input-name-matrice").val().trim() === "" ) {
+        if ($("#input-name-matrice").val().trim() === "") {
 
             $("#input-name-matrice").addClass("is-invalid");
 
-        } 
-        
+        }
+
         if ($("#input-create-date").val() === "") {
 
             $("#input-create-date").addClass("is-invalid");
@@ -568,8 +594,8 @@ function parseCompetencesToTable(dataArr) {
     if (competenceTable != null) {
         competenceTable.destroy();
     }
-    
-    
+
+
 
     // PROCESS THE DATA
     let dataSet = processCompetenceData4DataTable(dataArr);
@@ -847,6 +873,34 @@ async function postMatriceCompetences(json) {
 
     return fetch(url, { // Your POST endpoint
         method: 'POST',
+        headers: {
+            // Content-Type may need to be completely **omitted**
+            // or you may need something
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(json) // This is your file object
+    }).then(
+        response => response.json() // if the response is a JSON object
+    ).then(
+        success => {
+
+            return success;
+
+
+
+        } // Handle the success response object
+    ).catch(
+        error => console.log(error) // Handle the error response object
+    );
+}
+
+async function updateMatriceCompetence(json) {
+
+    let url = "http://localhost:8080/preassessment/api/v1/competence/matrice"
+
+
+    return fetch(url, { // Your POST endpoint
+        method: 'PUT',
         headers: {
             // Content-Type may need to be completely **omitted**
             // or you may need something

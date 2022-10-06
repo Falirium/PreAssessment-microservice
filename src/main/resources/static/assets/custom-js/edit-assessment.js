@@ -28,7 +28,7 @@ if (localStorage.getItem('assessmentId') != null) {
     setTimeout(function () {
         let currentUrl = window.location.href;
 
-        window.open(extractDomain(currentUrl) + "assessment/list");
+        window.location.href = extractDomain(currentUrl) + "assessment/list";
     }, 1000);
 }
 

@@ -10,22 +10,22 @@ let authorizedCol = ["id", "nom", "definition_comp", "niveau", "definition"];
 let competenceEditIndex = -1;
 const btnAddGlossaire = document.querySelector("#btn-add-glossaire");
 
-let competenceDatatable;
-let listCompetences;
+let matriceCompetenceDatatable;
+let listMatricesCompetences;
 
 // GET LIST OF COMPETENCES
-getListOfCompetences().then((data) => {
+getListOfMatricesCompetences().then((data) => {
 
 
-    listCompetences = data;
+    listMatricesCompetences = data;
 
     // // FILL THE TABLE WITH DATA
-    // parseGlossaireToTable(listCompetences);
+    // parseGlossaireToTable(listMatricesCompetences);
 
-    let dataSet = getCompetencesDataFromJson(listCompetences);
+    let dataSet = getCompetencesDataFromJson(listMatricesCompetences);
 
     // INITILIZE TABLE TO DATATABLE
-    competenceDatatable = $("#tbs3").DataTable({
+    matriceCompetenceDatatable = $("#tbs3").DataTable({
         data: dataSet,
         pageLength: 4,
         lengthMenu: [4, 8, 16, 20, 24, 'All']
@@ -49,7 +49,7 @@ getListOfCompetences().then((data) => {
     //     console.log(indexOfAssessment);
 
     //     // GET THE ASSOCIATED ASSESSMENT
-    //     let assessment = listCompetences[indexOfAssessment];
+    //     let assessment = listMatricesCompetences[indexOfAssessment];
     //     console.log(assessment);
 
     //     //SAVE ASSESSMENT ON LOCAL SESSION
@@ -64,88 +64,6 @@ getListOfCompetences().then((data) => {
 
 })
 
-// WHEN CLICK ON UPDATING THE LIST OF COMPETENCES
-btnAddGlossaire.addEventListener("click", (e) => {
-    let nomCompGlossaire = document.querySelector("#input-nom-competence-glossaire");
-    let niveauCompGlassaire = Array.from(document.querySelectorAll("#input-niveau-competence-glossaire"));
-    let defCompGlaossaire = Array.from(document.querySelectorAll(".input-level-def"));
-
-
-    listCompetences[competenceEditIndex] = {
-        "id": listCompetences[competenceEditIndex].id,
-        "name": nomCompGlossaire.value,
-        "definition": listCompetences[competenceEditIndex]["definition"],
-        "niveaux": []
-    }
-    defCompGlaossaire.forEach((def, index) => {
-        console.log(niveauCompGlassaire[index].value, def.value, index);
-        switch (niveauCompGlassaire[index].value) {
-            case "E":
-                listCompetences[competenceEditIndex]["niveaux"].push({
-                    "level": "Elémentaire",
-                    "definition": def.value
-                });
-                break;
-            case "M":
-                listCompetences[competenceEditIndex]["niveaux"].push({
-                    "level": "Maitrise",
-                    "definition": def.value
-                });
-                break;
-            case "A":
-                listCompetences[competenceEditIndex]["niveaux"].push({
-                    "level": "Avancé",
-                    "definition": def.value
-                });
-                break;
-            case "X":
-                listCompetences[competenceEditIndex]["niveaux"].push({
-                    "level": "Expert",
-                    "definition": def.value
-                });
-                break;
-
-        }
-        
-    })
-
-    console.log(competenceEditIndex, listCompetences);
-
-    // INITIALIZE THE INDEX
-    competenceEditIndex = -1;
-
-
-
-
-    // INITIALIZE THE INPUTS
-    nomCompGlossaire.value = "";
-    defCompGlaossaire.forEach((definition) => {
-        definition.value = "";
-    })
-
-
-
-    // console.log(listCompetences);
-    // FILL THE TABLE WITH NEW DATA
-    // parseGlossaireToTable(listCompetences);
-
-    // RE-INITIALIZE THE DATATABLE
-    // competenceDatatable.destroy();
-    // competenceDatatable = $("#tbs3").DataTable({
-    //     "pageLength": 4,
-    //     "lengthMenu": [4, 8, 16, 20, 24, 'All']
-    // });
-
-    let dataSet = getCompetencesDataFromJson(listCompetences);
-
-    competenceDatatable.clear();
-    competenceDatatable.rows.add(dataSet);
-    competenceDatatable.draw();
-
-    // ADD EVENTLISTENERS TO TABLE BTNS : EDIT DELETE
-    addEventListenersToTableBtns();
-
-})
 
 function buildURL(prefix, params) {
 
@@ -157,8 +75,8 @@ function buildURL(prefix, params) {
     return url;
 }
 
-async function getListOfCompetences() {
-    let url = "http://localhost:8080/preassessment/api/v1/competence/";
+async function getListOfMatricesCompetences() {
+    let url = "http://localhost:8080/preassessment/api/v1/competence/matrice/list";
     return fetch(url, {
         method: 'GET'
     }).then(response => response.json())
@@ -226,30 +144,34 @@ function getCompetenceColumnFromJson(json, authorizedCol) {
 
 function getCompetencesDataFromJson(arrJson) {
     let finalArr = [];
+
+    // WHEN THE ARR IS VIDE
+    if (arrJson.length === 0) {
+        return [];
+    }
     arrJson.map((e, i) => {
         //console.log(i);
-        e.niveaux.map((niveau, index) => {
 
-            let arr = [];
+        console.log(e);
 
-            arr.push(e.id);
-            arr.push(e.name);
-            arr.push(niveau.level);
-            arr.push(niveau.definition);
+        let arr = [];
 
-            // ACTION COL
-            arr.push(`
-            <div class="g-2">
-                <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                    data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
-                <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
-                    data-bs-original-title="Delete"><span
-                        class="fe fe-trash-2 fs-14"></span></a>
+        arr.push(e.id);
+        arr.push(e.name);
+        arr.push(e.createdAt.split("T")[0]);
+        arr.push(e.updatesAt.split("T")[0]);
+
+        // ACTION COL
+        arr.push(`
+            <div class="g-1">
+                <a id="" class="mc-table-btn-viz btn text-primary btn-sm" data-bs-toggle="tooltip"
+                    data-bs-original-title="Consulter"><span class="fe fe-eye fs-14"></span></a>
+                
             </div> 
             `);
 
-            finalArr.push(arr);
-        })
+        finalArr.push(arr);
+
 
     })
 
@@ -329,18 +251,20 @@ function showModal(type, header, content, action) {
 }
 
 function addEventListenersToTableBtns() {
-    let tableBody = document.querySelector("#glossaire-table-body");
-
 
     // Click event listeners 
-    let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
-    let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
+    let allVizCatBtns = $(".mc-table-btn-viz").get();
 
-    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-        deleteBtn.addEventListener("click", (e) => {
+
+    $(".mc-table-btn-viz").each(function (index, vizBtn) {
+
+        console.log(index, vizBtn);
+
+        $(vizBtn).click(function (e) {
+
+
 
             // WHEN THE SPAN ELEMENT IS FIRED
-
             let aElement;
             if (e.target.tagName === "SPAN") {
                 aElement = e.target.parentElement;
@@ -348,62 +272,45 @@ function addEventListenersToTableBtns() {
                 aElement = e.target;
             }
 
-            let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
+            let mcId = $(aElement).parents("td").siblings().slice(0, 1).text();
 
+            let matriceComp = getMatriceCompetenceInfoFromArr(mcId);
+            console.log(mcId, matriceComp.matrice.id);
 
+            // SAVE THIS MATRICE IN LOCAL-STORAGE
+            localStorage.setItem("matriceCompetence", JSON.stringify(matriceComp.matrice));
 
-            let competenceIndex = Math.floor(glossaireIndex / 4);
-            let levelIndex = glossaireIndex % 4;
-            listCompetences.splice(glossaireIndex, 1);
+            // REDIRECT TO THE EDIT PAGE
+            let currentUrl = window.location.href;
 
-            //console.log(listCompetences[competenceIndex].name, listCompetences[competenceIndex]["niveaux"][levelIndex])
-
-
-
-            showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
-
-
-
+            window.location.href = extractDomain(currentUrl) + "emploi/competence/edit";
 
         })
-    });
-
-    Array.from(allEditCatBtns).forEach((editBtn) => {
-        editBtn.addEventListener("click", (e) => {
-
-            // WHEN THE SPAN ELEMENT IS FIRED
-
-            let aElement;
-            if (e.target.tagName === "SPAN") {
-                aElement = e.target.parentElement;
-            } else {
-                aElement = e.target;
-            }
-
-            let glossaireIndex = [...allEditCatBtns].indexOf(aElement);
-
-
-
-            let competenceIndex = Math.floor(glossaireIndex / 4);
-            let levelIndex = glossaireIndex % 4;
-            console.log(competenceIndex);
-
-            $("#input-nom-competence-glossaire").val(listCompetences[competenceIndex].name);
-
-            $("#input-def-competence-e").val(listCompetences[competenceIndex]["niveaux"][0]["definition"]);
-            $("#input-def-competence-m").val(listCompetences[competenceIndex]["niveaux"][1]["definition"]);
-            $("#input-def-competence-a").val(listCompetences[competenceIndex]["niveaux"][2]["definition"]);
-            $("#input-def-competence-x").val(listCompetences[competenceIndex]["niveaux"][3]["definition"]);
-
-
-            competenceEditIndex = competenceIndex;
 
 
 
 
-            // parseGlossaireToTable(listCompetences, niveau);
-
-        })
     })
+}
+
+function getMatriceCompetenceInfoFromArr(id) {
+
+    // SEARCH FOR MATRICE COMPETENCE IN THE LIST ARRAY
+    for (var i = 0; i < listMatricesCompetences.length; i++) {
+        let matriceComp = listMatricesCompetences[i];
+
+        if (matriceComp.id == id) {
+            return {
+                "index": i,
+                "matrice": matriceComp
+            }
+        }
+
+    }
+
+    return {
+        "index": -1,
+        "matrice": null
+    }
 }
 

@@ -28,4 +28,9 @@ public class EmploiController {
     public String listOfCompetences() {
         return "list-competences";
     }
+
+    @GetMapping(path = "competence/edit")
+    public String editOfCompetences() {
+        return "edit-competence";
+    }
 }

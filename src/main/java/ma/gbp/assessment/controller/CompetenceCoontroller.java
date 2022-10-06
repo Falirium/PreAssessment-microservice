@@ -10,10 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ma.gbp.assessment.exception.CustomErrorException;
 import ma.gbp.assessment.model.Competence;
 import ma.gbp.assessment.model.MatriceCompetence;
 import ma.gbp.assessment.service.CompetenceService;
@@ -85,6 +87,56 @@ public class CompetenceCoontroller {
 
         // STEP 4 : PERSIST THE MATRICE
         return ResponseEntity.status(HttpStatus.OK).body(matriceCompetenceService.saveMatriceCompetence(newMc));
+    }
+
+    @PutMapping(value = "/matrice")
+    public ResponseEntity<MatriceCompetence> updateMatriceCompetence(@RequestBody MatriceCompetence mc){
+
+        // STEP 1 : GET THE TARGET MATRICE COMPETENCE
+        MatriceCompetence newMc = matriceCompetenceService.getMatriceCompetenceById(mc.getId());
+        if ( newMc == null) {
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Matrice Competence Not Found");
+        } 
+
+        // STEP 2 : CHECK FOR NEW COMPETENCE
+        List<Competence> associatedListOfCompetence = new ArrayList<Competence>();
+
+        
+        for (Competence competence : mc.getCompetences()) {
+
+            Competence comp = new Competence();
+
+            // VERIFY IF THE COMPETENCE EXISTS BY NAME
+            if (doesCompetenceExist(competence.getName())) {
+
+                comp = competenceService.getCompetenceByName(competence.getName());
+
+            } else {
+
+                // SAVE THE NEW COMPETENCE
+               comp = competenceService.saveCompetence(competence);
+
+            }
+
+            // ADD TO THE LIST
+            associatedListOfCompetence.add(comp);
+        }
+
+        // STEP 3 : UPDATE THE PROPERTIES
+        newMc.setName(mc.getName());
+        newMc.setCreatedAt(mc.getCreatedAt());
+        newMc.setUpdatesAt(mc.getUpdatesAt());
+        newMc.setCompetences(associatedListOfCompetence);
+        
+
+
+        // STEP 4 : SAVE THE NEW ENTITY
+        return ResponseEntity.status(HttpStatus.OK).body(matriceCompetenceService.saveMatriceCompetence(newMc)); 
+    }
+
+    @GetMapping(value = "/matrice/list")
+    public ResponseEntity<List<MatriceCompetence>> getAllMatricesCompetences() {
+        return ResponseEntity.status(HttpStatus.OK).body(matriceCompetenceService.getAllMatricesCompetences());
     }
 
 
