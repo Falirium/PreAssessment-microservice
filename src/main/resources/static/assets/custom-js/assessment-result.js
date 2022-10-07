@@ -6,7 +6,7 @@ console.log(idParam);
 
 // THIS VARIABLE DEFINED THE SHOWN COLUMN ON THE TABLE
 
-let authorizedCol = ["id", "collaborateur", "evaluateurOne", "evaluateurTwo", "emploi", "niveau", "associatedAssessment", "status"];
+let authorizedCol = ["id", "collaborateur", "evaluateurOne", "evaluateurTwo", "emploi", "niveau", "Score", "status"];
 
 
 let assessmentJson;
@@ -15,6 +15,9 @@ let assessmentJson;
 getFicheEvaluationsByAssessment(idParam).then((fiches) => {
 
     fichesArrJson = fiches;
+
+    // GET ASSESSMENTJSON FROM FICHE EVALUATION
+    assessmentJson = fiches[0].associatedAssessment;
 
     // COUNT HOLDS A JSON THAT CONTAINS : total, blank, inProgress, completed 
     let count = iterateOverEvaluations(fichesArrJson);
@@ -32,6 +35,7 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
 
     let dataSet = getFichesDataFromJson(fichesArrJson);
     let col = getFichesColumnFromJson(fichesArrJson[0], authorizedCol);
+    let fileTitle = assessmentJson.name + "_At_" + new Date().toISOString().split("T")[0];
 
     ficheDatatable = $("#tb4").DataTable({
         data: dataSet,
@@ -43,7 +47,14 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
         ordering: false,
         dom: 'Bfrtip',
         buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
+            
+            {
+                extend: 'excelHtml5',
+                title: fileTitle,
+                exportOptions: {
+                    columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+                }
+            }
         ]
     })
 
@@ -147,8 +158,8 @@ function getFichesColumnFromJson(json, authorizedCol) {
                 case "evaluateurTwo":
                     value = "evaluateurTwo"
                     break;
-                case "associatedAssessment":
-                    value = "assessment";
+                case "Score":
+                    value = "score";
                     break;
                 case "status":
                     value = "status"
@@ -217,7 +228,7 @@ function getFichesDataFromJson(arrJson) {
         arr.push(e.evaluateurTwo.firstName + " " + e.evaluateurTwo.lastName);
         arr.push(e.emploi.intitule);
         arr.push(e.emploi.level);
-        arr.push(e.associatedAssessment.name);
+        arr.push(e.score);
 
         // Status attribute has special style
         if (e.status === "CREATED") {

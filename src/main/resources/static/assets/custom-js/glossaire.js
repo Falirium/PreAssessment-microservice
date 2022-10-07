@@ -584,12 +584,22 @@ function parseCompetencesToTable(dataArr) {
     // INITIALIZE THE DATA TABALE
     // return new Promise((resolve, reject) => {
 
+        let fileTitle = matriceCompetenceJson.name + "_At_" + new Date().toISOString().split("T")[0];
 
     // });
     competenceTable = $("#tbs3").DataTable({
         data: dataSet,
         pageLength: 4,
-        lengthMenu: [4, 8, 16, 20, 24, 'All']
+        lengthMenu: [4, 8, 16, 20, 24, 'All'],
+        dom: 'Bfrtip',
+    
+        buttons: [
+            
+            {
+                extend: 'excelHtml5',
+                title: fileTitle
+            }
+        ]
     });
 
 

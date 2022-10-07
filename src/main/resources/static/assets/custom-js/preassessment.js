@@ -2217,15 +2217,3 @@ function checkForUncategorizedCollaborateur() {
     return isFound;
 }
 
-const compareDates = (d1, d2) => {
-    let date1 = new Date(d1).getTime();
-    let date2 = new Date(d2).getTime();
-  
-    if (date1 < date2) {
-      return `${d1} is less than ${d2}`;
-    } else if (date1 > date2) {
-      return `${d1} is greater than ${d2}`;
-    } else {
-      return `Both dates are equal`;
-    }
-  };
