@@ -178,8 +178,8 @@ $(function () {
                             setTimeout(function () {
                                 let currentUrl = window.location.href;
 
-                                window.open(extractDomain(currentUrl) + "assessment/list");
-                            }, 3000);
+                                window.location.href = extractDomain(currentUrl) + "assessment/list";
+                            }, 2000);
 
 
 

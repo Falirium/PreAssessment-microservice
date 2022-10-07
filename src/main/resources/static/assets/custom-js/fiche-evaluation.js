@@ -61,7 +61,7 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
     let ficheAnswers;
 
 
-    if (ficheEvaluation.re_manager1 != null && manager.type === "1" && ficheEvaluation.re_manager1 == null) {
+    if (ficheEvaluation.re_manager1 != null && manager.type === "1" && ficheEvaluation.re_manager2 == null) {
 
         ficheAnswers = JSON.parse(ficheEvaluation.re_manager1);
 
@@ -184,13 +184,23 @@ function saveFicheEvaluationHandler(e) {
             console.log(result);
 
             // SHOW SUCCESS MODAL
-            showModal("success", "La fiche a été enregistré", "La fiche a été enregistré avec succès. Vous serez redirigé <strong>automatiquement</strong> vers la liste des fichiers pour continuer l'évaluation.", "")
+            let modalHeader;
+            let modalBody;
+            if (ficheEvaluation.status.includes("1")) {
+                modalHeader = "Action complétée";
+                modalBody = "La fiche a été envoyée avec succès. Vous serez redirigé <strong>automatiquement</strong> vers la liste des fichiers pour continuer l'évaluation.";
+            } else {
+
+                modalHeader = "Action complétée";
+                modalBody = "La fiche a été enregistré avec succès. Vous serez redirigé <strong>automatiquement</strong> vers la liste des fichiers pour continuer l'évaluation.";
+            }
+            showModal("success", modalHeader, modalBody, "")
 
 
             // REDIRECT TO EVALUATION LIST PAGE
             setTimeout(function () {
                 currentUrl = window.location.href;
-                window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+                window.location.href = extractDomain(currentUrl) + "evaluation/list";
             }, 1500)
 
 

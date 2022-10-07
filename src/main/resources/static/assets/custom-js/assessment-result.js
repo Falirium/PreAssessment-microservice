@@ -98,9 +98,9 @@ function iterateOverEvaluations(arrJson) {
     arrJson.map((fiche, index) => {
         if (fiche.status === "CREATED") {
             numberOfBlank++;
-        } else if (fiche.status === "ÉVALUÉ") {
+        } else if (fiche.status.includes("ÉVALUÉ")) {
             numberOfInProgress++;
-        } else if (fiche.status === "TERMINÉ") {
+        } else if (fiche.status.includes("TERMINÉ")) {
             numberOfCompleted++;
         }
     });
@@ -222,13 +222,13 @@ function getFichesDataFromJson(arrJson) {
                 <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Non évalué</span>
             </div>
                 `)
-        } else if (e.status === "ÉVALUÉ") {
+        } else if (e.status.includes("ÉVALUÉ") ){
             arr.push(`
                 <div class="mt-sm-1 d-block">
                 <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Évalué</span>
             </div>
                 `)
-        } else if (e.status === "TERMINÉ") {
+        } else if (e.status.includes("TERMINÉ")) {
             arr.push(`
                 <div class="mt-sm-1 d-block">
                 <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Terminé</span>

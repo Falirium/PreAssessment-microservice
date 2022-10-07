@@ -146,31 +146,6 @@ btnSaveMatrice.addEventListener("click", (e) => {
 
 
 
-// WHEN THE LOCAL SESSION HAS A NON EMPTY COMPETENCE ARRAY
-if (localStorage.getItem("competences")) {
-    competenceArray = JSON.parse(localStorage.getItem("competences"));
-
-    console.log(competenceArray);
-
-    parseGlossaireToTable(competenceArray);
-
-    // ADD DATABALE LIBRARY SCRIPTS
-    loadJS("/assets/plugins/datatable/js/jquery.dataTables.min.js", true);
-    loadJS("/assets/plugins/datatable/js/dataTables.bootstrap5.js", true);
-    loadJS("/assets/plugins/datatable/js/dataTables.buttons.min.js", true);
-    loadJS("/assets/plugins/datatable/js/buttons.bootstrap5.min.js", true);
-    loadJS("/assets/plugins/datatable/js/jszip.min.js", true);
-    loadJS("/assets/plugins/datatable/pdfmake/pdfmake.min.js", true);
-    loadJS("/assets/plugins/datatable/pdfmake/vfs_fonts.js", true);
-    loadJS("/assets/plugins/datatable/js/buttons.html5.min.js", true);
-    loadJS("/assets/plugins/datatable/js/buttons.print.min.js", true);
-    loadJS("/assets/plugins/datatable/js/buttons.colVis.min.js", true);
-    loadJS("/assets/plugins/datatable/dataTables.responsive.min.js", true);
-    loadJS("/assets/plugins/datatable/responsive.bootstrap5.min.js", true);
-    loadJS("/assets/js/table-data.js", true);
-
-}
-
 btnAddGlossaire.addEventListener("click", (e) => {
 
     let nomCompGlossaire = document.querySelector("#input-nom-competence-glossaire");
@@ -234,7 +209,13 @@ btnAddGlossaire.addEventListener("click", (e) => {
     parseCompetencesToTable(competenceArray);
 
 })
+// ADD EVENT LISTENER TO DOWNLOAD BTN 
+$("#confirm-delete-btn").click(function (e) {
 
+    //SHOW MODAL
+    showModal("info", "Cette fonctionnalité n'est pas disponible", "Nous travaillons sur cette fonctionnalité.");
+
+})
 // CLICK EVENT LISTENER ON DELETE BTN FOR ERROR MODAL
 $("#confirm-delete-btn").click(function (e) {
 

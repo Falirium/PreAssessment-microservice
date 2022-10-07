@@ -41,7 +41,9 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
 
     if (manager.type === '1') {
         fiteredAuthorizedCol = authorizedCol.filter((col, index) => "evaluateurOne" != col );
-    } 
+    }  else {
+        fiteredAuthorizedCol = authorizedCol;
+    }
 
     let dataSet = getFichesDataFromJson(data,fiteredAuthorizedCol);
     let col = getFichesColumnFromJson(data[0], fiteredAuthorizedCol);
@@ -143,7 +145,7 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
             }
             let url = buildURL("evaluation/evaluate", urlParams);
 
-            window.open(extractDomain(currentUrl) + url)
+            window.location.href = extractDomain(currentUrl) + url;
             // console.log(extractDomain(currentUrl) + url);
             
         } else {
