@@ -773,46 +773,6 @@ function buildURL(prefix, params) {
     return url;
 }
 
-// async function fetchEmployeesData(id) {
-
-//     let url = "http://localhost:8080/preassessment/api/v1/file/2json/" + id;
-
-//     fetch(url, {
-//         method: 'GET'
-//     }).then(
-//         response => response.json() // if the response is a JSON object
-//     ).then(
-//         success => {
-//             console.log(success);
-//             // RETURN AN ID OF THE FILE IS SAVED TO DB
-
-
-
-
-//         } // Handle the success response object
-//     ).catch(
-//         error => console.log(error) // Handle the error response object
-//     );
-
-//     // try {
-//     //     let res = await fetch(url);
-//     //     let response = await res.json();
-
-//     //     response["Déjà dans l'emploi"] = clearWhiteRows(response["Déjà dans l'emploi"])
-//     //     jsonFinalPreassessment = response;
-
-//     //     classificationColumns = getClassificationColumn(response["Déjà dans l'emploi"][0]);
-
-//     //     parseToTable(response["Déjà dans l'emploi"]);
-
-
-//     //     console.log(response);
-
-//     // } catch (error) {
-//     //     console.log(error);
-//     // }
-
-// }
 
 async function postExcelFile(file) {
 
@@ -2171,7 +2131,7 @@ function generateFicheEvaluation(arr) {
         "sousPoints": "",
         "surPoints": "",
         "createdAt": new Date(),
-        "dateEvaluation": new Date(),
+        "dateEvaluation":  new Date(requestBodyAssessment.startedAt),
         "evaluateurOne": generateManager1(arr),
         "evaluateurTwo": generateManager2(arr),
         "collaborateur": generateCollaborateur(arr),
@@ -2256,3 +2216,16 @@ function checkForUncategorizedCollaborateur() {
 
     return isFound;
 }
+
+const compareDates = (d1, d2) => {
+    let date1 = new Date(d1).getTime();
+    let date2 = new Date(d2).getTime();
+  
+    if (date1 < date2) {
+      return `${d1} is less than ${d2}`;
+    } else if (date1 > date2) {
+      return `${d1} is greater than ${d2}`;
+    } else {
+      return `Both dates are equal`;
+    }
+  };

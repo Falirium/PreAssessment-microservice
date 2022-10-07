@@ -40,7 +40,11 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
             { "width": "6%", "targets": 2 }
         ],
         autoWidth: false,
-        ordering: false
+        ordering: false,
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
     })
 
 })

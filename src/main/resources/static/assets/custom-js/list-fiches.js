@@ -309,7 +309,20 @@ function getFichesColumnFromJson(json, authorizedCol) {
 
 function getFichesDataFromJson(arrJson, authorizedCol) {
     let finalArr = [];
-    arrJson.map((e, i) => {
+    
+    //
+    for (var i = 0; i < arrJson.length; i++) {
+        
+        let e = arrJson[i];
+        console.log(e);
+
+
+        // IF DATE D'EVALUATION IS THE SAME AS TODAY
+        let dateNow = new Date();
+        if (e.dateEvaluation.split("T")[0] !== dateNow.toISOString().split("T")[0]) {
+            continue;
+        }
+
         // console.log(i);
         let arr = [];
 
@@ -379,7 +392,7 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
 
 
         finalArr.push(arr);
-    })
+    }
 
     return finalArr;
 }
