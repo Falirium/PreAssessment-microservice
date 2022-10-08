@@ -54,11 +54,10 @@ getListOfTempAssessments().then((data) => {
                 aElement = e.target;
             }
 
-            let btns = $(".edit-btn").get();
-            let indexOfAssessment = btns.indexOf(aElement);
+            let assessmentName = $(aElement).parents("td").siblings().slice(1, 2).text();
+            console.log(assessmentName);
 
-            // GET THE ASSOCIATED ASSESSMENT
-            let assessment = listAssessments[indexOfAssessment];
+            let assessment = getAssessmentInfoFromArr(assessmentName).assessment;
             console.log(assessment);
 
             // CHECK IF THE ASSESSMENT IS LANCHED OR NOT
@@ -88,6 +87,21 @@ getListOfTempAssessments().then((data) => {
         // ADD EVENT LINTENER TO CONSULTER BTN
         $(".view-btn").click(function (e) {
 
+            // let aElement;
+            // if (e.target.tagName === "SPAN") {
+            //     aElement = e.target.parentElement;
+            // } else {
+            //     aElement = e.target;
+            // }
+
+            // let btns = $(".view-btn").get();
+            // let indexOfAssessment = btns.indexOf(aElement);
+
+            // // GET THE ASSOCIATED ASSESSMENT
+            // let assessment = listAssessments[indexOfAssessment];
+            // console.log(assessment);
+
+
             let aElement;
             if (e.target.tagName === "SPAN") {
                 aElement = e.target.parentElement;
@@ -95,12 +109,11 @@ getListOfTempAssessments().then((data) => {
                 aElement = e.target;
             }
 
-            let btns = $(".view-btn").get();
-            let indexOfAssessment = btns.indexOf(aElement);
+            let assessmentName = $(aElement).parents("td").siblings().slice(1, 2).text();
+            console.log(assessmentName);
 
-            // GET THE ASSOCIATED ASSESSMENT
-            let assessment = listAssessments[indexOfAssessment];
-            console.log(assessment);
+            let assessment = getAssessmentInfoFromArr(assessmentName).assessment;
+            console.log(assessment)
 
             if (!assessment.hasOwnProperty('status')) {
 
@@ -278,7 +291,7 @@ function getAssessmentsDataFromJson(arrJson) {
                 `)
             }
         } else {
-            let assessmentTempContent = JSON.parse(e.content); 
+            let assessmentTempContent = JSON.parse(e.content);
             arr.push(e.id);
             arr.push(e.name);
             arr.push(assessmentTempContent.startedAt);
@@ -373,4 +386,23 @@ function showModal(type, header, content, action) {
 
     myModal.show();
 
+}
+
+function getAssessmentInfoFromArr(assessmentName) {
+
+    for (var i = 0; i < listAssessments.length; i++) {
+        let assessment = listAssessments[i];
+
+        if (assessmentName === assessment.name) {
+            return {
+                "index" : i,
+                "assessment" : assessment
+            }
+        }
+
+        return {
+            "index" : -1,
+            "assessment" : null
+        }
+    }
 }

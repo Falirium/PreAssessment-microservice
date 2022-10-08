@@ -40,12 +40,12 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
     let fiteredAuthorizedCol;
 
     if (manager.type === '1') {
-        fiteredAuthorizedCol = authorizedCol.filter((col, index) => "evaluateurOne" != col );
-    }  else {
-        fiteredAuthorizedCol = authorizedCol;
+        fiteredAuthorizedCol = authorizedCol.filter((col, index) => "evaluateurOne" != col);
+    } else {
+        fiteredAuthorizedCol = authorizedCol.filter((col, index) => "evaluateurTwo" != col);
     }
 
-    let dataSet = getFichesDataFromJson(data,fiteredAuthorizedCol);
+    let dataSet = getFichesDataFromJson(data, fiteredAuthorizedCol);
     let col = getFichesColumnFromJson(data[0], fiteredAuthorizedCol);
 
     ficheDatatable = $("#tb1").DataTable({
@@ -61,6 +61,20 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
     // ADD EVENTLISTENERS TO VIEW BTN
     $(".view-btn").click(function (e) {
 
+        // let aElement;
+        // if (e.target.tagName === "SPAN") {
+        //     aElement = e.target.parentElement;
+        // } else {
+        //     aElement = e.target;
+        // }
+
+        // let btns = $(".view-btn").get();
+        // // let indexOfFiche = btns.indexOf(aElement);
+        // let indexOfFiche = $(aElement).parents(".g-1").attr("id");
+
+        // // console.log(manager.type === 2 && listFiches[indexOfFiche].status === "CREATED");
+
+
         let aElement;
         if (e.target.tagName === "SPAN") {
             aElement = e.target.parentElement;
@@ -68,21 +82,19 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
             aElement = e.target;
         }
 
-        let btns = $(".view-btn").get();
-        // let indexOfFiche = btns.indexOf(aElement);
-        let indexOfFiche = $(aElement).parents(".g-1").attr("id");
+        let ficheEvaluationId = $(aElement).parents("td").siblings().slice(0, 1).text();
 
-        // console.log(manager.type === 2 && listFiches[indexOfFiche].status === "CREATED");
+        let ficheFromArr = getFicheInfoFromArr(competenceName).fiche;
 
 
         // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAM MANAGER
 
-        if (( manager.type === '1' && (listFiches[indexOfFiche].status === "ÉVALUÉ-0" || listFiches[indexOfFiche].status === "CREATED")) || (manager.type === '2' && (listFiches[indexOfFiche].status === "ÉVALUÉ-1" || listFiches[indexOfFiche].status === "TERMINÉ-0" )) ) {
+        if ((manager.type === '1' && (ficheFromArr.status === "ÉVALUÉ-0" || ficheFromArr.status === "CREATED")) || (manager.type === '2' && (ficheFromArr.status === "ÉVALUÉ-1" || listFiches[indexOfFiche].status === "TERMINÉ-0"))) {
 
-            console.log( "access authorized");
+            console.log("access authorized");
 
             // GET THE ASSOCIATED FIHCE D EVALUATION
-            let fiche = listFiches[indexOfFiche];
+            let fiche = ficheFromArr;
             console.log(fiche);
 
             //SAVE FICHE OBJECT ON LOCAL SESSION
@@ -147,51 +159,51 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
 
             window.location.href = extractDomain(currentUrl) + url;
             // console.log(extractDomain(currentUrl) + url);
-            
+
         } else {
-            console.log( "access denied");
+            console.log("access denied");
 
-            if ( manager.type === '1') {
-                let errorBody ;
+            if (manager.type === '1') {
+                let errorBody;
 
-                if (listFiches[indexOfFiche].status === "ÉVALUÉ-1") {
+                if (ficheFromArr.status === "ÉVALUÉ-1") {
 
                     errorBody = `Désolé, vous ne pouvez pas accéder ou modifier les fiches d'évaluations que vous avez envoyés à votre manager`;
 
-                } else if (listFiches[indexOfFiche].status.includes("TERMINÉ")) {
+                } else if (ficheFromArr.status.includes("TERMINÉ")) {
 
                     errorBody = `Désolé, vous ne pouvez pas accéder aux les fiches d'évaluations qui ont été évalués par votre manager.`
                 }
-        
+
 
                 showModal("error", "Accès Refusé", errorBody, "");
 
-            } else if ( manager.type === '2') {
+            } else if (manager.type === '2') {
 
-                let errorBody ;
+                let errorBody;
 
-                if (listFiches[indexOfFiche].status === "ÉVALUÉ-0" || listFiches[indexOfFiche].status === "CREATED") {
+                if (ficheFromArr.status === "ÉVALUÉ-0" || ficheFromArr.status === "CREATED") {
 
                     errorBody = `Désolé, vous ne pouvez pas accéder aux fiches d'évaluations qui n'ont pas été validées par le manager N+1.`;
 
-                } else if (listFiches[indexOfFiche].status === "TERMINÉ-1") {
+                } else if (ficheFromArr.status === "TERMINÉ-1") {
 
                     errorBody = `Désolé, vous ne pouvez pas accéder ou modifier les fiches d'évaluations que vous avez envoyés aux consultants DRH.`;
                 }
-        
+
 
                 showModal("error", "Accès Refusé", errorBody, "");
 
             }
-        }   
+        }
 
 
-        if ((listFiches[indexOfFiche].status === "ÉVALUÉ" && manager.type === '1') || (listFiches[indexOfFiche].status === "TERMINÉ" && manager.type === '2')) {
+        if ((ficheFromArr.status === "ÉVALUÉ" && manager.type === '1') || (ficheFromArr.status === "TERMINÉ" && manager.type === '2')) {
 
             // SHOW ALERT MODAL
             showModal("error", "Accès refusé", "Vous ne pouvez pas accéder aux fiches d'évaluations que vous avez évalués.  En cas de problème, contactez-nous", "")
 
-        } else if (manager.type === '2' && listFiches[indexOfFiche].status === "CREATED") {
+        } else if (manager.type === '2' && ficheFromArr.status === "CREATED") {
 
             // SHOW ALERT MODAL
             showModal("error", "Accès refusé", "Vous n'avez pas accès. Parce que le manager N+1 n'a pas encore évalué cette fiche");
@@ -199,7 +211,7 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
 
         } else {
 
-            
+
 
         }
 
@@ -309,17 +321,17 @@ function getFichesColumnFromJson(json, authorizedCol) {
 
 function getFichesDataFromJson(arrJson, authorizedCol) {
     let finalArr = [];
-    
+
     //
     for (var i = 0; i < arrJson.length; i++) {
-        
+
         let e = arrJson[i];
         console.log(e);
 
 
         // IF DATE D'EVALUATION IS THE SAME AS TODAY
         let dateNow = new Date();
-        if (e.dateEvaluation.split("T")[0] !== dateNow.toISOString().split("T")[0]) {
+        if (comparingDates(dateNow.toISOString().split("T")[0], e.dateEvaluation.split("T")[0]).includes("greater")) {
             continue;
         }
 
@@ -349,9 +361,9 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
                 case "associatedAssessment":
                     arr.push(e.associatedAssessment.name);
                     break;
-                    
+
                 case "status":
-                    console.log("HERE STATUS",authorized );
+                    console.log("HERE STATUS", authorized);
                     // Status attribute has special style
                     if (e.status === "CREATED") {
                         arr.push(`
@@ -374,11 +386,11 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
                     }
                     console.log("fin STATUS");
                     break;
-                
+
             }
         })
 
-       
+
 
         // ACTION COL
         arr.push(`
@@ -447,4 +459,37 @@ function showModal(type, header, content, action) {
 
     myModal.show();
 
+}
+
+
+function comparingDates(d1, d2) {
+    let date1 = new Date(d1).getTime();
+    let date2 = new Date(d2).getTime();
+
+    if (date1 < date2) {
+        return `${d1} is less than ${d2}`;
+    } else if (date1 > date2) {
+        return `${d1} is greater than ${d2}`;
+    } else {
+        return `Both dates are equal`;
+    }
+};
+
+function getFicheInfoFromArr(ficheId) {
+
+    for (var i = 0; i < listFiches.length; i++) {
+        let ficheEva = listFiches[i];
+
+        if (ficheId == ficheEva.id) {
+            return {
+                "index" : i,
+                "fiche" : ficheEva
+            }
+        }
+
+        return {
+            "index" : -1,
+            "fiche" : null
+        }
+    }
 }
