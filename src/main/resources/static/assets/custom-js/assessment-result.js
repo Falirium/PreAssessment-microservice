@@ -47,16 +47,110 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
         ordering: false,
         dom: 'Bfrtip',
         buttons: [
-            
+
             {
                 extend: 'excelHtml5',
                 title: fileTitle,
                 exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 }
             }
         ]
     })
+
+    // ADD EVENT LISTENER ON VIEW BTN
+    $(".view-btn").click(function (e) {
+
+        let aElement;
+        if (e.target.tagName === "SPAN") {
+            aElement = e.target.parentElement;
+        } else {
+            aElement = e.target;
+        }
+
+        let ficheEvaluationId = $(aElement).parents("td").siblings().slice(0, 1).text();
+        console.log(ficheEvaluationId);
+
+        let ficheFromArr = getFicheInfoFromArr(ficheEvaluationId).fiche;
+
+
+        // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAM MANAGER
+
+
+
+
+        // GET THE ASSOCIATED FIHCE D EVALUATION
+        let fiche = ficheFromArr;
+        console.log(fiche);
+
+        //SAVE FICHE OBJECT ON LOCAL SESSION
+        localStorage.setItem("ficheEvaluation", JSON.stringify(fiche));
+
+        // REDIRECT TO THE FICHE PAGE : /evaluation/evaluate?.....
+
+        let emploiName = encodeURIComponent(fiche.emploi.intitule);
+        let emploiLevel = fiche.emploi.level;
+
+        let doesResponsabilitesExist = false;
+        let doesMarqueursExist = false;
+        let doesExigencesExist = false;
+        let doesCompetencesDcExist = false;
+        let doesCompetencesSeExist = false;
+        let doesCompetencesSfExist = false;
+
+
+        //GET THE CATEGORY ASSESSMENT_CONTENT PROPERTY
+        fiche.ficheContent.map((e, i) => {
+            switch (e) {
+                case "responsabilites":
+                    doesResponsabilitesExist = true;
+                    break;
+
+                case "exigences":
+                    doesExigencesExist = true;
+                    break;
+
+                case "marqueurs":
+                    doesMarqueursExist = true;
+                    break;
+
+                case "competences-dc":
+                    doesCompetencesDcExist = true;
+                    break;
+
+                case "competences-sf":
+                    doesCompetencesSfExist = true;
+                    break;
+
+                case "competences-se":
+                    doesCompetencesSeExist = true;
+                    break;
+
+
+            }
+        })
+
+        // BUILD URL 
+        let urlParams = {
+            "eName": emploiName,
+            "level": emploiLevel,
+            "marqueurs": doesMarqueursExist,
+            "exigences": doesExigencesExist,
+            "responsabilites": doesResponsabilitesExist,
+            "competences_dc": doesCompetencesDcExist,
+            "competences_se": doesCompetencesSeExist,
+            "competences_sf": doesCompetencesSfExist,
+        }
+        let url = buildURL("evaluation/evaluate", urlParams);
+
+
+
+        window.open(extractDomain(window.location.href) + url);
+        // console.log(extractDomain(currentUrl) + url);
+
+
+    })
+
 
 })
 
@@ -103,7 +197,7 @@ function displayCompletedEvaluations(number, total) {
 function displayTotalFiches(total) {
     $("#total-fiches").html(total);
 }
- 
+
 function iterateOverEvaluations(arrJson) {
 
     let numberOfBlank = 0;
@@ -237,7 +331,7 @@ function getFichesDataFromJson(arrJson) {
                 <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Non évalué</span>
             </div>
                 `)
-        } else if (e.status.includes("ÉVALUÉ") ){
+        } else if (e.status.includes("ÉVALUÉ")) {
             arr.push(`
                 <div class="mt-sm-1 d-block">
                 <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Évalué</span>
@@ -253,10 +347,10 @@ function getFichesDataFromJson(arrJson) {
 
         // ACTION COL
         arr.push(`
-            <div id="${i}" class="g-1">
+            <div id="view-btn" class="g-1">
                 <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
                     data-bs-original-title="Voir le résultat"><span
-                        class="fe fe-edit fs-14"></span></a>
+                        class="fe fe-eye fs-14"></span></a>
             </div>
             `)
 
@@ -266,4 +360,35 @@ function getFichesDataFromJson(arrJson) {
     })
 
     return finalArr;
+}
+
+function getFicheInfoFromArr(ficheId) {
+
+    for (var i = 0; i < fichesArrJson.length; i++) {
+        let ficheEva = fichesArrJson[i];
+
+        if (ficheId ==   ficheEva.id) {
+            return {
+                "index" : i,
+                "fiche" : ficheEva
+            }
+        }
+
+        
+    }
+
+    return {
+        "index" : -1,
+        "fiche" : null
+    }
+}
+
+function buildURL(prefix, params) {
+
+    let url = prefix + "?";
+    for (var key of Object.keys(params)) {
+        url = url + key + "=" + params[key] + "&";
+    }
+
+    return url;
 }

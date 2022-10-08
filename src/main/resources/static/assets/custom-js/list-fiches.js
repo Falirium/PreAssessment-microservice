@@ -89,7 +89,7 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
 
         // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAM MANAGER
 
-        if ((manager.type === '1' && (ficheFromArr.status === "ÉVALUÉ-0" || ficheFromArr.status === "CREATED")) || (manager.type === '2' && (ficheFromArr.status === "ÉVALUÉ-1" || listFiches[indexOfFiche].status === "TERMINÉ-0"))) {
+        if ((manager.type === '1' && (ficheFromArr.status === "ÉVALUÉ-0" || ficheFromArr.status === "CREATED")) || (manager.type === '2' && (ficheFromArr.status === "ÉVALUÉ-1" || ficheFromArr.status === "TERMINÉ-0"))) {
 
             console.log("access authorized");
 

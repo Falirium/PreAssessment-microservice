@@ -13,16 +13,22 @@ if (localStorage.getItem("ficheEvaluation") === null) {
 
     // GET FICHE & MANAGER
     ficheEvaluation = JSON.parse(localStorage.getItem("ficheEvaluation"));
-    manager = JSON.parse(localStorage.getItem("user"));
+    if (localStorage.getItem("user") === "admin") {
+        manager = localStorage.getItem("user");
+    } else {
+        manager = JSON.parse(localStorage.getItem("user"));
+    }
 
     // SET FICHE EVALUATION INFOS
     $("#emploi-cible-text").text(ficheEvaluation.emploi.intitule);
     $("#date-eva-text").text(ficheEvaluation.emploi.dateEvaluation);
-    if (manager.type === "1") {
+    if (manager === "admin") {
+        $("#mat-eva-text").text(ficheEvaluation.evaluateurOne.matricule);
+    } else if (manager.type === "1") {
         $("#mat-eva-text").text(ficheEvaluation.evaluateurOne.matricule);
     } else if (manager.type === "2") {
         $("#mat-eva-text").text(ficheEvaluation.evaluateurTwo.matricule);
-    }
+    } 
     $("#mat-collaborateur-text").text(ficheEvaluation.collaborateur.matricule);
     $("#date-eva-text").text(ficheEvaluation.dateEvaluation.split("T")[0]);
 }
@@ -61,18 +67,47 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
     let ficheAnswers;
 
 
-    if (ficheEvaluation.re_manager1 != null && manager.type === "1" && ficheEvaluation.re_manager2 == null) {
+    if (manager === "admin") {
+        if (ficheEvaluation.re_manager1 != null && ficheEvaluation.re_manager2 != null) {
 
-        ficheAnswers = JSON.parse(ficheEvaluation.re_manager1);
+            ficheAnswers = JSON.parse(ficheEvaluation.re_manager2);
 
-    } else if (ficheEvaluation.re_manager1 != null && manager.type === "2" && ficheEvaluation.re_manager2 == null) {
+            // SET THE NAME OF MANAGER 2 AS EVALUATEUR
+            $("#mat-eva-text").text(ficheEvaluation.evaluateurTwo.matricule);
 
-        ficheAnswers = JSON.parse(ficheEvaluation.re_manager1);
+        } else if (ficheEvaluation.re_manager1 != null ) {
 
-    } else if (ficheEvaluation.re_manager1 != null && manager.type === "2" && ficheEvaluation.re_manager2 != null) {
+            ficheAnswers = JSON.parse(ficheEvaluation.re_manager1);
 
-        ficheAnswers = JSON.parse(ficheEvaluation.re_manager2);
+            // SET THE NAME OF MANAGER 1 AS EVALUATEUR
+            $("#mat-eva-text").text(ficheEvaluation.evaluateurOne.matricule);
+
+
+        } else if (ficheEvaluation.re_manager2 != null ) {
+
+            ficheAnswers = JSON.parse(ficheEvaluation.re_manager2);
+
+            // SET THE NAME OF MANAGER 2 AS EVALUATEUR
+            $("#mat-eva-text").text(ficheEvaluation.evaluateurTwo.matricule);
+
+        } 
+
+    } else {
+
+        if (ficheEvaluation.re_manager1 != null && manager.type === "1" && ficheEvaluation.re_manager2 == null) {
+
+            ficheAnswers = JSON.parse(ficheEvaluation.re_manager1);
+
+        } else if (ficheEvaluation.re_manager1 != null && manager.type === "2" && ficheEvaluation.re_manager2 == null) {
+
+            ficheAnswers = JSON.parse(ficheEvaluation.re_manager1);
+
+        } else if (ficheEvaluation.re_manager1 != null && manager.type === "2" && ficheEvaluation.re_manager2 != null) {
+
+            ficheAnswers = JSON.parse(ficheEvaluation.re_manager2);
+        }
     }
+
 
 
 
@@ -93,6 +128,11 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
         $("#score").text(score.toString() + "%");
         displaySousPoints();
         displaySurPoints();
+
+        // CASE OF ADMIN DISABLE MODIFICATION
+        if (manager === 'admin') {
+            disableModificationForAdmin();
+        }
     });
 
 
@@ -106,6 +146,11 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
     // POPULATE FIHCE EVALUATION
     getFicheEmploiPreview(urlParams).then((json) => {
         populateResTable(json);
+
+        // CASE OF ADMIN DISABLE MODIFICATION
+        if (manager === 'admin') {
+            disableModificationForAdmin();
+        }
     });
 
 }
@@ -118,14 +163,24 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
 
 // VALIDATE BTN 
 $("#btn-fiche-validate").click({
-    finalValidation : false
-},saveFicheEvaluationHandler)
+    finalValidation: false
+}, saveFicheEvaluationHandler)
 
 // SEND THE RESULT OF THIS
 $("#btn-fiche-send").click({
-    finalValidation : true
-} ,saveFicheEvaluationHandler)
+    finalValidation: true
+}, saveFicheEvaluationHandler)
 
+
+function disableModificationForAdmin() {
+
+    // DISABLE ACTIONS BTN || DELETE THEM 
+    $(".action-btn").prop('disabled', true);
+
+    // DISABLE ALL TOGGLE BTN
+    $("input[type=radio]").attr('disabled', true);
+
+}
 
 function saveFicheEvaluationHandler(e) {
     // WE HAVE TWO SCENARIOS : MANAGER1 VALIDAES , MANAGER2 VALIDATES
@@ -152,7 +207,7 @@ function saveFicheEvaluationHandler(e) {
                 ficheEvaluation.status = "ÉVALUÉ-0";
             }
 
-            
+
 
             // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
             let re = takeCopy(ficheEvaluation);
@@ -171,7 +226,7 @@ function saveFicheEvaluationHandler(e) {
 
             }
 
-            
+
 
             // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
             let re = takeCopy(ficheEvaluation);
