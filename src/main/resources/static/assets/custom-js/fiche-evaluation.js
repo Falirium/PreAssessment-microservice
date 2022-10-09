@@ -262,6 +262,9 @@ function saveFicheEvaluationHandler(e) {
         })
 
     }
+
+    // UNBIDE THIS HANDLER WITH THE ELEMENT ----> IMMITATION OF ONE CLICK EVENT LISTENER
+    $( this ).off(e);
 }
 
 function allFieldSelected() {

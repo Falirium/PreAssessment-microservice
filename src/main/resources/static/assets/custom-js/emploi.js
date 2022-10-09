@@ -146,7 +146,7 @@ $(".base-emploi-info").change(function (index) {
     //console.log(emploiJSON);
 })
 
-$("#btn-emploi-save").click(function () {
+$("#btn-emploi-save").one('click', function () {
 
     // WHEN THE USER CLICK DIRECTLY ON SAVE WITHOUT ANY ERROR
     if (niveauxArray.length !== $(".niveau-container").length) {

@@ -128,7 +128,7 @@ $(function () {
     })
 
     // EVENT LISTENER WHEN WE SAVE AN ASSESSMENT
-    $("#btn-assessment-lanch").click(function (e) {
+    $("#btn-assessment-lanch").one('click', function (e) {
 
         // TWO SENARIOS : LANCH AN ASSESSMENT WITHOUT BEING SAVED - LANCH AN ASSESSMENT THAT IS SAVED
         let alreadySavedAssessment = (localStorage.getItem("assessmentId") === null ) ? false : true;
@@ -203,7 +203,7 @@ $(function () {
     })
 
     // EVENT LISTENER TO SAVE THE ASSESSMENT 
-    $("#btn-assessment-save").click(function (e) {
+    $("#btn-assessment-save").one('click', function (e) {
 
         let assessmentVariablesContent = {
 

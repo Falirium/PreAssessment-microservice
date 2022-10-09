@@ -86,8 +86,7 @@ $("#input-create-date").change(function (e) {
 })
 
 // SAVE THE LIST INTO THE DATABASE
-
-btnSaveMatrice.addEventListener("click", (e) => {
+$(btnSaveMatrice).one('click', function (e) {
 
     // STEP 1 : VERIFY IF ALL THE FIELD ARE FILLED
 
@@ -142,6 +141,62 @@ btnSaveMatrice.addEventListener("click", (e) => {
     }
 
 })
+
+// btnSaveMatrice.addEventListener("click", (e) => {
+
+//     // STEP 1 : VERIFY IF ALL THE FIELD ARE FILLED
+
+
+//     // STEP 2 : SAVE NEW LISTS OF COMPETENCES
+//     if (fieldsAreChecked()) {
+
+//         // UPDATE MATRICE-COMPETENCE JSON
+//         let timeNow = new Date();
+//         matriceCompetenceJson.updatesAt = timeNow.toISOString().split('T')[0];
+//         matriceCompetenceJson.competences = competenceArray;
+
+//         console.log(matriceCompetenceJson);
+
+//         // 2 SCENARIOS : SAVE NEW ENTITY OR UPDATE AN EXISTANT ENTITY
+//         if (localStorage.getItem("matriceCompetence") != null) {
+
+//             updateMatriceCompetence(matriceCompetenceJson).then((success) => {
+
+//                 // SHOW SUCCESS MODEL        
+//                 showModal("success", "La liste des compétences a été modifiée avec succès", "Les modifications sur la liste des compétences ont été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+
+//                 // REDIRECT TO THE LIST OF ASSESSMENTS
+//                 setTimeout(function () {
+//                     let currentUrl = window.location.href;
+
+//                     window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+//                 }, 1000);
+//             });
+
+//             // REMOVE THE MATRICE FROM LOCAL STORAGE
+//             localStorage.removeItem("matriceCompetence");
+
+
+//         } else {
+
+//             postMatriceCompetences(matriceCompetenceJson).then((success) => {
+
+//                 // SHOW SUCCESS MODEL        
+//                 showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+
+//                 // REDIRECT TO THE LIST OF ASSESSMENTS
+//                 setTimeout(function () {
+//                     let currentUrl = window.location.href;
+
+//                     window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+//                 }, 1000);
+//             });
+
+//         }
+
+//     }
+
+// })
 
 
 
