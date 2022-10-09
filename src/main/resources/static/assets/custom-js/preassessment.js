@@ -131,7 +131,7 @@ $(function () {
     $("#btn-assessment-lanch").one('click', function (e) {
 
         // TWO SENARIOS : LANCH AN ASSESSMENT WITHOUT BEING SAVED - LANCH AN ASSESSMENT THAT IS SAVED
-        let alreadySavedAssessment = (localStorage.getItem("assessmentId") === null ) ? false : true;
+        let alreadySavedAssessment = (localStorage.getItem("assessmentId") === null) ? false : true;
 
         // CHECK IF THERE IS SOME UNCATEGORIED COLLABORATEUR
         if (checkForUncategorizedCollaborateur()) {
@@ -194,7 +194,7 @@ $(function () {
 
             });
 
-        
+
         }
 
 
@@ -234,20 +234,34 @@ $(function () {
             // SAVE THIS TO ASSESSMENT-TEMPORARY MODEL
             postToAssessmentTemp(savedAssessment, 'PUT').then((success) => {
 
-                // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
-                showModal("success", "Assessment est bien sauvegardé", "L'assessment a été sauvegardé avec succès. Vous pouvez éditer et modifier cette évaluation plus tard à partir de la liste des assessments sur le tableau de bord.")
-
-                console.log(success);
 
                 // REMOVE ANY ASSESSMENT-ID
                 removeAssessmentFromStorage();
 
-                // REDIRECT TO THE LIST OF ASSESSMENTS
-                setTimeout(function () {
-                    let currentUrl = window.location.href;
+                // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
+                showModal("success", "Assessment est bien sauvegardé", "L'assessment a été sauvegardé avec succès. Vous pouvez éditer et modifier cette évaluation plus tard à partir de la liste des assessments sur le tableau de bord.", "",
+                    {
+                        "text": "Retour à l'accueil",
+                        "color": "success",
+                        "id": "btn-save"
+                    }, function (e) {
+                        setTimeout(function () {
+                            let currentUrl = window.location.href;
 
-                    window.location.href = extractDomain(currentUrl) + "assessment/list";
-                }, 1000);
+                            window.location.href = extractDomain(currentUrl) + "assessment/list";
+                        }, 1000);
+                    })
+
+                console.log(success);
+
+
+
+                // REDIRECT TO THE LIST OF ASSESSMENTS
+                // setTimeout(function () {
+                //     let currentUrl = window.location.href;
+
+                //     window.location.href = extractDomain(currentUrl) + "assessment/list";
+                // }, 1000);
 
             }).catch((error) => {
                 console.log(error);
@@ -258,20 +272,33 @@ $(function () {
             // SAVE THIS TO ASSESSMENT-TEMPORARY MODEL
             postToAssessmentTemp(savedAssessment, 'POST').then((success) => {
 
-                // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
-                showModal("success", "Assessment est lancé", "L'assessment a été lancé avec succès. Vous allez maintenant suivre l'état d'avancement de cet assessment depuis son tableau de bord.")
-
-                // console.log(success); 
-
                 // REMOVE ANY ASSESSMENT-ID
                 removeAssessmentFromStorage();
 
-                // REDIRECT TO THE LIST OF ASSESSMENTS
-                setTimeout(function () {
-                    let currentUrl = window.location.href;
+                // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
+                showModal("success", "Assessment est lancé", "L'assessment a été lancé avec succès. Vous allez maintenant suivre l'état d'avancement de cet assessment depuis son tableau de bord.", "",
+                    {
+                        "text": "Retour à l'accueil",
+                        "color": "success",
+                        "id": "btn-save"
+                    }, function (e) {
+                        setTimeout(function () {
+                            let currentUrl = window.location.href;
 
-                    window.location.href = extractDomain(currentUrl) + "assessment/list";
-                }, 1000);
+                            window.location.href = extractDomain(currentUrl) + "assessment/list";
+                        }, 1000);
+                    });
+
+                // console.log(success); 
+
+
+
+                // // REDIRECT TO THE LIST OF ASSESSMENTS
+                // setTimeout(function () {
+                //     let currentUrl = window.location.href;
+
+                //     window.location.href = extractDomain(currentUrl) + "assessment/list";
+                // }, 1000);
 
             }).catch((error) => {
                 console.log(error);
@@ -661,7 +688,7 @@ $("#btn-categorize").click(function (e) {
 
 
         // SHOW SUCCESS MODAL 
-        showModal("success", "Population catégorisée", "La liste de la population a été catégorisée avec succès sur la base des catégories créées. Allez à l'étape 3 pour voir le résultat", "");
+        showModal("success", "Population classifiée", "La liste de la population a été classifiée avec succès sur la base des catégories créées. Allez à l'étape 3 pour voir le résultat", "");
     }
 
 
@@ -928,10 +955,10 @@ async function deleteTempAssessment(assessmentName) {
     }).then(
         response => response.json()
     ).then(
-       ( success) =>{ 
-        console.log(success);
-        return success;    
-    }
+        (success) => {
+            console.log(success);
+            return success;
+        }
     ).catch(
         error => console.log(error)
     )
@@ -950,10 +977,10 @@ async function postAssessment(jsonArr) {
     }).then(
         response => response.json()
     ).then(
-        (success) =>{ 
+        (success) => {
             console.log(success);
             return success;
-        
+
         }
     ).catch(
         error => console.log(error)
@@ -1824,9 +1851,11 @@ function getSelect2Selections(arr) {
     })
 }
 
-function showModal(type, header, content, action) {
+function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId;
+
+    
 
 
     switch (type) {
@@ -1861,6 +1890,25 @@ function showModal(type, header, content, action) {
             modalContentId = "#modal-confirm-content";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
+    }
+
+    // DELETE ALL BTNS
+    $(modalHeaderId).parent().find("button").remove();
+
+
+    if (btnJson != null) {
+        // CREATE BTNS
+        $(modalHeaderId).parent()
+            .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
+            data-bs-dismiss="modal">${btnJson.text}</button>`)
+            .append(`<button aria-label="Close" class="btn btn-primary mx-4 pd-x-25"
+            data-bs-dismiss="modal">Fermer</button>`);
+
+        // ADD EVENT LISTENER TO THE BTN
+        $("#" + btnJson.id).click(eventHandler);
+    } else {
+        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
+        data-bs-dismiss="modal">Fermer</button>`);
     }
 
 
@@ -2131,7 +2179,7 @@ function generateFicheEvaluation(arr) {
         "sousPoints": "",
         "surPoints": "",
         "createdAt": new Date(),
-        "dateEvaluation":  new Date(requestBodyAssessment.startedAt),
+        "dateEvaluation": new Date(requestBodyAssessment.startedAt),
         "evaluateurOne": generateManager1(arr),
         "evaluateurTwo": generateManager2(arr),
         "collaborateur": generateCollaborateur(arr),
