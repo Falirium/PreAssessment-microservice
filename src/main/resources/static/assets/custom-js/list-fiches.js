@@ -84,7 +84,8 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
 
         let ficheEvaluationId = $(aElement).parents("td").siblings().slice(0, 1).text();
 
-        let ficheFromArr = getFicheInfoFromArr(competenceName).fiche;
+        let ficheFromArr = getFicheInfoFromArr(ficheEvaluationId).fiche;
+        console.log(ficheEvaluationId, ficheFromArr)
 
 
         // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAM MANAGER
@@ -371,16 +372,34 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
                             <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Non évalué</span>
                         </div>
                             `)
-                    } else if (e.status.includes("ÉVALUÉ")) {
+                    } else if (e.status.includes("ÉVALUÉ-0")) {
                         arr.push(`
                         <div class="mt-sm-1 d-block">
                             <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Évalué</span>
                         </div>
+                        <div class="mt-sm-1 d-block">
+                            <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">en cours</span>
+                        </div>
                             `)
-                    } else if (e.status.includes("TERMINÉ")) {
+                    } else if (e.status.includes("ÉVALUÉ-1")) {
                         arr.push(`
                         <div class="mt-sm-1 d-block">
-                            <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Terminé</span>
+                            <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Évalué par N+1</span>
+                        </div>
+                            `)
+                    } else if (e.status.includes("TERMINÉ-0")) {
+                        arr.push(`
+                        <div class="mt-sm-1 d-block">
+                            <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Validé</span>
+                         </div>
+                         <div class="mt-sm-1 d-block">
+                            <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">En cours</span>
+                         </div>
+                        `)
+                    }  else if (e.status.includes("TERMINÉ-1")) {
+                        arr.push(`
+                        <div class="mt-sm-1 d-block">
+                            <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Validé par N+2</span>
                          </div>
                         `)
                     }
@@ -411,9 +430,9 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
 
 function showModal(type, header, content, action, btnJson, eventHandler) {
 
-    let modalId, modalHeaderId, modalContentId;
+    let modalId, modalHeaderId, modalContentId, color;
 
-    
+
 
 
     switch (type) {
@@ -421,24 +440,28 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             modalId = "success";
             modalHeaderId = "#modal-success-header";
             modalContentId = "#modal-success-content";
+            color = "success";
             break;
 
         case "warning":
             modalId = "warning";
             modalHeaderId = "#modal-warning-header";
             modalContentId = "#modal-warning-content";
+            color = "warning";
             break;
 
         case "info":
             modalId = "info";
             modalHeaderId = "#modal-info-header";
             modalContentId = "#modal-info-content";
+            color = "info";
             break;
 
         case "error":
             modalId = "modaldemo5";
             modalHeaderId = "#modal-error-header";
             modalContentId = "#modal-error-content";
+            color = "danger";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
 
@@ -446,6 +469,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             modalId = "confirm";
             modalHeaderId = "#modal-confirm-header";
             modalContentId = "#modal-confirm-content";
+            color = "info";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
     }
@@ -458,14 +482,12 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
         // CREATE BTNS
         $(modalHeaderId).parent()
             .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
-            data-bs-dismiss="modal">${btnJson.text}</button>`)
-            .append(`<button aria-label="Close" class="btn btn-primary mx-4 pd-x-25"
-            data-bs-dismiss="modal">Fermer</button>`);
+            data-bs-dismiss="modal">${btnJson.text}</button>`);
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(eventHandler);
     } else {
-        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
+        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
 
@@ -500,6 +522,7 @@ function getFicheInfoFromArr(ficheId) {
 
     for (var i = 0; i < listFiches.length; i++) {
         let ficheEva = listFiches[i];
+        console.log(ficheId, ficheEva.id)
 
         if (ficheId == ficheEva.id) {
             return {
@@ -508,9 +531,10 @@ function getFicheInfoFromArr(ficheId) {
             }
         }
 
-        return {
-            "index" : -1,
-            "fiche" : null
-        }
+        
+    }
+    return {
+        "index" : -1,
+        "fiche" : null
     }
 }

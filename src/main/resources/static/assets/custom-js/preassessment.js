@@ -172,7 +172,14 @@ $(function () {
                         postAssessment(requestBodyAssessment).then((assessment) => {
 
                             // SHOW SUCCESS MODAL
-                            showModal("success", "Assessment enregistré ", "L'évaluation a été enregistrée avec succès. L'étape suivante consiste à lancer l'assessment. ", "");
+                            showModal("success", "Assessment est lancée ", "L'assessment a été lancé avec succès.", "", {
+                                "text": "Retour à l'accueil",
+                                "color": "success",
+                                "id": "btn-save"
+                            }, function () {
+                                redirectTo("assessment/list", 1000);
+                            });
+
 
                             // REDIRECT TO THE LIST OF ASSESSMENTS
                             setTimeout(function () {
@@ -226,7 +233,7 @@ $(function () {
 
         console.log(savedAssessment);
 
-        // CHECK IF THE ASSESSMENT IS CREATEDFOR TE FIRST TIME OR IT IS A MODIFICATION
+        // CHECK IF THE ASSESSMENT IS CREATED FOR TE FIRST TIME OR IT IS A MODIFICATION
         if (localStorage.getItem("assessmentId") != null) {
 
             savedAssessment.id = parseInt(localStorage.getItem("assessmentId"));
@@ -239,17 +246,13 @@ $(function () {
                 removeAssessmentFromStorage();
 
                 // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
-                showModal("success", "Assessment est bien sauvegardé", "L'assessment a été sauvegardé avec succès. Vous pouvez éditer et modifier cette évaluation plus tard à partir de la liste des assessments sur le tableau de bord.", "",
+                showModal("success", "Assessment est bien modifié", "Les modifications ont été sauvegardé avec succès. Vous pouvez éditer et modifier cette assessment plus tard à partir de la liste des assessments sur le tableau de bord.", "",
                     {
                         "text": "Retour à l'accueil",
                         "color": "success",
                         "id": "btn-save"
-                    }, function (e) {
-                        setTimeout(function () {
-                            let currentUrl = window.location.href;
-
-                            window.location.href = extractDomain(currentUrl) + "assessment/list";
-                        }, 1000);
+                    }, function () {
+                        redirectTo("assessment/list", 1000);
                     })
 
                 console.log(success);
@@ -276,17 +279,13 @@ $(function () {
                 removeAssessmentFromStorage();
 
                 // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
-                showModal("success", "Assessment est lancé", "L'assessment a été lancé avec succès. Vous allez maintenant suivre l'état d'avancement de cet assessment depuis son tableau de bord.", "",
+                showModal("success", "Assessment est bien enregitré", "L'assessment a été enregitré avec succès. Vous pouvez éditer et modifier cette assessment plus tard à partir de la liste des assessments sur le tableau de bord.", "",
                     {
                         "text": "Retour à l'accueil",
                         "color": "success",
                         "id": "btn-save"
-                    }, function (e) {
-                        setTimeout(function () {
-                            let currentUrl = window.location.href;
-
-                            window.location.href = extractDomain(currentUrl) + "assessment/list";
-                        }, 1000);
+                    }, function () {
+                        redirectTo("assessment/list", 1000);
                     });
 
                 // console.log(success); 
@@ -561,13 +560,29 @@ inputFileUploader.addEventListener('change', (e) => {
 
     // btnVisualize.classList.add("btn-loading");
 
-    parseExcelPopulation(file).then((data) => {
+    parseExcelPopulation(file).then(async (data) => {
 
         // REMOVE LOADING EFFECT
         // btnVisualize.classList.remove("btn-loading");
 
         let excelData = data[0];
         listEmploi = data[1];
+
+        // CHECK IF EMPLOIS IS SAVED IN DATABASE
+        let areEmploisFound = await checkForSavedEmplois(listEmploi);
+        console.log(areEmploisFound);
+        if (!areEmploisFound.check) {
+
+            // SHOW ERROR MODAL
+            showModal("error", "VOUS NE POUVEZ PAS CONTINUER", "l'emploi <<" + areEmploisFound.notFoundEmploi + ">> non trouvé. Veuillez ajouter la fiche de cet emploi à la base de données puis créer un assessment de cet emploi.", "", {
+                "text": "Revenir à l'acceuil",
+                "color": "danger",
+                "id": "dfe1"
+            }, function () {
+                redirectTo("assessment/list", 1000);
+            });
+
+        }
 
         populationArr = excelData;
 
@@ -605,11 +620,69 @@ inputFileUploader.addEventListener('change', (e) => {
     postExcelFile(file);
 })
 
+async function checkForSavedEmplois(arrEmploi) {
+
+    return new Promise((resolve, reject) => {
+        if (arrEmploi.length === 0) {
+            resolve({
+                "check": false,
+                "message": "empty array"
+            });
+        }
+        arrEmploi.map(async (e, i) => {
+            let eName = e.split("_")[0];
+            let level = e.split("_")[1];
+
+            //    let check = await getEmploiByNameAndLevel(eName, level);
+
+            //    console.log(check);
+            getEmploiByNameAndLevel(eName, level).then((result) => {
+                console.log(result);
+                if (!result) {
+                    resolve({
+                        "check": false,
+                        "notFoundEmploi": " " + eName + ", niveau de séniorité : " + level + " "
+                    })
+                }
+            }).then((result) => {
+                resolve({
+                    "check": true
+                });
+            });
+
+        })
+
+
+    })
+
+
+
+}
+
 $("#btn-suivant-category-section").click(function () {
     console.log("CLIKKKK");
     $(".emploi-cible-list").html("");
     populateEmploiSection(listEmploi);
 })
+
+async function getEmploiByNameAndLevel(eName, level) {
+
+    let url = "http://localhost:8080/preassessment/api/v1/emploi/niveau/emploi?eName=" + encodeURIComponent(eName.toLowerCase()) + "&level=" + level;
+    console.log(url);
+    return fetch(url, {
+        method: 'GET'
+    }).then(
+        response => {
+            if (response.status == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    ).catch(
+        error => console.log(error)
+    )
+}
 
 // EVENT LISTENER TO CATEGORIZE THE POPULATION BASED ON LIST OF CATEGORIES SAVED IN THE TABLE
 $("#btn-categorize").click(function (e) {
@@ -1558,7 +1631,26 @@ function parseToCategoryTable(categoryJson) {
 
             indexOfDeletedCategory = categoryIndex;
 
-            showModal("confirm", "Vous allez supprimer cette catégorie !", 'Cliquez sur le bouton "Oui" pour confirmer votre choix', "category")
+            showModal("confirm", "Vous allez supprimer cette catégorie !", 'Cliquez sur le bouton "Oui" pour confirmer votre choix', "category", {
+                "text": "Supprimer",
+                "color": "warning",
+                "id": "dh1",
+                "hasFermerBtn" : true
+            }, function (e) {
+                switch ($(this).attr("data-action")) {
+                    case "category":
+
+                        console.log(indexOfDeletedCategory);
+                        categoriesRequestBody.splice(indexOfDeletedCategory, 1);
+
+                        //INITIALIZE THE INDEX
+                        indexOfDeletedCategory = -1;
+
+                        parseToCategoryTable(categoriesRequestBody);
+
+                        break;
+                }
+            })
 
             // console.log(categoryIndex);
             // categoriesRequestBody.splice(categoryIndex, 1);
@@ -1853,9 +1945,9 @@ function getSelect2Selections(arr) {
 
 function showModal(type, header, content, action, btnJson, eventHandler) {
 
-    let modalId, modalHeaderId, modalContentId;
+    let modalId, modalHeaderId, modalContentId, color;
 
-    
+
 
 
     switch (type) {
@@ -1863,24 +1955,28 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             modalId = "success";
             modalHeaderId = "#modal-success-header";
             modalContentId = "#modal-success-content";
+            color = "success";
             break;
 
         case "warning":
             modalId = "warning";
             modalHeaderId = "#modal-warning-header";
             modalContentId = "#modal-warning-content";
+            color = "warning";
             break;
 
         case "info":
             modalId = "info";
             modalHeaderId = "#modal-info-header";
             modalContentId = "#modal-info-content";
+            color = "info";
             break;
 
         case "error":
             modalId = "modaldemo5";
             modalHeaderId = "#modal-error-header";
             modalContentId = "#modal-error-content";
+            color = "danger";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
 
@@ -1888,6 +1984,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             modalId = "confirm";
             modalHeaderId = "#modal-confirm-header";
             modalContentId = "#modal-confirm-content";
+            color = "primary";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
     }
@@ -1900,14 +1997,17 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
         // CREATE BTNS
         $(modalHeaderId).parent()
             .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
-            data-bs-dismiss="modal">${btnJson.text}</button>`)
-            .append(`<button aria-label="Close" class="btn btn-primary mx-4 pd-x-25"
+            data-bs-dismiss="modal">${btnJson.text}</button>`);
+
+        if (btnJson.hasOwnProperty('hasFermerBtn')) {
+            $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
             data-bs-dismiss="modal">Fermer</button>`);
+        }
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(eventHandler);
     } else {
-        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
+        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
 
@@ -2265,3 +2365,11 @@ function checkForUncategorizedCollaborateur() {
     return isFound;
 }
 
+function redirectTo(url, timeInMilliseconds) {
+    setTimeout(function () {
+        let currentUrl = window.location.href;
+
+        window.location.href = extractDomain(currentUrl) + url;
+    }, timeInMilliseconds);
+
+}

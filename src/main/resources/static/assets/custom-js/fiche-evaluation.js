@@ -28,7 +28,7 @@ if (localStorage.getItem("ficheEvaluation") === null) {
         $("#mat-eva-text").text(ficheEvaluation.evaluateurOne.matricule);
     } else if (manager.type === "2") {
         $("#mat-eva-text").text(ficheEvaluation.evaluateurTwo.matricule);
-    } 
+    }
     $("#mat-collaborateur-text").text(ficheEvaluation.collaborateur.matricule);
     $("#date-eva-text").text(ficheEvaluation.dateEvaluation.split("T")[0]);
 }
@@ -75,7 +75,7 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
             // SET THE NAME OF MANAGER 2 AS EVALUATEUR
             $("#mat-eva-text").text(ficheEvaluation.evaluateurTwo.matricule);
 
-        } else if (ficheEvaluation.re_manager1 != null ) {
+        } else if (ficheEvaluation.re_manager1 != null) {
 
             ficheAnswers = JSON.parse(ficheEvaluation.re_manager1);
 
@@ -83,14 +83,14 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
             $("#mat-eva-text").text(ficheEvaluation.evaluateurOne.matricule);
 
 
-        } else if (ficheEvaluation.re_manager2 != null ) {
+        } else if (ficheEvaluation.re_manager2 != null) {
 
             ficheAnswers = JSON.parse(ficheEvaluation.re_manager2);
 
             // SET THE NAME OF MANAGER 2 AS EVALUATEUR
             $("#mat-eva-text").text(ficheEvaluation.evaluateurTwo.matricule);
 
-        } 
+        }
 
     } else {
 
@@ -243,20 +243,26 @@ function saveFicheEvaluationHandler(e) {
             let modalBody;
             if (ficheEvaluation.status.includes("1")) {
                 modalHeader = "Action complétée";
-                modalBody = "La fiche a été envoyée avec succès. Vous serez redirigé <strong>automatiquement</strong> vers la liste des fichiers pour continuer l'évaluation.";
+                modalBody = "La fiche a été envoyée avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
             } else {
 
                 modalHeader = "Action complétée";
-                modalBody = "La fiche a été enregistré avec succès. Vous serez redirigé <strong>automatiquement</strong> vers la liste des fichiers pour continuer l'évaluation.";
+                modalBody = "La fiche a été enregistré avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
             }
-            showModal("success", modalHeader, modalBody, "")
+            showModal("success", modalHeader, modalBody, "", {
+                "text": "Revenir à l'accueil",
+                "color": "success",
+                "id": "dje1"
+            }, function () {
+                // REDIRECT TO EVALUATION LIST PAGE
+                setTimeout(function () {
+                    currentUrl = window.location.href;
+                    window.location.href = extractDomain(currentUrl) + "evaluation/list";
+                }, 1000)
+            })
 
 
-            // REDIRECT TO EVALUATION LIST PAGE
-            setTimeout(function () {
-                currentUrl = window.location.href;
-                window.location.href = extractDomain(currentUrl) + "evaluation/list";
-            }, 1500)
+
 
 
         })
@@ -264,7 +270,7 @@ function saveFicheEvaluationHandler(e) {
     }
 
     // UNBIDE THIS HANDLER WITH THE ELEMENT ----> IMMITATION OF ONE CLICK EVENT LISTENER
-    $( this ).off(e);
+    $(this).off(e);
 }
 
 function allFieldSelected() {
@@ -905,9 +911,9 @@ async function updateFicheEvaluation(id, jsonFiche) {
 
 function showModal(type, header, content, action, btnJson, eventHandler) {
 
-    let modalId, modalHeaderId, modalContentId;
+    let modalId, modalHeaderId, modalContentId, color;
 
-    
+
 
 
     switch (type) {
@@ -915,24 +921,28 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             modalId = "success";
             modalHeaderId = "#modal-success-header";
             modalContentId = "#modal-success-content";
+            color = "success";
             break;
 
         case "warning":
             modalId = "warning";
             modalHeaderId = "#modal-warning-header";
             modalContentId = "#modal-warning-content";
+            color = "warning";
             break;
 
         case "info":
             modalId = "info";
             modalHeaderId = "#modal-info-header";
             modalContentId = "#modal-info-content";
+            color = "info";
             break;
 
         case "error":
             modalId = "modaldemo5";
             modalHeaderId = "#modal-error-header";
             modalContentId = "#modal-error-content";
+            color = "danger";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
 
@@ -940,6 +950,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             modalId = "confirm";
             modalHeaderId = "#modal-confirm-header";
             modalContentId = "#modal-confirm-content";
+            color = "info";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
     }
@@ -952,14 +963,12 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
         // CREATE BTNS
         $(modalHeaderId).parent()
             .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
-            data-bs-dismiss="modal">${btnJson.text}</button>`)
-            .append(`<button aria-label="Close" class="btn btn-primary mx-4 pd-x-25"
-            data-bs-dismiss="modal">Fermer</button>`);
+            data-bs-dismiss="modal">${btnJson.text}</button>`);
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(eventHandler);
     } else {
-        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
+        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
 

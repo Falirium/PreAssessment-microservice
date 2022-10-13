@@ -970,9 +970,9 @@ async function updateMatriceCompetence(json) {
 
 function showModal(type, header, content, action, btnJson, eventHandler) {
 
-    let modalId, modalHeaderId, modalContentId;
+    let modalId, modalHeaderId, modalContentId, color;
 
-    
+
 
 
     switch (type) {
@@ -980,24 +980,28 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             modalId = "success";
             modalHeaderId = "#modal-success-header";
             modalContentId = "#modal-success-content";
+            color = "success";
             break;
 
         case "warning":
             modalId = "warning";
             modalHeaderId = "#modal-warning-header";
             modalContentId = "#modal-warning-content";
+            color = "warning";
             break;
 
         case "info":
             modalId = "info";
             modalHeaderId = "#modal-info-header";
             modalContentId = "#modal-info-content";
+            color = "info";
             break;
 
         case "error":
             modalId = "modaldemo5";
             modalHeaderId = "#modal-error-header";
             modalContentId = "#modal-error-content";
+            color = "danger";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
 
@@ -1005,6 +1009,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             modalId = "confirm";
             modalHeaderId = "#modal-confirm-header";
             modalContentId = "#modal-confirm-content";
+            color = "info";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
     }
@@ -1017,14 +1022,12 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
         // CREATE BTNS
         $(modalHeaderId).parent()
             .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
-            data-bs-dismiss="modal">${btnJson.text}</button>`)
-            .append(`<button aria-label="Close" class="btn btn-primary mx-4 pd-x-25"
-            data-bs-dismiss="modal">Fermer</button>`);
+            data-bs-dismiss="modal">${btnJson.text}</button>`);
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(eventHandler);
     } else {
-        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
+        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
 
@@ -1040,4 +1043,3 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
     myModal.show();
 
 }
-

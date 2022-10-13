@@ -207,9 +207,9 @@ function iterateOverEvaluations(arrJson) {
     arrJson.map((fiche, index) => {
         if (fiche.status === "CREATED") {
             numberOfBlank++;
-        } else if (fiche.status.includes("ÉVALUÉ")) {
+        } else if (fiche.status.includes("ÉVALUÉ") || fiche.status.includes("TERMINÉ-0")) {
             numberOfInProgress++;
-        } else if (fiche.status.includes("TERMINÉ")) {
+        } else if (fiche.status.includes("TERMINÉ-1")) {
             numberOfCompleted++;
         }
     });
@@ -331,19 +331,38 @@ function getFichesDataFromJson(arrJson) {
                 <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Non évalué</span>
             </div>
                 `)
-        } else if (e.status.includes("ÉVALUÉ")) {
+        } else if (e.status.includes("ÉVALUÉ-0")) {
             arr.push(`
-                <div class="mt-sm-1 d-block">
+            <div class="mt-sm-1 d-block">
                 <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Évalué</span>
             </div>
-                `)
-        } else if (e.status.includes("TERMINÉ")) {
-            arr.push(`
-                <div class="mt-sm-1 d-block">
-                <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Terminé</span>
+            <div class="mt-sm-1 d-block">
+                <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">en cours</span>
             </div>
                 `)
+        } else if (e.status.includes("ÉVALUÉ-1")) {
+            arr.push(`
+            <div class="mt-sm-1 d-block">
+                <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Évalué par N+1</span>
+            </div>
+                `)
+        } else if (e.status.includes("TERMINÉ-0")) {
+            arr.push(`
+            <div class="mt-sm-1 d-block">
+                <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Validé</span>
+             </div>
+             <div class="mt-sm-1 d-block">
+                <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">En cours</span>
+             </div>
+            `)
+        }  else if (e.status.includes("TERMINÉ-1")) {
+            arr.push(`
+            <div class="mt-sm-1 d-block">
+                <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Validé par N+2</span>
+             </div>
+            `)
         }
+
 
         // ACTION COL
         arr.push(`
@@ -367,19 +386,19 @@ function getFicheInfoFromArr(ficheId) {
     for (var i = 0; i < fichesArrJson.length; i++) {
         let ficheEva = fichesArrJson[i];
 
-        if (ficheId ==   ficheEva.id) {
+        if (ficheId == ficheEva.id) {
             return {
-                "index" : i,
-                "fiche" : ficheEva
+                "index": i,
+                "fiche": ficheEva
             }
         }
 
-        
+
     }
 
     return {
-        "index" : -1,
-        "fiche" : null
+        "index": -1,
+        "fiche": null
     }
 }
 

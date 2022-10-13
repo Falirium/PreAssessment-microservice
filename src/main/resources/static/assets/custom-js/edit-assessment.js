@@ -63,6 +63,7 @@ function populateAssessmentVariables(json) {
     populationArr = values.populationArr;
     categorizedPopulationArr = values.categorizedPopulationArr;
     listEmploi = values.listEmploi;
+    listOfNewCategories = values.listOfNewCategories;
 }
 
 function parseAssessmentFieldsForEdit() {
