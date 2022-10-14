@@ -411,3 +411,121 @@ function buildURL(prefix, params) {
 
     return url;
 }
+
+// ADD EVENT LISTENERS TO ACTION BTN
+$("#btn-assessment-terminate").click(function(e) {
+
+    // SHOW CONFIRM DELETE MODAL
+    showModal("confirm", "Confirmer l'action", `
+    Vous êtes sur le point de mettre fin à cette évaluation ! Avant de confirmer cette action, veuillez vous assurer de ce qui suit :
+    <ul class="list-style-1">
+        <li>Tous les managers ont complété leurs fiches d'évaluations.</li>
+        <li> LES MANAGERS NE SONT PAS EN TRAIN D'ESSAYER DE VALIDER LES FICHES D'ÉVALUATIONS.</li>
+    </ul> <br>
+    Lorsque vous confirmez cette action : 
+    <ul class="list-style-1">
+        <li>Les managers ne pourront plus évaluer les fiches d'évaluations laissées</li>
+        <li>Si un manager est en train de valider un dossier, son résultat ne comptera pas.</li>
+    </ul>
+     
+    `,"" ,{
+        "text" : "Terminer l'assessment",
+        "color" : "warning",
+        "id" : "dqz1",
+        "hasFermerBtn" : true
+    }, function() {
+        alert("Assessment terminer");
+    }, {
+        "padding" : "p-5",
+        "textAligenement": "text-start"
+    })
+})
+
+function showModal(type, header, content, action, btnJson, eventHandler, contentFormatter) {
+
+    let modalId, modalHeaderId, modalContentId, color;
+    
+
+
+
+
+    switch (type) {
+        case "success":
+            modalId = "success";
+            modalHeaderId = "#modal-success-header";
+            modalContentId = "#modal-success-content";
+            color = "success";
+            break;
+
+        case "warning":
+            modalId = "warning";
+            modalHeaderId = "#modal-warning-header";
+            modalContentId = "#modal-warning-content";
+            color = "warning";
+            break;
+
+        case "info":
+            modalId = "info";
+            modalHeaderId = "#modal-info-header";
+            modalContentId = "#modal-info-content";
+            color = "info";
+            break;
+
+        case "error":
+            modalId = "modaldemo5";
+            modalHeaderId = "#modal-error-header";
+            modalContentId = "#modal-error-content";
+            color = "danger";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+
+        case "confirm":
+            modalId = "confirm";
+            modalHeaderId = "#modal-confirm-header";
+            modalContentId = "#modal-confirm-content";
+            color = "primary";
+            $("#confirm-yes-btn").attr("data-action", action);
+            break;
+    }
+
+    // DELETE ALL BTNS
+    $(modalHeaderId).parent().find("button").remove();
+
+
+    if (btnJson != null) {
+        // CREATE BTNS
+        $(modalHeaderId).parent()
+            .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
+            data-bs-dismiss="modal">${btnJson.text}</button>`);
+
+        if (btnJson.hasOwnProperty('hasFermerBtn')) {
+            $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
+            data-bs-dismiss="modal">Fermer</button>`);
+        }
+
+        // ADD EVENT LISTENER TO THE BTN
+        $("#" + btnJson.id).click(eventHandler);
+    } else {
+        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
+        data-bs-dismiss="modal">Fermer</button>`);
+    }
+
+
+    var myModal = new bootstrap.Modal(document.getElementById(modalId));
+
+    // SET HEADER
+    $(modalHeaderId).text(header);
+
+    // SET CONTENT
+    $(modalContentId).html(content);
+    if (contentFormatter != null) {
+        let padding = contentFormatter.padding;
+        let textAlignement  = contentFormatter.textAlignement;
+        $(modalContentId).addClass([padding,textAlignement]);
+    }
+
+
+    myModal.show();
+
+}
+

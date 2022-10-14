@@ -181,12 +181,7 @@ $(function () {
                             });
 
 
-                            // REDIRECT TO THE LIST OF ASSESSMENTS
-                            setTimeout(function () {
-                                let currentUrl = window.location.href;
-
-                                window.location.href = extractDomain(currentUrl) + "assessment/list";
-                            }, 2000);
+                    
 
 
 
