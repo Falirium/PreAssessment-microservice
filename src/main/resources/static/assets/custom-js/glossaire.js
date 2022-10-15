@@ -107,14 +107,20 @@ $(btnSaveMatrice).one('click', function (e) {
             updateMatriceCompetence(matriceCompetenceJson).then((success) => {
 
                 // SHOW SUCCESS MODEL        
-                showModal("success", "La liste des compétences a été modifiée avec succès", "Les modifications sur la liste des compétences ont été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+                showModal("success", "La liste des compétences a été modifiée avec succès", "Les modifications sur la liste des compétences ont été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi", "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "success",
+                    "id": "ld1"
+                }, function () {
+                    // REDIRECT TO THE LIST OF ASSESSMENTS
+                    setTimeout(function () {
+                        let currentUrl = window.location.href;
 
-                // REDIRECT TO THE LIST OF ASSESSMENTS
-                setTimeout(function () {
-                    let currentUrl = window.location.href;
+                        window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+                    }, 1000);
+                });
 
-                    window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
-                }, 1000);
+
             });
 
             // REMOVE THE MATRICE FROM LOCAL STORAGE
@@ -126,14 +132,20 @@ $(btnSaveMatrice).one('click', function (e) {
             postMatriceCompetences(matriceCompetenceJson).then((success) => {
 
                 // SHOW SUCCESS MODEL        
-                showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
+                showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi", "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "success",
+                    "id": "lds1"
+                }, function () {
+                    // REDIRECT TO THE LIST OF ASSESSMENTS
+                    setTimeout(function () {
+                        let currentUrl = window.location.href;
 
-                // REDIRECT TO THE LIST OF ASSESSMENTS
-                setTimeout(function () {
-                    let currentUrl = window.location.href;
+                        window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+                    }, 1000);
+                });
 
-                    window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
-                }, 1000);
+
             });
 
         }
@@ -319,152 +331,179 @@ fileExcel.addEventListener("change", (e) => {
 
 })
 
-function parseGlossaireToTable(glossaire) {
-    let tableBody = document.querySelector("#glossaire-table-body");
+// function parseGlossaireToTable(glossaire) {
+//     let tableBody = document.querySelector("#glossaire-table-body");
 
 
-    // Initilize the table body
+//     // Initilize the table body
 
-    tableBody.innerHTML = ``;
-    for (var j = 0; j < glossaire.length; j++) {
+//     tableBody.innerHTML = ``;
+//     for (var j = 0; j < glossaire.length; j++) {
 
-        // console.log(j,glossaire[j]["niveaux"]);
+//         // console.log(j,glossaire[j]["niveaux"]);
 
-        for (var i = 0; i < glossaire[j]["niveaux"].length; i++) {
+//         for (var i = 0; i < glossaire[j]["niveaux"].length; i++) {
 
-            if (typeof (glossaire[j]["niveaux"][i]) !== 'undefined') {
+//             if (typeof (glossaire[j]["niveaux"][i]) !== 'undefined') {
 
-                // console.log(glossaire[j]["niveaux"][i]);
+//                 // console.log(glossaire[j]["niveaux"][i]);
 
-                let tr = tableBody.insertRow(-1);
+//                 let tr = tableBody.insertRow(-1);
 
-                // if (i === 0) {
-                //     let nameCell = tr.insertCell(-1);
-                //     nameCell.setAttribute("rowspan", "4");
-                //     nameCell.innerHTML = glossaire[j].name;
+//                 // if (i === 0) {
+//                 //     let nameCell = tr.insertCell(-1);
+//                 //     nameCell.setAttribute("rowspan", "4");
+//                 //     nameCell.innerHTML = glossaire[j].name;
 
-                //     let niveauCell = tr.insertCell(-1);
-                //     niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
+//                 //     let niveauCell = tr.insertCell(-1);
+//                 //     niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
 
-                //     let defCell = tr.insertCell(-1);
-                //     defCell.innerHTML = glossaire[j]["niveaux"][i].definition;
-                //     let actionCell = tr.insertCell(-1);
-                //     actionCell.setAttribute("rowspan", "4");
-                //     actionCell.innerHTML = `
-                //         <div class="g-2">
-                //             <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                //                 data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
-                //             <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
-                //                 data-bs-original-title="Delete"><span
-                //                     class="fe fe-trash-2 fs-14"></span></a>
-                //         </div> 
-                //     `;
+//                 //     let defCell = tr.insertCell(-1);
+//                 //     defCell.innerHTML = glossaire[j]["niveaux"][i].definition;
+//                 //     let actionCell = tr.insertCell(-1);
+//                 //     actionCell.setAttribute("rowspan", "4");
+//                 //     actionCell.innerHTML = `
+//                 //         <div class="g-2">
+//                 //             <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
+//                 //                 data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
+//                 //             <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
+//                 //                 data-bs-original-title="Delete"><span
+//                 //                     class="fe fe-trash-2 fs-14"></span></a>
+//                 //         </div> 
+//                 //     `;
 
-                // } else {
-                //     let niveauCell = tr.insertCell(-1);
-                //     niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
+//                 // } else {
+//                 //     let niveauCell = tr.insertCell(-1);
+//                 //     niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
 
-                //     let defCell = tr.insertCell(-1);
-                //     defCell.innerHTML = glossaire[j]["niveaux"][i].definition;
-                // }
-                let nameCell = tr.insertCell(-1);
-                nameCell.innerHTML = glossaire[j].name;
+//                 //     let defCell = tr.insertCell(-1);
+//                 //     defCell.innerHTML = glossaire[j]["niveaux"][i].definition;
+//                 // }
+//                 let nameCell = tr.insertCell(-1);
+//                 nameCell.innerHTML = glossaire[j].name;
 
-                let niveauCell = tr.insertCell(-1);
-                niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
+//                 let niveauCell = tr.insertCell(-1);
+//                 niveauCell.innerHTML = glossaire[j]["niveaux"][i].level;
 
-                let defCell = tr.insertCell(-1);
-                defCell.innerHTML = glossaire[j]["niveaux"][i]["definition"];
-                let actionCell = tr.insertCell(-1);
-                actionCell.innerHTML = `
-                            <div class="g-2">
-                                <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                                    data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
-                                <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
-                                    data-bs-original-title="Delete"><span
-                                        class="fe fe-trash-2 fs-14"></span></a>
-                            </div> 
-                        `;
-            }
-        }
-    }
+//                 let defCell = tr.insertCell(-1);
+//                 defCell.innerHTML = glossaire[j]["niveaux"][i]["definition"];
+//                 let actionCell = tr.insertCell(-1);
+//                 actionCell.innerHTML = `
+//                             <div class="g-2">
+//                                 <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
+//                                     data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
+//                                 <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
+//                                     data-bs-original-title="Delete"><span
+//                                         class="fe fe-trash-2 fs-14"></span></a>
+//                             </div> 
+//                         `;
+//             }
+//         }
+//     }
 
-    // Click event listeners 
-    let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
-    let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
+//     // Click event listeners 
+//     let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
+//     let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
 
-    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-        deleteBtn.addEventListener("click", (e) => {
+//     Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
+//         deleteBtn.addEventListener("click", (e) => {
 
-            // WHEN THE SPAN ELEMENT IS FIRED
+//             // WHEN THE SPAN ELEMENT IS FIRED
 
-            let aElement;
-            if (e.target.tagName === "SPAN") {
-                aElement = e.target.parentElement;
-            } else {
-                aElement = e.target;
-            }
+//             let aElement;
+//             if (e.target.tagName === "SPAN") {
+//                 aElement = e.target.parentElement;
+//             } else {
+//                 aElement = e.target;
+//             }
 
-            let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-
-
-            let competenceIndex = Math.floor(glossaireIndex / 4);
-            let levelIndex = glossaireIndex % 4;
-            competenceArray.splice(glossaireIndex, 1);
-
-            //console.log(competenceArray[competenceIndex].name, competenceArray[competenceIndex]["niveaux"][levelIndex])
+//             let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
 
 
 
-            showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
+//             let competenceIndex = Math.floor(glossaireIndex / 4);
+//             let levelIndex = glossaireIndex % 4;
+//             competenceArray.splice(glossaireIndex, 1);
+
+//             //console.log(competenceArray[competenceIndex].name, competenceArray[competenceIndex]["niveaux"][levelIndex])
+
+
+
+//             showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence", {
+//                 "text": "Oui",
+//                 "color": "danger",
+//                 "id": "dsl1"
+//             }, function (e) {
+
+//                 let action = $("#confirm-delete-btn").attr("data-action");
+
+//                 if (action === "competence") {
+
+//                     // CHECK IF THE INDEX 
+//                     if (competenceDeleteIndex != -1) {
+
+//                         competenceArray.splice(competenceDeleteIndex, 1);
+
+
+//                         // INITIALIZE THE INDEX
+//                         competenceDeleteIndex = -1;
+
+//                         // PARSE THE UPDATED DATA TO THE TABLE
+//                         parseCompetencesToTable(competenceArray);
+//                     } else {
+
+
+//                     }
+//                 }
+
+//             })
 
 
 
 
-        })
-    });
+//         })
+//     });
 
-    Array.from(allEditCatBtns).forEach((editBtn) => {
-        editBtn.addEventListener("click", (e) => {
+//     Array.from(allEditCatBtns).forEach((editBtn) => {
+//         editBtn.addEventListener("click", (e) => {
 
-            // WHEN THE SPAN ELEMENT IS FIRED
+//             // WHEN THE SPAN ELEMENT IS FIRED
 
-            let aElement;
-            if (e.target.tagName === "SPAN") {
-                aElement = e.target.parentElement;
-            } else {
-                aElement = e.target;
-            }
+//             let aElement;
+//             if (e.target.tagName === "SPAN") {
+//                 aElement = e.target.parentElement;
+//             } else {
+//                 aElement = e.target;
+//             }
 
-            let glossaireIndex = [...allEditCatBtns].indexOf(aElement);
-
-
-
-            let competenceIndex = Math.floor(glossaireIndex / 4);
-            let levelIndex = glossaireIndex % 4;
-            // console.log(competenceArray[competenceIndex]["niveaux"][0]["definition"]);
-
-            $("#input-nom-competence-glossaire").val(competenceArray[competenceIndex].name);
-
-            $("#input-def-competence-e").val(competenceArray[competenceIndex]["niveaux"][0]["definition"]);
-            $("#input-def-competence-m").val(competenceArray[competenceIndex]["niveaux"][1]["definition"]);
-            $("#input-def-competence-a").val(competenceArray[competenceIndex]["niveaux"][2]["definition"]);
-            $("#input-def-competence-x").val(competenceArray[competenceIndex]["niveaux"][3]["definition"]);
-
-
-            competenceEditIndex = competenceIndex;
+//             let glossaireIndex = [...allEditCatBtns].indexOf(aElement);
 
 
 
-            // parseGlossaireToTable(competenceArray, niveau);
+//             let competenceIndex = Math.floor(glossaireIndex / 4);
+//             let levelIndex = glossaireIndex % 4;
+//             // console.log(competenceArray[competenceIndex]["niveaux"][0]["definition"]);
 
-        })
-    })
+//             $("#input-nom-competence-glossaire").val(competenceArray[competenceIndex].name);
+
+//             $("#input-def-competence-e").val(competenceArray[competenceIndex]["niveaux"][0]["definition"]);
+//             $("#input-def-competence-m").val(competenceArray[competenceIndex]["niveaux"][1]["definition"]);
+//             $("#input-def-competence-a").val(competenceArray[competenceIndex]["niveaux"][2]["definition"]);
+//             $("#input-def-competence-x").val(competenceArray[competenceIndex]["niveaux"][3]["definition"]);
+
+
+//             competenceEditIndex = competenceIndex;
 
 
 
-}
+//             // parseGlossaireToTable(competenceArray, niveau);
+
+//         })
+//     })
+
+
+
+// }
 
 // THIS FUNCTION GETS DATA FROM EXCEL FILE AND RETURNS A PROMISE THAT PREPARE FINAL ARRAY HOLDING ALL THE COMPETENCES
 async function parseExcelFile2(inputElement) {
@@ -639,22 +678,13 @@ function parseCompetencesToTable(dataArr) {
     // INITIALIZE THE DATA TABALE
     // return new Promise((resolve, reject) => {
 
-        let fileTitle = matriceCompetenceJson.name + "_At_" + new Date().toISOString().split("T")[0];
+    let fileTitle = matriceCompetenceJson.name + "_At_" + new Date().toISOString().split("T")[0];
 
     // });
-    competenceTable = $("#tbs3").DataTable({
+    competenceTable = $("#tbs6").DataTable({
         data: dataSet,
         pageLength: 4,
-        lengthMenu: [4, 8, 16, 20, 24, 'All'],
-        dom: 'Bfrtip',
-    
-        buttons: [
-            
-            {
-                extend: 'excelHtml5',
-                title: fileTitle
-            }
-        ]
+        lengthMenu: [4, 8, 16, 20, 24, 'All']
     });
 
 
@@ -707,7 +737,33 @@ function parseCompetencesToTable(dataArr) {
 
 
 
-                showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence");
+                showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence", {
+                    "text": "Oui",
+                    "color": "danger",
+                    "id": "dsl1",
+                    "hasFermerBtn": true
+                }, function (e) {
+
+                    console.log(competenceDeleteIndex);
+
+                    // CHECK IF THE INDEX 
+                    if (competenceDeleteIndex != -1) {
+
+                        competenceArray.splice(competenceDeleteIndex, 1);
+
+
+                        // INITIALIZE THE INDEX
+                        competenceDeleteIndex = -1;
+
+                        // PARSE THE UPDATED DATA TO THE TABLE
+                        parseCompetencesToTable(competenceArray);
+                    } else {
+
+
+                    }
+
+
+                })
             })
 
         })
@@ -733,7 +789,7 @@ function parseCompetencesToTable(dataArr) {
                     aElement = e.target;
                 }
 
-                let competenceName = $(aElement).parents("td").siblings().slice(0, 1).text();
+                let competenceName = $(aElement).parents("td").siblings().slice(1, 2).text();
 
                 let compFromArr = getCompetenceInfoFromArr(competenceName);
                 console.log(competenceName, compFromArr);
@@ -864,7 +920,8 @@ function processCompetenceData4DataTable(arr) {
 
             let mid = [];
 
-            // PUSH DATA FOLLOWING THIS ORDER : NAME --> LEVEL --> DEFINITION --> ACTION
+            // PUSH DATA FOLLOWING THIS ORDER : ID --> NAME --> LEVEL --> DEFINITION --> ACTION
+            mid.push(e.id);
             mid.push(e.name);
             mid.push(niveau.level);
             mid.push(niveau.definition);
@@ -1009,7 +1066,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             modalId = "confirm";
             modalHeaderId = "#modal-confirm-header";
             modalContentId = "#modal-confirm-content";
-            color = "info";
+            color = "primary";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
     }
@@ -1024,8 +1081,13 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
             data-bs-dismiss="modal">${btnJson.text}</button>`);
 
+        if (btnJson.hasOwnProperty('hasFermerBtn')) {
+            $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
+            data-bs-dismiss="modal">Fermer</button>`);
+        }
+
         // ADD EVENT LISTENER TO THE BTN
-        $("#" + btnJson.id).click(eventHandler);
+        $("#" + btnJson.id).click(function (e) { eventHandler(e) });
     } else {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);

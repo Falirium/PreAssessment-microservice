@@ -181,7 +181,7 @@ $(function () {
                             });
 
 
-                    
+
 
 
 
@@ -1608,6 +1608,7 @@ function parseToCategoryTable(categoryJson) {
     let allEditCatBtns = tableBody.querySelectorAll("#cat-table-btn-edit");
 
 
+    // ADD EVENT LISTNERS ON ACTION BTNS OF CATEGORY TABLE
     Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
         deleteBtn.addEventListener("click", (e) => {
 
@@ -1630,21 +1631,20 @@ function parseToCategoryTable(categoryJson) {
                 "text": "Supprimer",
                 "color": "warning",
                 "id": "dh1",
-                "hasFermerBtn" : true
+                "hasFermerBtn": true
             }, function (e) {
-                switch ($(this).attr("data-action")) {
-                    case "category":
 
-                        console.log(indexOfDeletedCategory);
-                        categoriesRequestBody.splice(indexOfDeletedCategory, 1);
 
-                        //INITIALIZE THE INDEX
-                        indexOfDeletedCategory = -1;
+                console.log(indexOfDeletedCategory);
+                categoriesRequestBody.splice(indexOfDeletedCategory, 1);
 
-                        parseToCategoryTable(categoriesRequestBody);
+                //INITIALIZE THE INDEX
+                indexOfDeletedCategory = -1;
 
-                        break;
-                }
+                parseToCategoryTable(categoriesRequestBody);
+
+
+
             })
 
             // console.log(categoryIndex);
@@ -1995,12 +1995,12 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             data-bs-dismiss="modal">${btnJson.text}</button>`);
 
         if (btnJson.hasOwnProperty('hasFermerBtn')) {
-            $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
+            $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
             data-bs-dismiss="modal">Fermer</button>`);
         }
 
         // ADD EVENT LISTENER TO THE BTN
-        $("#" + btnJson.id).click(eventHandler);
+        $("#" + btnJson.id).click(function (e) { eventHandler(e) });
     } else {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);

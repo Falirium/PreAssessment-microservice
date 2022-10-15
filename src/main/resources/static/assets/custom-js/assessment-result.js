@@ -441,10 +441,9 @@ $("#btn-assessment-terminate").click(function(e) {
     })
 })
 
-function showModal(type, header, content, action, btnJson, eventHandler, contentFormatter) {
+function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
-    
 
 
 
@@ -499,12 +498,12 @@ function showModal(type, header, content, action, btnJson, eventHandler, content
             data-bs-dismiss="modal">${btnJson.text}</button>`);
 
         if (btnJson.hasOwnProperty('hasFermerBtn')) {
-            $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
+            $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
             data-bs-dismiss="modal">Fermer</button>`);
         }
 
         // ADD EVENT LISTENER TO THE BTN
-        $("#" + btnJson.id).click(eventHandler);
+        $("#" + btnJson.id).click(function (e) { eventHandler(e) });
     } else {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
@@ -517,15 +516,8 @@ function showModal(type, header, content, action, btnJson, eventHandler, content
     $(modalHeaderId).text(header);
 
     // SET CONTENT
-    $(modalContentId).html(content);
-    if (contentFormatter != null) {
-        let padding = contentFormatter.padding;
-        let textAlignement  = contentFormatter.textAlignement;
-        $(modalContentId).addClass([padding,textAlignement]);
-    }
-
+    $(modalContentId).text(content)
 
     myModal.show();
 
 }
-

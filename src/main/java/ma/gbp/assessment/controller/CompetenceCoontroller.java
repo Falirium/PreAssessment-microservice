@@ -98,7 +98,8 @@ public class CompetenceCoontroller {
             throw new CustomErrorException(HttpStatus.NOT_FOUND, "Matrice Competence Not Found");
         } 
 
-        // STEP 2 : CHECK FOR NEW COMPETENCE
+        // STEP 2 : CHECK FOR NEW COMPETENCE OR CHANGED COMPETENCES
+        // COMPARE THE TWO LISTS : RETURNS TWO LISTS : NEW COMPETENCES + DELETE COMPETENCES
         List<Competence> associatedListOfCompetence = new ArrayList<Competence>();
 
         
