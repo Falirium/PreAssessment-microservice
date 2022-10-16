@@ -86,13 +86,22 @@ $("#input-create-date").change(function (e) {
 })
 
 // SAVE THE LIST INTO THE DATABASE
-$(btnSaveMatrice).one('click', function (e) {
+$(btnSaveMatrice).click(function (e) {
 
     // STEP 1 : VERIFY IF ALL THE FIELD ARE FILLED
+    if (!checkMatriceBasics()) {
+        showModal("error", "Action non complétée", "Certains informations concernant la matrice ne sont pas remplis. Essayer de les remplir", "");
+    } else if( !checkForCompetenceArray()) {
 
+        showModal("error", "Action non complétée", "La liste des compétences est vide. Essayer d'ajouter des compétences.", "");
 
-    // STEP 2 : SAVE NEW LISTS OF COMPETENCES
-    if (fieldsAreChecked()) {
+    } else if (!checkCompetencesLevelsSection()) {
+        showModal("error", "Action non complétée", "Les définitions de chaque niveau ne doivent pas être vide. Essayer de les remplir.", "");
+
+    } else {  // STEP 2 : SAVE NEW LISTS OF COMPETENCES
+
+        // DISABLE THE EVENTHANDLER
+        $(this).off(e);
 
         // UPDATE MATRICE-COMPETENCE JSON
         let timeNow = new Date();
@@ -149,8 +158,10 @@ $(btnSaveMatrice).one('click', function (e) {
             });
 
         }
-
     }
+
+
+
 
 })
 
@@ -215,65 +226,75 @@ $(btnSaveMatrice).one('click', function (e) {
 
 btnAddGlossaire.addEventListener("click", (e) => {
 
-    let nomCompGlossaire = document.querySelector("#input-nom-competence-glossaire");
-    let niveauCompGlassaire = Array.from(document.querySelectorAll("#input-niveau-competence-glossaire"));
-    let defCompGlaossaire = Array.from(document.querySelectorAll(".input-level-def"));
+    // CHECK FIRSTABLE THE VALUES OF INPUTS
+    if (!checkCompetencesLevelsSection()) {
 
-    if (competenceEditIndex !== -1) {
-
-        competenceArray[competenceEditIndex] = {
-            "name": nomCompGlossaire.value,
-            "definition": competenceArray[competenceEditIndex]["definition"],
-            "niveaux": []
-        }
-
-        defCompGlaossaire.forEach((def, index) => {
-            // console.log(niveauCompGlassaire[index].value, def.value, index)
-            competenceArray[competenceEditIndex]["niveaux"].push({
-                "level": niveauCompGlassaire[index].value,
-                "definition": def.value
-            })
-        })
-
-        console.log(competenceEditIndex, competenceArray);
-
-        // INITIALIZE THE INDEX
-        competenceEditIndex = -1;
-
+        // SHOW ERROR
+        showModal("error", "Action non complétée", "Les définitions de chaque niveau ne doivent pas être vide. Essayer de les remplir.", "");
 
     } else {
 
-        let competenceGlassaireJson = {
-            "name": nomCompGlossaire.value,
-            "definition": null,
-            "niveaux": []
-        }
+        let nomCompGlossaire = document.querySelector("#input-nom-competence-glossaire");
+        let niveauCompGlassaire = Array.from(document.querySelectorAll("#input-niveau-competence-glossaire"));
+        let defCompGlaossaire = Array.from(document.querySelectorAll(".input-level-def"));
 
+        if (competenceEditIndex !== -1) {
 
-
-        for (var i = 0; i < niveauCompGlassaire.length; i++) {
-            let nivaeuJson = {
-                "level": niveauCompGlassaire[i].value,
-                "definition": defCompGlaossaire[i].value
+            competenceArray[competenceEditIndex] = {
+                "name": nomCompGlossaire.value,
+                "definition": competenceArray[competenceEditIndex]["definition"],
+                "niveaux": []
             }
 
-            competenceGlassaireJson["niveaux"].push(nivaeuJson);
+            defCompGlaossaire.forEach((def, index) => {
+                // console.log(niveauCompGlassaire[index].value, def.value, index)
+                competenceArray[competenceEditIndex]["niveaux"].push({
+                    "level": niveauCompGlassaire[index].value,
+                    "definition": def.value
+                })
+            })
+
+            console.log(competenceEditIndex, competenceArray);
+
+            // INITIALIZE THE INDEX
+            competenceEditIndex = -1;
+
+
+        } else {
+
+            let competenceGlassaireJson = {
+                "name": nomCompGlossaire.value,
+                "definition": null,
+                "niveaux": []
+            }
+
+
+
+            for (var i = 0; i < niveauCompGlassaire.length; i++) {
+                let nivaeuJson = {
+                    "level": niveauCompGlassaire[i].value,
+                    "definition": defCompGlaossaire[i].value
+                }
+
+                competenceGlassaireJson["niveaux"].push(nivaeuJson);
+            }
+
+            competenceArray.push(competenceGlassaireJson);
+
         }
 
-        competenceArray.push(competenceGlassaireJson);
 
+        // INITIALIZE THE INPUTS
+        nomCompGlossaire.value = "";
+        defCompGlaossaire.forEach((definition) => {
+            definition.value = "";
+        })
+
+
+        // PARSE THE DATA TO THE TABLE
+        parseCompetencesToTable(competenceArray);
     }
 
-
-    // INITIALIZE THE INPUTS
-    nomCompGlossaire.value = "";
-    defCompGlaossaire.forEach((definition) => {
-        definition.value = "";
-    })
-
-
-    // PARSE THE DATA TO THE TABLE
-    parseCompetencesToTable(competenceArray);
 
 })
 // ADD EVENT LISTENER TO DOWNLOAD BTN 
@@ -993,7 +1014,23 @@ async function postMatriceCompetences(json) {
 
         } // Handle the success response object
     ).catch(
-        error => console.log(error) // Handle the error response object
+        error => {
+            console.log(error);
+
+            showModal("error", "Action non complétée", "L'enregistrement de cette matrice de compétences a été échouée. Essayer de refaire vos modifications.", "", {
+                "text": "REvenir à l'acceuil",
+                "color": "danger",
+                "id": "dsds1"
+            }, function () {
+                // REDIRECT TO THE LIST OF ASSESSMENTS
+                setTimeout(function () {
+                    let currentUrl = window.location.href;
+
+                    window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+                }, 1000);
+            })
+
+        } // Handle the error response object
     );
 }
 
@@ -1021,7 +1058,22 @@ async function updateMatriceCompetence(json) {
 
         } // Handle the success response object
     ).catch(
-        error => console.log(error) // Handle the error response object
+        error => {
+            console.log(error);
+            showModal("error", "Action non complétée", "Les modifications sur cette matrice de compétences ne sont pas enregistrées. Essayer de refaire vos modifications.", "", {
+                "text": "REvenir à l'acceuil",
+                "color": "danger",
+                "id": "dsds1"
+            }, function () {
+                // REDIRECT TO THE LIST OF ASSESSMENTS
+                setTimeout(function () {
+                    let currentUrl = window.location.href;
+
+                    window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
+                }, 1000);
+            })
+
+        } // Handle the error response object
     );
 }
 
@@ -1105,3 +1157,51 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
     myModal.show();
 
 }
+
+function checkCompetencesLevelsSection() {
+
+    let isNotNull = true;
+
+    $(".input-level-def").removeClass("is-invalid");
+
+    // ENABLE THIS WHEN COMPETENCE IS SET TO BE EDITED BUT NOT COMPELETED
+    if ( $("#nom-competence-error").val().trim() === '') {
+        return true;
+    }
+
+    $(".input-level-def").each(function (index, element) {
+        if ($(element).val() === '') {
+            $(element).addClass("is-invalid");
+        }
+
+        isNotNull = false;
+    })
+
+    return isNotNull;
+}
+
+function checkMatriceBasics() {
+    let isNotNull = true;
+
+    $(".matrice-info").removeClass("is-invalid");
+
+    $(".matrice-info").each(function (index, element) {
+        if ($(element).val().trim() == '') {
+            $(element).addClass("is-invalid");
+            isNotNull = false;
+        }   
+    })
+
+    console.log(isNotNull);
+    return isNotNull;
+}
+
+function checkForCompetenceArray() {
+
+    if (competenceArray.length == 0) {
+        return false;
+    }
+
+    return true;
+}
+

@@ -31,4 +31,7 @@ public class CompetenceReService {
         return competenceReRepository.saveAll(competences);
     }
     
+    public CompetenceRe getCompetenceReByName(String compName) {
+        return competenceReRepository.findByName(compName);
+    }
 }

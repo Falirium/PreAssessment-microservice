@@ -94,8 +94,8 @@ public class CompetenceCoontroller {
 
         // STEP 1 : GET THE TARGET MATRICE COMPETENCE
         MatriceCompetence newMc = matriceCompetenceService.getMatriceCompetenceById(mc.getId());
-        if ( newMc == null) {
-            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Matrice Competence Not Found");
+        if ( newMc != null) {
+            throw new CustomErrorException(HttpStatus.OK, "Matrice Competence is found");
         } 
 
         // STEP 2 : CHECK FOR NEW COMPETENCE OR CHANGED COMPETENCES

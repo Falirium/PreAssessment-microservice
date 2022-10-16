@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import ma.gbp.assessment.exception.CustomErrorException;
 import ma.gbp.assessment.message.FicheEvaluationPreview;
 import ma.gbp.assessment.message.FullCompetenceRequis;
 import ma.gbp.assessment.model.Competence;
@@ -65,13 +66,23 @@ public class NiveauController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        // return ResponseEntity.status(HttpStatus.OK).body(niveauService.getNiveauByNameAndByLevel(emploiName.toLowerCase(), level));
+        // return
+        // ResponseEntity.status(HttpStatus.OK).body(niveauService.getNiveauByNameAndByLevel(emploiName.toLowerCase(),
+        // level));
     }
 
     @PostMapping(value = "/")
     public ResponseEntity<Niveau> createNiveau(@RequestBody Niveau niveau) {
 
-        Niveau savedNiveau = niveauService.saveNiveau(new Niveau(
+        // CHECK IF NIVEAU IS ALREADY EXIST
+        Niveau n = niveauService.getNiveauByNameAndByLevel(niveau.getIntitule(), niveau.getLevel());
+
+        if (n != null) {
+            throw new CustomErrorException(HttpStatus.OK, "Niveau already saved");
+        }
+
+        // Create an istance of Niveau
+        Niveau newNiveau = new Niveau(
                 niveau.getIntitule(),
                 niveau.getFiliere(),
                 niveau.getSousFiliere(),
@@ -80,16 +91,32 @@ public class NiveauController {
                 niveau.getLevel(),
                 niveau.getResponsabilites(),
                 niveau.getExigences(),
-                niveau.getMarqueurs()));
+                niveau.getMarqueurs());
 
         // CREATE COMPETENCE REQUIES ENTIES -> THEN ASSIGN THEM
-        List<CompetenceRe> newCompetencesReq = competenceReService.saveListOfComeptences(niveau.getCompetencesRequis());
+        // ITERATE OVER LIST OF COMPETENCES REQUIS : NEW COMPETENCES REQUIS - ALREADY
+        // SAVED COMPETENCES REQUIS
 
-        savedNiveau.setCompetencesRequis(newCompetencesReq);
+        List<CompetenceRe> listOfCompetencesRe = new ArrayList<CompetenceRe>();
 
-        // SAVE COMPETENCE INTO COMPETENCE
+        for (CompetenceRe cr : niveau.getCompetencesRequis()) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(niveauService.saveNiveau(savedNiveau));
+            CompetenceRe competenceRe = new CompetenceRe();
+
+            if (!doesCompetenceReExist(cr.getName())) {
+                competenceRe = competenceReService.saveCompetenceRequis(cr);
+            } else {
+                competenceRe = competenceReService.getCompetenceReByName(cr.getName());
+            }
+
+            listOfCompetencesRe.add(competenceRe);
+
+        }
+
+        // SET CCOMPETENCEREQUIS INTO NIVEAU
+        newNiveau.setCompetencesRequis(listOfCompetencesRe);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(niveauService.saveNiveau(newNiveau));
     }
 
     @PostMapping(value = "/niveaux")
@@ -98,24 +125,48 @@ public class NiveauController {
         List<Niveau> savedNiveaux = new ArrayList<Niveau>();
 
         for (int i = 0; i < niveaux.size(); i++) {
-            Niveau savedNiveau = niveauService.saveNiveau(new Niveau(
-                    niveaux.get(i).getIntitule(),
-                    niveaux.get(i).getFiliere(),
-                    niveaux.get(i).getSousFiliere(),
-                    niveaux.get(i).getDateMaj(),
-                    niveaux.get(i).getVocation(),
-                    niveaux.get(i).getLevel(),
-                    niveaux.get(i).getResponsabilites(),
-                    niveaux.get(i).getExigences(),
-                    niveaux.get(i).getMarqueurs()));
+            Niveau niveau = niveaux.get(i);
+            // CHECK IF NIVEAU IS ALREADY EXIST
+            Niveau n = niveauService.getNiveauByNameAndByLevel(niveau.getIntitule(), niveau.getLevel());
+
+            if (n != null) {
+                throw new CustomErrorException(HttpStatus.OK, "Niveau already saved");
+            }
+
+            // Create an istance of Niveau
+            Niveau newNiveau = new Niveau(
+                    niveau.getIntitule(),
+                    niveau.getFiliere(),
+                    niveau.getSousFiliere(),
+                    niveau.getDateMaj(),
+                    niveau.getVocation(),
+                    niveau.getLevel(),
+                    niveau.getResponsabilites(),
+                    niveau.getExigences(),
+                    niveau.getMarqueurs());
 
             // CREATE COMPETENCE REQUIES ENTIES -> THEN ASSIGN THEM
-            List<CompetenceRe> newCompetencesReq = competenceReService
-                    .saveListOfComeptences(niveaux.get(i).getCompetencesRequis());
+            // ITERATE OVER LIST OF COMPETENCES REQUIS : NEW COMPETENCES REQUIS - ALREADY
+            // SAVED COMPETENCES REQUIS
 
-            savedNiveau.setCompetencesRequis(newCompetencesReq);
+            List<CompetenceRe> listOfCompetencesRe = new ArrayList<CompetenceRe>();
 
-            savedNiveaux.add(niveauService.saveNiveau(savedNiveau));
+            for (CompetenceRe cr : niveau.getCompetencesRequis()) {
+
+                CompetenceRe competenceRe = new CompetenceRe();
+
+                if (!doesCompetenceReExist(cr.getName())) {
+                    competenceRe = competenceReService.saveCompetenceRequis(cr);
+                } else {
+                    competenceRe = competenceReService.getCompetenceReByName(cr.getName());
+                }
+
+                listOfCompetencesRe.add(competenceRe);
+
+            }
+
+            // SET CCOMPETENCEREQUIS INTO NIVEAU
+            newNiveau.setCompetencesRequis(listOfCompetencesRe);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedNiveaux);
@@ -226,5 +277,15 @@ public class NiveauController {
             @RequestParam(name = "level") int level) {
         Niveau niveau = niveauService.getNiveauByNameAndByLevel(emploiName, level);
         return ResponseEntity.status(HttpStatus.OK).body(niveau);
+    }
+
+    private boolean doesCompetenceReExist(String compName) {
+        CompetenceRe competenceRe = competenceReService.getCompetenceReByName(compName);
+
+        if (competenceRe != null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

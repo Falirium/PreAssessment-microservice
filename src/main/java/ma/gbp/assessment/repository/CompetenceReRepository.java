@@ -11,6 +11,7 @@ import ma.gbp.assessment.model.CompetenceRe;
 public interface CompetenceReRepository extends JpaRepository<CompetenceRe, Long>{
 
     // List<CompetenceRe> findCompetenceResByNiveausId(Long niveauId);
+    CompetenceRe findByName(String name);
     
     
 }
