@@ -293,6 +293,9 @@ btnAddGlossaire.addEventListener("click", (e) => {
 
         // PARSE THE DATA TO THE TABLE
         parseCompetencesToTable(competenceArray);
+
+        // ELIMINATE DISBALE PROPERTY
+        $("#input-nom-competence-glossaire").prop('disabled', false);
     }
 
 
@@ -810,7 +813,7 @@ function parseCompetencesToTable(dataArr) {
                     aElement = e.target;
                 }
 
-                let competenceName = $(aElement).parents("td").siblings().slice(1, 2).text();
+                let competenceName = $(aElement).parents("td").siblings().slice(0, 1).text();
 
                 let compFromArr = getCompetenceInfoFromArr(competenceName);
                 console.log(competenceName, compFromArr);
@@ -818,6 +821,8 @@ function parseCompetencesToTable(dataArr) {
 
                 // PARSE VALUES OF CLICKED COMPETENCE ON THE INPUTS
                 $("#input-nom-competence-glossaire").val(compFromArr.competence.name);
+                $("#input-nom-competence-glossaire").prop('disabled', true);
+
 
                 $("#input-def-competence-e").val(compFromArr.competence.niveaux[0]["definition"]);
                 $("#input-def-competence-m").val(compFromArr.competence.niveaux[1]["definition"]);
@@ -942,7 +947,7 @@ function processCompetenceData4DataTable(arr) {
             let mid = [];
 
             // PUSH DATA FOLLOWING THIS ORDER : ID --> NAME --> LEVEL --> DEFINITION --> ACTION
-            mid.push(e.id);
+            // mid.push(e.id);
             mid.push(e.name);
             mid.push(niveau.level);
             mid.push(niveau.definition);
@@ -1165,16 +1170,17 @@ function checkCompetencesLevelsSection() {
     $(".input-level-def").removeClass("is-invalid");
 
     // ENABLE THIS WHEN COMPETENCE IS SET TO BE EDITED BUT NOT COMPELETED
-    if ( $("#nom-competence-error").val().trim() === '') {
+    if ( $("#input-nom-competence-glossaire").val().trim() === '') {
         return true;
     }
 
     $(".input-level-def").each(function (index, element) {
         if ($(element).val() === '') {
             $(element).addClass("is-invalid");
+            isNotNull = false;
         }
 
-        isNotNull = false;
+        
     })
 
     return isNotNull;

@@ -125,12 +125,14 @@ public class NiveauController {
         List<Niveau> savedNiveaux = new ArrayList<Niveau>();
 
         for (int i = 0; i < niveaux.size(); i++) {
+
             Niveau niveau = niveaux.get(i);
+
             // CHECK IF NIVEAU IS ALREADY EXIST
             Niveau n = niveauService.getNiveauByNameAndByLevel(niveau.getIntitule(), niveau.getLevel());
 
             if (n != null) {
-                throw new CustomErrorException(HttpStatus.OK, "Niveau already saved");
+                throw new CustomErrorException(HttpStatus.FOUND, "L'emploi " + niveau.getIntitule() + " niveau de séniorité : " + niveau.getLevel() + " est déjà enregistré");
             }
 
             // Create an istance of Niveau
@@ -165,11 +167,14 @@ public class NiveauController {
 
             }
 
-            // SET CCOMPETENCEREQUIS INTO NIVEAU
+            // SET CCOMPETENCE-REQUIS INTO NIVEAU
             newNiveau.setCompetencesRequis(listOfCompetencesRe);
+
+            // ADD NIVEAU TO THE LIST OF SAVED NIVEAU
+            savedNiveaux.add(newNiveau);
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedNiveaux);
+        return ResponseEntity.status(HttpStatus.CREATED).body(niveauService.saveListOfNiveau(savedNiveaux));
     }
 
     // @GetMapping(value = "/fiche")

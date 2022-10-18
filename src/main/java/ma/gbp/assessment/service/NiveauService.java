@@ -19,6 +19,10 @@ public class NiveauService {
         return niveauRepository.save(newNiveau);
     }
 
+    public List<Niveau> saveListOfNiveau(List<Niveau> niveaux) {
+        return niveauRepository.saveAll(niveaux);
+    }
+
     public Niveau getNiveau(Long id) {
         return niveauRepository.findById(id).get();
     }
