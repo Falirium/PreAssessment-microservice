@@ -132,7 +132,7 @@ public class NiveauController {
             Niveau n = niveauService.getNiveauByNameAndByLevel(niveau.getIntitule(), niveau.getLevel());
 
             if (n != null) {
-                throw new CustomErrorException(HttpStatus.FOUND, "L'emploi " + niveau.getIntitule() + " niveau de séniorité : " + niveau.getLevel() + " est déjà enregistré");
+                throw new CustomErrorException(HttpStatus.NOT_ACCEPTABLE, "L'emploi " + niveau.getIntitule() + " niveau de séniorité : " + niveau.getLevel() + " est déjà enregistré");
             }
 
             // Create an istance of Niveau

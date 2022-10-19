@@ -19,6 +19,10 @@ public class MatriceCompetenceService {
         return matriceCompetenceRepository.findById(id).get();
     }
 
+    public MatriceCompetence getMatriceCompetenceByName(String matriceName) {
+        return matriceCompetenceRepository.findByName(matriceName);
+    }
+
     public List<MatriceCompetence> getAllMatricesCompetences() {
         return matriceCompetenceRepository.findAll();
     }

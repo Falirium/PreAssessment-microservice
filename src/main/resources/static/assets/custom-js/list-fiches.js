@@ -384,7 +384,7 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
                     } else if (e.status.includes("ÉVALUÉ-1")) {
                         arr.push(`
                         <div class="mt-sm-1 d-block">
-                            <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Évalué par N+1</span>
+                            <span class="badge bg-success-transparent rounded-pill text-lime p-2 px-3">Évalué par N+1</span>
                         </div>
                             `)
                     } else if (e.status.includes("TERMINÉ-0")) {

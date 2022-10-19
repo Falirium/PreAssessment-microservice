@@ -108,19 +108,22 @@ $(btnSaveMatrice).click(function (e) {
         matriceCompetenceJson.updatesAt = timeNow.toISOString().split('T')[0];
         matriceCompetenceJson.competences = competenceArray;
 
-        console.log(matriceCompetenceJson);
+        // console.log(matriceCompetenceJson);
 
         // 2 SCENARIOS : SAVE NEW ENTITY OR UPDATE AN EXISTANT ENTITY
         if (localStorage.getItem("matriceCompetence") != null) {
 
             updateMatriceCompetence(matriceCompetenceJson).then((success) => {
 
+                console.log(success);
                 // SHOW SUCCESS MODEL        
                 showModal("success", "La liste des compétences a été modifiée avec succès", "Les modifications sur la liste des compétences ont été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi", "", {
                     "text": "Revenir à l'acceuil",
                     "color": "success",
                     "id": "ld1"
                 }, function () {
+                    //
+                    localStorage.removeItem("matriceCompetence");
                     // REDIRECT TO THE LIST OF ASSESSMENTS
                     setTimeout(function () {
                         let currentUrl = window.location.href;
@@ -1056,17 +1059,13 @@ async function updateMatriceCompetence(json) {
         response => response.json() // if the response is a JSON object
     ).then(
         success => {
-
             return success;
-
-
-
         } // Handle the success response object
     ).catch(
         error => {
             console.log(error);
             showModal("error", "Action non complétée", "Les modifications sur cette matrice de compétences ne sont pas enregistrées. Essayer de refaire vos modifications.", "", {
-                "text": "REvenir à l'acceuil",
+                "text": "Revenir à l'acceuil",
                 "color": "danger",
                 "id": "dsds1"
             }, function () {

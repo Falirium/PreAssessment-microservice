@@ -7,5 +7,5 @@ import ma.gbp.assessment.model.MatriceCompetence;
 
 @Repository
 public interface MatriceCompetenceRepository extends JpaRepository<MatriceCompetence, Long> {
-    
+    MatriceCompetence findByName(String matriceName);
 }

@@ -5,13 +5,9 @@
 let emploiJSON = {};
 let niveauxArray = [];
 
-// THIS ARRAY IS MEANT FOR POST REQUEST
-let niveauxEmploiArray = [];
-
 
 // MIDLLE ARRAYS
 let responsabilitesArray = [];
-let resArray = [];
 let exigencesArray = [];
 let marqueursArray = [];
 let competencesArray = [];
@@ -681,89 +677,89 @@ function parseCompetenceToTable(competences, niveauContainer) {
 
 }
 
-function parseGlossaireToTable(glossaire, niveauContainer) {
-    let tableBody = niveauContainer.querySelector("#glossaire-table-body");
+// function parseGlossaireToTable(glossaire, niveauContainer) {
+//     let tableBody = niveauContainer.querySelector("#glossaire-table-body");
 
 
-    // Initilize the table body
+//     // Initilize the table body
 
-    tableBody.innerHTML = ``;
-    for (var j = 0; j < glossaire.length; j++) {
+//     tableBody.innerHTML = ``;
+//     for (var j = 0; j < glossaire.length; j++) {
 
-        for (var i = 0; i < glossaire[j]["niveaux"].length; i++) {
+//         for (var i = 0; i < glossaire[j]["niveaux"].length; i++) {
 
-            let tr = tableBody.insertRow(-1);
+//             let tr = tableBody.insertRow(-1);
 
-            if (i === 0) {
+//             if (i === 0) {
 
-                let nameCell = tr.insertCell(-1);
-                nameCell.setAttribute("rowspan", "4");
-                nameCell.innerHTML = glossaire[j].name;
+//                 let nameCell = tr.insertCell(-1);
+//                 nameCell.setAttribute("rowspan", "4");
+//                 nameCell.innerHTML = glossaire[j].name;
 
-                let niveauCell = tr.insertCell(-1);
-                niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
+//                 let niveauCell = tr.insertCell(-1);
+//                 niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
 
-                let defCell = tr.insertCell(-1);
-                defCell.innerHTML = glossaire[j]["niveaux"][i].description;
-                let actionCell = tr.insertCell(-1);
-                actionCell.setAttribute("rowspan", "4");
-                actionCell.innerHTML = `
-                    <div class="g-2">
-                        <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-                            data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
-                        <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
-                            data-bs-original-title="Delete"><span
-                                class="fe fe-trash-2 fs-14"></span></a>
-                    </div> 
-                `;
+//                 let defCell = tr.insertCell(-1);
+//                 defCell.innerHTML = glossaire[j]["niveaux"][i].description;
+//                 let actionCell = tr.insertCell(-1);
+//                 actionCell.setAttribute("rowspan", "4");
+//                 actionCell.innerHTML = `
+//                     <div class="g-2">
+//                         <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
+//                             data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
+//                         <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
+//                             data-bs-original-title="Delete"><span
+//                                 class="fe fe-trash-2 fs-14"></span></a>
+//                     </div> 
+//                 `;
 
-            } else {
-                let niveauCell = tr.insertCell(-1);
-                niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
+//             } else {
+//                 let niveauCell = tr.insertCell(-1);
+//                 niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
 
-                let defCell = tr.insertCell(-1);
-                defCell.innerHTML = glossaire[j]["niveaux"][i].description;
-
-
-
-            }
-
-        }
-
-
-    }
+//                 let defCell = tr.insertCell(-1);
+//                 defCell.innerHTML = glossaire[j]["niveaux"][i].description;
 
 
 
-    // Click event listeners 
-    let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
-    let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
+//             }
 
-    Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-        deleteBtn.addEventListener("click", (e) => {
+//         }
 
-            // WHEN THE SPAN ELEMENT IS FIRED
 
-            let aElement;
-            if (e.target.tagName === "SPAN") {
-                aElement = e.target.parentElement;
-            } else {
-                aElement = e.target;
-            }
-
-            let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-            console.log(competenceIndex);
-            glossaireArray.splice(glossaireIndex, 1);
-
-            parseGlossaireToTable(glossaireArray, niveau);
-
-        })
-    })
+//     }
 
 
 
-}
+//     // Click event listeners 
+//     let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
+//     let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
+
+//     Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
+//         deleteBtn.addEventListener("click", (e) => {
+
+//             // WHEN THE SPAN ELEMENT IS FIRED
+
+//             let aElement;
+//             if (e.target.tagName === "SPAN") {
+//                 aElement = e.target.parentElement;
+//             } else {
+//                 aElement = e.target;
+//             }
+
+//             let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
+
+//             console.log(competenceIndex);
+//             glossaireArray.splice(glossaireIndex, 1);
+
+//             parseGlossaireToTable(glossaireArray, niveau);
+
+//         })
+//     })
+
+
+
+// }
 
 function lastNiveauContainer() {
     let niveaux = Array.from(document.querySelectorAll(".niveau-container"));
@@ -794,10 +790,6 @@ function addListenersToNewNiveau(container) {
         });
 
     }
-
-
-
-
 
 
     btnEditNiveau.addEventListener("click", (e) => {
@@ -998,6 +990,7 @@ function addListenersToNewNiveau(container) {
         disableInputsFor(container);
 
 
+        // CREATE A  NEW CONTAINER 
         let niveauContainer = document.querySelector(".niveau-container");
         let parent = niveauContainer.parentElement;
 
@@ -1344,6 +1337,7 @@ async function getListCompetences() {
         error => console.log(error) // Handle the error response object
     );
 }
+
 async function postEmploi(emploiArr) {
     let url = "http://localhost:8080/preassessment/api/v1/emploi/niveau/niveaux"
 
