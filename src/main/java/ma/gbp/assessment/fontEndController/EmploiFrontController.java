@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(path ="/emploi")
-public class EmploiController {
+public class EmploiFrontController {
     
 
     @GetMapping(path = "/add")

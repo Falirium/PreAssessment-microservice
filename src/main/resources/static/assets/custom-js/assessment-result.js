@@ -413,7 +413,7 @@ function buildURL(prefix, params) {
 }
 
 // ADD EVENT LISTENERS TO ACTION BTN
-$("#btn-assessment-terminate").click(function(e) {
+$("#btn-assessment-sus").click(function(e) {
 
     // SHOW CONFIRM DELETE MODAL
     showModal("confirm", "Confirmer l'action", `
@@ -439,7 +439,11 @@ $("#btn-assessment-terminate").click(function(e) {
         "padding" : "p-5",
         "textAligenement": "text-start"
     })
-})
+});
+
+$("#btn-assessment-terminate").click(function(e) {
+
+});
 
 function showModal(type, header, content, action, btnJson, eventHandler) {
 

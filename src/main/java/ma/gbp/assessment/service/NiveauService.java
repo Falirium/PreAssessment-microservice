@@ -38,4 +38,8 @@ public class NiveauService {
     public Niveau getNiveauByNameAndByLevel(String name, int level) {
         return niveauRepository.findByIntituleAndLevel(name, level);
     }
+
+    public void removeNiveauById(Long id) {
+        niveauRepository.deleteById(id);
+    }
 }

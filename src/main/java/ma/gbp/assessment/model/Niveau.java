@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -93,6 +94,11 @@ public class Niveau {
     @OneToMany(mappedBy="emploi")
     @JsonIgnore
     private List<FicheEvaluation> associatedFichesEvaluations;
+
+    @ManyToOne
+    @JoinColumn(name = "emploi_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Emploi emploi;
 
     public Niveau(String intitule, String filiere, String sousFiliere, Date dateMaj, String vocation, int level,
             List<Responsabilite> responsabilites, List<String> exigences, List<String> marqueurs) {

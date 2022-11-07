@@ -34,4 +34,12 @@ public class CompetenceReService {
     public CompetenceRe getCompetenceReByName(String compName) {
         return competenceReRepository.findByName(compName);
     }
+
+    public CompetenceRe getCompetenceReByNameAndTypeAndNiveau(String name, String type, String niveauRe) {
+        return competenceReRepository.findByNameAndTypeAndNiveauRequis(name, type, niveauRe);
+    }
+
+    public void removeCompetenceRequis(CompetenceRe cr) {
+        competenceReRepository.delete(cr);
+    }
 }
