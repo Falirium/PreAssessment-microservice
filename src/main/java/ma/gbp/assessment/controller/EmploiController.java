@@ -125,7 +125,8 @@ public class EmploiController {
                     "L'emploi " + "' " + newEmploi.getIntitule() + " ' " + "n'est pas trouvé");
         }
 
-        // STEP 1 : UPDATE LES INFORMATIONS DE L'EMPLOI
+        // STEP 1 : UPDATE LES INFORMATIONS DE BASE L'EMPLOI
+        
 
         // GET LIST OF NIVEAUX OF THE ASSOCIATED EMPLOI
         List<Niveau> listNiveauxOfEditedEmploi = editedEmploi.getNiveaux();
@@ -162,6 +163,13 @@ public class EmploiController {
 
             // GET THE ASSOCIATED NIVEAU
             Niveau associatedNiveau = getNiveauFromList(niveau.getLevel(), listNiveauxOfEditedEmploi);
+
+            // UPDATE LES INFORMATIONS DE BASE
+            associatedNiveau.setFiliere(niveau.getFiliere());
+            associatedNiveau.setSousFiliere(niveau.getSousFiliere());
+            associatedNiveau.setDateMaj(niveau.getDateMaj());
+            associatedNiveau.setVocation(niveau.getVocation());
+            associatedNiveau.setResponsabilites(niveau.getResponsabilites());
 
             // STEP 3.1 : UPDATE EXIGENCES + MARQUEURS
             associatedNiveau.setExigences(niveau.getExigences());

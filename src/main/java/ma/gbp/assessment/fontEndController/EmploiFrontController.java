@@ -14,6 +14,11 @@ public class EmploiFrontController {
         return "add-emploi";
     }
 
+    @GetMapping(path = "/edit")
+    public String editEmploi() {
+        return "edit-emploi";
+    }
+
     @GetMapping(path = "/competence/add")
     public String addCompetence() {
         return "add-competence";

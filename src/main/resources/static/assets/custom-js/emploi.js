@@ -1,6 +1,3 @@
-
-
-
 // MAIN ARRAYS
 let emploiJSON = {};
 let niveauxArray = [];
@@ -11,7 +8,7 @@ let responsabilitesArray = [];
 let exigencesArray = [];
 let marqueursArray = [];
 let competencesArray = [];
-let competenceNameArray = [];
+// let competenceNameArray = [];
 
 // USED TO PASS DATA TO SELECT2
 let selectionData = [];
@@ -53,7 +50,33 @@ let niveauCounter = 1;
 
 let focusedNiveauContainer = document.querySelector(".niveau-container");
 
-getListCompetences();
+// MAIN INITIALIZATION CODE
+
+getListCompetences().then((success) => {
+
+    fetchCompetencesArray = success;
+    // competenceNameArray = getNameCompetence(competencesArray);
+    console.log(fetchCompetencesArray);
+
+    addListenersToNewNiveau(focusedNiveauContainer);
+
+    selectionData = getCompetencesDataSource(fetchCompetencesArray);
+
+
+    $("#input-nom-competence").select2({
+        data: selectionData
+    })
+
+}).then(() => {
+
+    // LANCH EDIT SCRIPT IF IT EXIST
+
+    if (localStorage.getItem("emploi") != null) {
+        lanchEditScript();
+    }
+});
+
+// END OF INITIALIZATION
 
 
 
@@ -90,33 +113,39 @@ btnAddResponsabilite.addEventListener('click', (e) => {
     parseResToTable(responsabilitesArray);
 })
 
-btnConfirmDeleteNiveau.addEventListener("click", (e) => {
+// btnConfirmDeleteNiveau.addEventListener("click", (e) => {
 
-    // console.log("HERE WE GO");
-    // console.log(currentNiveauIndex);;
+//     // console.log("HERE WE GO");
+//     // console.log(currentNiveauIndex);;
 
-    if (currentNiveauIndex === 0) {
+//     if (currentNiveauIndex === 0) {
 
-    } else {
+//     } else {
 
-        // DELETE THE NIVEAU ENTRIE FROM NIVEAUX-ARRAY
-        // console.log(Array.from(document.querySelectorAll(".niveau-container")).indexOf(container));
-        niveauxArray.splice(currentNiveauIndex, 1);
-
-
-
-        // DELETE THE NIVEAU CONTAINER
-        let currentNiveauContainerArray = Array.from(document.querySelectorAll(".niveau-container"));
-        let currentNiveauContainer = currentNiveauContainerArray[currentNiveauIndex];
-        // console.log(currentNiveauContainer);
-        currentNiveauContainer.remove();
-
-        niveauCounter--;
+//         // DELETE THE NIVEAU ENTRIE FROM NIVEAUX-ARRAY
+//         // console.log(Array.from(document.querySelectorAll(".niveau-container")).indexOf(container));
+//         niveauxArray.splice(currentNiveauIndex, 1);
 
 
-    }
 
-})
+//         // DELETE THE NIVEAU CONTAINER
+//         let currentNiveauContainerArray = Array.from(document.querySelectorAll(".niveau-container"));
+//         let currentNiveauContainer = currentNiveauContainerArray[currentNiveauIndex];
+//         currentNiveauContainer.remove();
+
+//         niveauCounter--;
+
+//         // UPDATE VARIABLES ON THE CURRENT NIVEAU CONTAINER
+//         focusedNiveauContainer = lastNiveauContainer();
+//         currentNiveauIndex = niveauCounter - 1;
+
+//         // REMOVE DISABLE EFFECT ON THE LAST NIVEAU CONTAINER
+//         clearDisableFromInputsFor(focusedNiveauContainer);
+
+
+//     }
+
+// })
 
 $(".base-emploi-info").change(function (index) {
 
@@ -164,48 +193,94 @@ $("#btn-emploi-save").one('click', function () {
         emploiJSON["niveaux"] = niveauxArray;
 
 
-        // POST THE RESULT TO THE DATABASE
-        postEmploi(generateNiveauxFromEmploi(emploiJSON)).then((success) => {
-            
-            if (success.hasOwnProperty("message")) {
-                showModal("error", "Action échouée", success.message + " Veuillez remplir une nouvelle fiche d'emploi avec un nom différent", "", {
-                    "text" : "Revenir à l'acceuil",
-                    "color" : "danger",
-                    "id" : "sdq1"
-                }, function () {
-                    // REDIRECT TO THE LIST OF ASSESSMENTS
-                    setTimeout(function () {
-                        let currentUrl = window.location.href;
+        // console.log(generateEmploiJson(emploiJSON));
 
-                        window.location.href = extractDomain(currentUrl) + "emploi/list";
-                    }, 1000);
-                });
-            } else {
-                showModal("success", "Action complétée", "la fiche d'emploi avec ces niveaux de sénioritées a été ajouté avec succès à la base de données. ", "", {
-                    "text" : "Revenir à l'acceuil",
-                    "color" : "success",
-                    "id" : "sdq1"
-                }, function () {
-                    // REDIRECT TO THE LIST OF ASSESSMENTS
-                    setTimeout(function () {
-                        let currentUrl = window.location.href;
+        // 2 SCEANARIOS : SAVE NEW EMPLOI || EDIT A SAVED EMPLOI
+        if (localStorage.getItem("emploi") != null) {
 
-                        window.location.href = extractDomain(currentUrl) + "emploi/list";
-                    }, 1000);
-                });
-            }
-            
-            
-        });
+            // EDIT AN EMPLOI
+            updateEmploi(generateEmploiJson(emploiJSON)).then((success) => {
+
+                if (success.hasOwnProperty("message")) {
+                    showModal("error", "Action échouée", success.message + "", "", {
+                        "text": "Revenir à l'acceuil",
+                        "color": "danger",
+                        "id": "sdq1"
+                    }, function () {
+                        // REDIRECT TO THE LIST OF ASSESSMENTS
+                        setTimeout(function () {
+                            let currentUrl = window.location.href;
+
+                            window.location.href = extractDomain(currentUrl) + "emploi/list";
+                        }, 1000);
+                    });
+                } else {
+
+                    // REMOVE EMPLOI FROM LOCALSTORAGE
+                    localStorage.removeItem("emploi");
+
+                    console.log(success);
+                    showModal("success", "Action complétée", "la fiche d'emploi avec ces niveaux de sénioritées a été ajouté avec succès à la base de données. ", "", {
+                        "text": "Revenir à l'acceuil",
+                        "color": "success",
+                        "id": "sdq1"
+                    }, function () {
+                        // REDIRECT TO THE LIST OF ASSESSMENTS
+                        setTimeout(function () {
+                            let currentUrl = window.location.href;
+
+                            window.location.href = extractDomain(currentUrl) + "emploi/list";
+                        }, 1000);
+                    });
+                }
+
+
+            });
+
+        } else {
+
+            // SAVE A NEW EPLOI
+            postEmploi(generateEmploiJson(emploiJSON)).then((success) => {
+
+                if (success.hasOwnProperty("message")) {
+                    showModal("error", "Action échouée", success.message + " Veuillez remplir une nouvelle fiche d'emploi avec un nom différent", "", {
+                        "text": "Revenir à l'acceuil",
+                        "color": "danger",
+                        "id": "sdq1"
+                    }, function () {
+                        // REDIRECT TO THE LIST OF ASSESSMENTS
+                        setTimeout(function () {
+                            let currentUrl = window.location.href;
+
+                            window.location.href = extractDomain(currentUrl) + "emploi/list";
+                        }, 1000);
+                    });
+                } else {
+                    showModal("success", "Action complétée", "la fiche d'emploi avec ces niveaux de sénioritées a été ajouté avec succès à la base de données. ", "", {
+                        "text": "Revenir à l'acceuil",
+                        "color": "success",
+                        "id": "sdq1"
+                    }, function () {
+                        // REDIRECT TO THE LIST OF ASSESSMENTS
+                        setTimeout(function () {
+                            let currentUrl = window.location.href;
+
+                            window.location.href = extractDomain(currentUrl) + "emploi/list";
+                        }, 1000);
+                    });
+                }
+
+
+            });
+        }
+
+
+
 
     }
 
-    console.log(generateNiveauxFromEmploi(emploiJSON));
+    // console.log(generateEmploiJson(emploiJSON));
 })
-
-
-
-
 
 
 
@@ -220,7 +295,7 @@ function parseResToTable(responsabilitesArray) {
     for (var i = 0; i < responsabilitesArray.length; i++) {
 
         let valuesLength = responsabilitesArray[i]["valeur"].length;
-        console.log(responsabilitesArray);
+        // console.log(responsabilitesArray);
 
         for (var j = 0; j < valuesLength; j++) {
             let tr = tableBody.insertRow(-1);
@@ -573,7 +648,7 @@ function parseMarqueurToTable(marqueurs, niveauContainer) {
 function parseCompetenceToTable(competences, niveauContainer) {
     let tableBody = niveauContainer.querySelector("#competence-table-body");
 
-    console.log(niveauContainer);
+    // console.log(niveauContainer);
 
     // Initilize the table body
 
@@ -677,89 +752,7 @@ function parseCompetenceToTable(competences, niveauContainer) {
 
 }
 
-// function parseGlossaireToTable(glossaire, niveauContainer) {
-//     let tableBody = niveauContainer.querySelector("#glossaire-table-body");
 
-
-//     // Initilize the table body
-
-//     tableBody.innerHTML = ``;
-//     for (var j = 0; j < glossaire.length; j++) {
-
-//         for (var i = 0; i < glossaire[j]["niveaux"].length; i++) {
-
-//             let tr = tableBody.insertRow(-1);
-
-//             if (i === 0) {
-
-//                 let nameCell = tr.insertCell(-1);
-//                 nameCell.setAttribute("rowspan", "4");
-//                 nameCell.innerHTML = glossaire[j].name;
-
-//                 let niveauCell = tr.insertCell(-1);
-//                 niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
-
-//                 let defCell = tr.insertCell(-1);
-//                 defCell.innerHTML = glossaire[j]["niveaux"][i].description;
-//                 let actionCell = tr.insertCell(-1);
-//                 actionCell.setAttribute("rowspan", "4");
-//                 actionCell.innerHTML = `
-//                     <div class="g-2">
-//                         <a id="glo-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
-//                             data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
-//                         <a id="glo-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
-//                             data-bs-original-title="Delete"><span
-//                                 class="fe fe-trash-2 fs-14"></span></a>
-//                     </div> 
-//                 `;
-
-//             } else {
-//                 let niveauCell = tr.insertCell(-1);
-//                 niveauCell.innerHTML = glossaire[j]["niveaux"][i].niveau;
-
-//                 let defCell = tr.insertCell(-1);
-//                 defCell.innerHTML = glossaire[j]["niveaux"][i].description;
-
-
-
-//             }
-
-//         }
-
-
-//     }
-
-
-
-//     // Click event listeners 
-//     let allDeleteCatBtns = tableBody.querySelectorAll("#glo-table-btn-delete");
-//     let allEditCatBtns = tableBody.querySelectorAll("#glo-table-btn-edit");
-
-//     Array.from(allDeleteCatBtns).forEach((deleteBtn) => {
-//         deleteBtn.addEventListener("click", (e) => {
-
-//             // WHEN THE SPAN ELEMENT IS FIRED
-
-//             let aElement;
-//             if (e.target.tagName === "SPAN") {
-//                 aElement = e.target.parentElement;
-//             } else {
-//                 aElement = e.target;
-//             }
-
-//             let glossaireIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-//             console.log(competenceIndex);
-//             glossaireArray.splice(glossaireIndex, 1);
-
-//             parseGlossaireToTable(glossaireArray, niveau);
-
-//         })
-//     })
-
-
-
-// }
 
 function lastNiveauContainer() {
     let niveaux = Array.from(document.querySelectorAll(".niveau-container"));
@@ -781,10 +774,11 @@ function addListenersToNewNiveau(container) {
 
 
     // ADD DATA-INDEX TO SELECT ELEMENT => 
-    console.log($("#input-nom-competence").last());
+    // console.log($("#input-nom-competence").last());
     $(".nom-competence").last().attr("data-index", currentNiveauIndex.toString());
 
     if (currentNiveauIndex !== 0) {
+        console.log(currentNiveauIndex + "---" + "select2 done")
         $(".niveau-container").last().find("#input-nom-competence").select2({
             data: selectionData
         });
@@ -804,48 +798,60 @@ function addListenersToNewNiveau(container) {
         }
         //console.log(container);
 
-        // CLEAR DISABLE FROM INPUT
+        // CASE OF EXISTENCE OF 1 NIVEAU
+        if (niveauCounter > 1) {
 
-        // GET NIVEAU INDEX
-        let clickedNiveauIndex = Array.from(document.querySelectorAll(".niveau-container")).indexOf(container);
+            // GET NIVEAU INDEX
+            let clickedNiveauIndex = Array.from(document.querySelectorAll(".niveau-container")).indexOf(container);
 
-        console.log(currentNiveauIndex, clickedNiveauIndex);
+            console.log(currentNiveauIndex, clickedNiveauIndex);
 
 
-        // SAVE ARRAYS TO NIVEAUX-ARRAY
-        if (typeof (niveauxArray[currentNiveauIndex]) === 'undefined') { // SAVE THIS AS NEW ENTRY TO NIVEAUX ARRAY
+            // SAVE ARRAYS TO NIVEAUX-ARRAY
+            if (typeof (niveauxArray[currentNiveauIndex]) === 'undefined') { // SAVE THIS AS NEW ENTRY TO NIVEAUX ARRAY
 
-            let niveauJson = {
-                "level": niveauCounter,
-                "exigences": exigencesArray,
-                "marqueurs": marqueursArray,
-                "competences": competencesArray
-            };
+                let niveauJson = {
+                    "level": niveauCounter,
+                    "exigences": exigencesArray,
+                    "marqueurs": marqueursArray,
+                    "competences": competencesArray
+                };
 
-            niveauxArray.push(niveauJson);
+                niveauxArray.push(niveauJson);
+
+            } else {
+                niveauxArray[currentNiveauIndex].exigences = exigencesArray;
+                niveauxArray[currentNiveauIndex].marqueurs = marqueursArray;
+                niveauxArray[currentNiveauIndex]["competences"] = competencesArray;
+            }
+
+            // GET THE VALUES OF THE CLICKED NIVEAU FROM NIVEAUXARRAY
+            exigencesArray = niveauxArray[clickedNiveauIndex].exigences;
+            marqueursArray = niveauxArray[clickedNiveauIndex].marqueurs;
+            competencesArray = niveauxArray[clickedNiveauIndex]["competences"];
+
+
+            // CLEAR DISABLED-READONLY FROM INPUTS
+            clearDisableFromInputsFor(container);
+
+            // DISABLE INPUTS-SELECTS FOR THE PREVIOUS NIVEAU CONTAINER
+            let previousNiveau = Array.from(document.querySelectorAll(".niveau-container"))[currentNiveauIndex];
+            disableInputsFor(previousNiveau);
+
+
+            // CHANGE CURRENT TO CLICKED
+            currentNiveauIndex = clickedNiveauIndex;
 
         } else {
-            niveauxArray[currentNiveauIndex].exigences = exigencesArray;
-            niveauxArray[currentNiveauIndex].marqueurs = marqueursArray;
-            niveauxArray[currentNiveauIndex]["competences"] = competencesArray;
+            // GET THE VALUES OF THE CLICKED NIVEAU FROM NIVEAUXARRAY
+            exigencesArray = niveauxArray[0].exigences;
+            marqueursArray = niveauxArray[0].marqueurs;
+            competencesArray = niveauxArray[0]["competences"];
         }
 
-        // GET THE VALUES OF THE CLICKED NIVEAU FROM NIVEAUXARRAY
-        exigencesArray = niveauxArray[clickedNiveauIndex].exigences;
-        marqueursArray = niveauxArray[clickedNiveauIndex].marqueurs;
-        competencesArray = niveauxArray[clickedNiveauIndex]["competences"];
+        // CLEAR DISABLE FROM INPUT
 
 
-        // CLEAR DISABLED-READONLY FROM INPUTS
-        clearDisableFromInputsFor(container);
-
-        // DISABLE INPUTS-SELECTS FOR THE PREVIOUS NIVEAU CONTAINER
-        let previousNiveau = Array.from(document.querySelectorAll(".niveau-container"))[currentNiveauIndex];
-        disableInputsFor(previousNiveau);
-
-
-        // CHANGE CURRENT TO CLICKED
-        currentNiveauIndex = clickedNiveauIndex;
 
 
 
@@ -869,8 +875,46 @@ function addListenersToNewNiveau(container) {
         currentNiveauIndex = clickedNiveauIndex;
 
         // A WINDOW IS SHOWN TO CONFIRM THE DELETE
-        var myModal = new bootstrap.Modal(document.getElementById('modaldemo5'));
-        myModal.show();
+        // var myModal = new bootstrap.Modal(document.getElementById('modaldemo5'));
+        // myModal.show();
+
+        showModal("error", "Supprimer le niveau de séniorité !", 'Vous essayez de supprimer ce niveau de séniorité. Après votre confirmation, vous ne pourrez pas restaurer les informations supprimées. Cliquez sur "Supprimer le niveau" pour confirmer', "", {
+            "text": "Supprimer le niveau",
+            "color": "danger",
+            "id": "dfe1"
+        }, function () {
+
+
+            // console.log("HERE WE GO");
+            // console.log(currentNiveauIndex);;
+
+            if (currentNiveauIndex === 0) {
+
+            } else {
+
+                // DELETE THE NIVEAU ENTRIE FROM NIVEAUX-ARRAY
+                // console.log(Array.from(document.querySelectorAll(".niveau-container")).indexOf(container));
+                niveauxArray.splice(currentNiveauIndex, 1);
+
+
+
+                // DELETE THE NIVEAU CONTAINER
+                let currentNiveauContainerArray = Array.from(document.querySelectorAll(".niveau-container"));
+                let currentNiveauContainer = currentNiveauContainerArray[currentNiveauIndex];
+                currentNiveauContainer.remove();
+
+                niveauCounter--;
+
+                // UPDATE VARIABLES ON THE CURRENT NIVEAU CONTAINER
+                focusedNiveauContainer = lastNiveauContainer();
+                currentNiveauIndex = niveauCounter - 1;
+
+                // REMOVE DISABLE EFFECT ON THE LAST NIVEAU CONTAINER
+                clearDisableFromInputsFor(focusedNiveauContainer);
+
+
+            }
+        })
 
     })
 
@@ -1306,7 +1350,7 @@ function checkLastNiveauInputs() {
 async function getListCompetences() {
     let url = "http://localhost:8080/preassessment/api/v1/competence/"
 
-    fetch(url, { // Your POST endpoint
+    return fetch(url, { // Your POST endpoint
         method: 'GET',
         headers: {
             // Content-Type may need to be completely **omitted**
@@ -1316,36 +1360,20 @@ async function getListCompetences() {
     }).then(
         response => response.json() // if the response is a JSON object
     ).then(
-        success => {
-            fetchCompetencesArray = success;
-            // competenceNameArray = getNameCompetence(competencesArray);
-            console.log(fetchCompetencesArray);
-
-            addListenersToNewNiveau(focusedNiveauContainer);
-
-            selectionData = getCompetencesDataSource(fetchCompetencesArray);
-
-            $(function () {
-                $("#input-nom-competence").select2({
-                    data: selectionData
-                })
-            })
-
-
-        } // Handle the success response object
+        success => success // Handle the success response object
     ).catch(
         error => console.log(error) // Handle the error response object
     );
 }
 
 async function postEmploi(emploiArr) {
-    let url = "http://localhost:8080/preassessment/api/v1/emploi/niveau/niveaux"
+    let url = "http://localhost:8080/preassessment/api/v1/emploi/add";
 
     return fetch(url, { // Your POST endpoint
         method: 'POST',
         headers: {
             // Content-Type may need to be completely **omitted**
-            // or you may need something
+            // or you may need something            
             "Content-Type": "application/json"
         },
         body: JSON.stringify(emploiArr) // This is your file object
@@ -1391,7 +1419,8 @@ function getCompetencesDataSource(arr) {
 }
 
 
-function generateNiveauxFromEmploi(json) {
+function generateEmploiJson(json) {
+
     let niveauArr = []
     json["niveaux"].map((niveau, index) => {
         niveauArr.push({
@@ -1409,7 +1438,11 @@ function generateNiveauxFromEmploi(json) {
 
 
     })
-    return niveauArr;
+    return {
+        "id": emploiJSON.id === null ? null : emploiJSON.id,
+        "intitule": niveauArr[0].intitule,
+        "niveaux": niveauArr
+    };
 }
 
 function getArrFromJsonArr(jsonArr) {

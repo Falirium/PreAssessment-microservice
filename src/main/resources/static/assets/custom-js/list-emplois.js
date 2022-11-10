@@ -3,7 +3,9 @@ console.log("list-emplois.js")
 
 
 
-let authorizedCol = ["id", "intitule", "level", "filiere", "sousFiliere", "dateMaj"];
+// let authorizedCol = ["id", "intitule", "level", "filiere", "sousFiliere", "dateMaj"];
+let authorizedCol = ["id", "intitule", "niveaux", "filiere", "sousFiliere", "dateMaj"];
+
 
 let emploiDatatable;
 
@@ -36,22 +38,39 @@ getListOfEmplois().then((data) => {
             aElement = e.target;
         }
 
-        let btns = $(".view-btn").get();
-        let indexOfAssessment = btns.indexOf(aElement);
-        console.log(indexOfAssessment);
+        // let btns = $(".view-btn").get();
+        // let indexOfAssessment = btns.indexOf(aElement);
+        // console.log(indexOfAssessment);
 
-        // GET THE ASSOCIATED ASSESSMENT
-        let assessment = listEmplois[indexOfAssessment];
-        console.log(assessment);
+        // // GET THE ASSOCIATED ASSESSMENT
+        // let assessment = listEmplois[indexOfAssessment];
+        // console.log(assessment);
 
-        //SAVE ASSESSMENT ON LOCAL SESSION
-        localStorage.setItem("assessment", JSON.stringify(assessment));
+        // //SAVE ASSESSMENT ON LOCAL SESSION
+        // localStorage.setItem("assessment", JSON.stringify(assessment));
 
-        // REDIRECT TO THE ASSESSMENT PAGE 
-        // let url = buildURL("evaluation/evaluate", urlParams);
+        // // REDIRECT TO THE ASSESSMENT PAGE 
+        // // let url = buildURL("evaluation/evaluate", urlParams);
 
-        // window.open(extractDomain(currentUrl) + url)
-        // console.log(localStorage.getItem("assessment"));
+        // // window.open(extractDomain(currentUrl) + url)
+        // // console.log(localStorage.getItem("assessment"));
+
+        let emploiName = $(aElement).parents("td").siblings().slice(1, 2).text();
+        console.log(emploiName);
+
+        let emploi = getEmploiInfoFromArr(emploiName).emploi;
+        console.log(emploi);
+
+        //SAVE EMPLOI ON LOCAL SESSION
+        localStorage.setItem("emploi", JSON.stringify(emploi));
+
+        // REDIRECT TO THE EMPLOI EDIT PAGE 
+       
+        // let currentUrl = window.location.href;
+
+        // window.location.href = extractDomain(currentUrl) + "emploi/edit";
+
+
     })
 
 })
@@ -67,7 +86,7 @@ function buildURL(prefix, params) {
 }
 
 async function getListOfEmplois() {
-    let url = "http://localhost:8080/preassessment/api/v1/emploi/niveau/";
+    let url = "http://localhost:8080/preassessment/api/v1/emploi/";
     return fetch(url, {
         method: 'GET'
     }).then(response => response.json())
@@ -83,7 +102,7 @@ function getEmploiColumnFromJson(json, authorizedCol) {
     let colArr = [];
 
 
-    if(typeof(json) === 'undefined') {
+    if (typeof (json) === 'undefined') {
         return [];
     }
 
@@ -148,15 +167,15 @@ function getEmploisDataFromJson(arrJson) {
 
         arr.push(e.id);
         arr.push(capitilizeFirstLetter(e.intitule));
-        arr.push(e.level);
-        arr.push(e.filiere);
-        arr.push(e.sousFiliere);
-        if (e.dateMaj != null) {
-            arr.push(e.dateMaj.split("T")[0]);
+        arr.push(e.niveaux.length);
+        arr.push(e.niveaux[0]["filiere"]);
+        arr.push(e.niveaux[0]["sousFiliere"]);
+        if (e.niveaux[0]["dateMaj"] != null) {
+            arr.push(e.niveaux[0]["dateMaj"].split("T")[0]);
         } else {
             arr.push("No date");
         }
-        
+
 
         // ACTION COL
         arr.push(`
@@ -190,4 +209,24 @@ function capitilizeFirstLetter(str) {
     //using a blankspace as a separator 
     return arr.join(" ");
 
+}
+
+
+
+function getEmploiInfoFromArr(emploiName) {
+
+    for (var i = 0; i < listEmplois.length; i++) {
+        let emploi = listEmplois[i];
+        if (emploiName.toUpperCase() === emploi.intitule.toUpperCase()) {
+            return {
+                "index": i,
+                "emploi": emploi
+            }
+        }
+
+        return {
+            "index": -1,
+            "emploi": null
+        }
+    }
 }
