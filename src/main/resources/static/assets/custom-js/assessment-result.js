@@ -29,6 +29,22 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
     displayCompletedEvaluations(count.completed, count.total);
     displayTotalFiches(count.total);
 
+    // CHECK ASSESSMENT STATUS
+    if (assessmentJson.status === "SUSPENDED") {
+
+        // CHANGE THE CONTENT OF SUSPEND BTN
+        $("#btn-assessment-sus").addClass("btn-info").removeClass("btn-warning").text("Reprendre l'assessment");
+
+    } else if (assessmentJson.status === "ENDED") {
+
+        // DISABLES BTNS
+        $("#btn-assessment-sus").addClass("disabled")
+        $("#btn-assessment-terminate").addClass("disabled")
+        $("#btn-assessment-inform").addClass("disabled")
+
+    }
+
+
     // DISPLAY THE LIST OF FICHES
 
     // INITIALIZE DATATABLE
@@ -328,37 +344,37 @@ function getFichesDataFromJson(arrJson) {
         if (e.status === "CREATED") {
             arr.push(`
             <div class="mt-sm-1 d-block">
-                <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Non évalué</span>
+                <span class="tag tag-radius tag-round tag-outline-danger">Non évalué</span>
             </div>
                 `)
         } else if (e.status.includes("ÉVALUÉ-0")) {
             arr.push(`
             <div class="mt-sm-1 d-block">
-                <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Évalué</span>
+                <span class="tag tag-radius tag-round tag-outline-warning">Évalué</span>
             </div>
             <div class="mt-sm-1 d-block">
-                <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">en cours</span>
+                <span class="tag tag-radius tag-round tag-outline-warning">En cours</span>
             </div>
                 `)
         } else if (e.status.includes("ÉVALUÉ-1")) {
             arr.push(`
             <div class="mt-sm-1 d-block">
-                <span class="badge bg-success-transparent rounded-pill text-lime p-2 px-3">Évalué par N+1</span>
+                <span class="tag tag-radius tag-round tag-outline-success">Évalué par N+1</span>
             </div>
                 `)
         } else if (e.status.includes("TERMINÉ-0")) {
             arr.push(`
             <div class="mt-sm-1 d-block">
-                <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Validé</span>
+                <span class="tag tag-radius tag-round tag-outline-warning">Validé</span>
              </div>
              <div class="mt-sm-1 d-block">
-                <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">En cours</span>
+                <span class="tag tag-radius tag-round tag-outline-warning">En cours</span>
              </div>
             `)
-        }  else if (e.status.includes("TERMINÉ-1")) {
+        } else if (e.status.includes("TERMINÉ-1")) {
             arr.push(`
             <div class="mt-sm-1 d-block">
-                <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Validé par N+2</span>
+                <span class="tag tag-radius tag-round tag-outline-success">Évalué par N+2</span>
              </div>
             `)
         }
@@ -413,9 +429,66 @@ function buildURL(prefix, params) {
 }
 
 // ADD EVENT LISTENERS TO ACTION BTN
-$("#btn-assessment-sus").click(function(e) {
+$("#btn-assessment-sus").click(function (e) {
 
-    // SHOW CONFIRM DELETE MODAL
+    if (assessmentJson.status === "SUSPENDED") {
+
+
+        showModal("confirm", "Confirmer l'action", `
+        Vous êtes sur le point de reprendre cette assessment. Après la confimation, tous les managers ont pu terminer leurs évaluations non terminées.
+        `, "", {
+            "text": "Reprise de l'assessment",
+            "color": "warning",
+            "id": "dqz1",
+            "hasFermerBtn": true
+        }, function () {
+            // alert("Assessment terminer");
+    
+            // CHANGE THE STATUS TO LANCHED
+            assessmentJson.status = "LANCHED";
+    
+            // SAVE THE RESULT TO DB
+            updateAssessment(assessmentJson).then((success) => {
+    
+                // REDIRECT TO THE ASSESSMENT PAGE 
+                if (success.hasOwnProperty("message")) {
+    
+                    // SHOW ERROR MODAL
+                    showModal("error", "Action échouée", success.message, "", {
+                        "text": "Revenir à l'acceuil",
+                        "color": "error",
+                        "id": "dqz1"
+                    }, function () {
+    
+                        //  REDIRECT TO THE ASSESSMENT PAGE
+                        redirectTo("assessment/list", 1000);
+                    });
+    
+                } else {
+    
+                    // SHOW SUCCESS MDOAL
+                    showModal("success", "Action complétée", "L'assessment est maintenant repris. Tous les managers peuvent compléter leurs évaluations", "", {
+                        "text": "Revenir à l'acceuil",
+                        "color": "success",
+                        "id": "dqz1"
+                    }, function () {
+    
+    
+                        //  REDIRECT TO THE ASSESSMENT PAGE
+                        redirectTo("assessment/list", 1000);
+                    });
+                }
+                // })
+    
+    
+            }, {
+                "padding": "p-5",
+                "textAligenement": "text-start"
+            })
+        });
+
+    } else {
+        // SHOW CONFIRM SUSPEND MODAL
     showModal("confirm", "Confirmer l'action", `
     Vous êtes sur le point de mettre fin à cette évaluation ! Avant de confirmer cette action, veuillez vous assurer de ce qui suit :
     <ul class="list-style-1">
@@ -428,21 +501,126 @@ $("#btn-assessment-sus").click(function(e) {
         <li>Si un manager est en train de valider un dossier, son résultat ne comptera pas.</li>
     </ul>
      
-    `,"" ,{
-        "text" : "Terminer l'assessment",
-        "color" : "warning",
-        "id" : "dqz1",
-        "hasFermerBtn" : true
-    }, function() {
-        alert("Assessment terminer");
-    }, {
-        "padding" : "p-5",
-        "textAligenement": "text-start"
-    })
+    `, "", {
+        "text": "Suspendre l'assessment",
+        "color": "warning",
+        "id": "dqz1",
+        "hasFermerBtn": true
+    }, function () {
+        // alert("Assessment terminer");
+
+        // CHANGE THE STATUS TO SUSPEND
+        assessmentJson.status = "SUSPENDED";
+
+        // SAVE THE RESULT TO DB
+        updateAssessment(assessmentJson).then((success) => {
+
+            // REDIRECT TO THE ASSESSMENT PAGE 
+            if (success.hasOwnProperty("message")) {
+
+                // SHOW ERROR MODAL
+                showModal("error", "Action échouée", success.message, "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "error",
+                    "id": "dqz1"
+                }, function () {
+
+                    //  REDIRECT TO THE ASSESSMENT PAGE
+                    redirectTo("assessment/list", 1000);
+                });
+
+            } else {
+
+                // SHOW SUCCESS MDOAL
+                showModal("success", "Action complétée", "L'assessment est maintenant suspendu avec succès. Tous les résultats sont enregistrés dans la base de données", "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "success",
+                    "id": "dqz1"
+                }, function () {
+
+
+                    //  REDIRECT TO THE ASSESSMENT PAGE
+                    redirectTo("assessment/list", 1000);
+                });
+            }
+            // })
+
+
+        }, {
+            "padding": "p-5",
+            "textAligenement": "text-start"
+        })
+    });
+    }
+
+    
 });
 
-$("#btn-assessment-terminate").click(function(e) {
 
+$("#btn-assessment-terminate").click(function (e) {
+
+    // SHOW CONFIRM TERMINATE MODAL
+    showModal("confirm", "Confirmer l'action", `
+    Vous êtes sur le point de mettre fin à cette évaluation ! Avant de confirmer cette action, veuillez vous assurer de ce qui suit :
+    <ul class="list-style-1">
+        <li>Tous les managers ont complété leurs fiches d'évaluations.</li>
+        <li> LES MANAGERS NE SONT PAS EN TRAIN D'ESSAYER DE VALIDER LES FICHES D'ÉVALUATIONS.</li>
+    </ul> <br>
+    Lorsque vous confirmez cette action : 
+    <ul class="list-style-1">
+        <li>Les managers ne pourront plus évaluer les fiches d'évaluations laissées</li>
+        <li>Si un manager est en train de valider un dossier, son résultat ne comptera pas.</li>
+    </ul>
+     
+    `, "", {
+        "text": "Terminer l'assessment",
+        "color": "warning",
+        "id": "dqz1",
+        "hasFermerBtn": true
+    }, function () {
+        // alert("Assessment terminer");
+
+        // CHANGE THE STATUS TO SUSPEND
+        assessmentJson.status = "ENDED";
+
+        // SAVE THE RESULT TO DB
+        updateAssessment(assessmentJson).then((success) => {
+
+            // REDIRECT TO THE ASSESSMENT PAGE 
+            if (success.hasOwnProperty("message")) {
+
+                // SHOW ERROR MODAL
+                showModal("error", "Action échouée", success.message, "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "error",
+                    "id": "dqz1"
+                }, function () {
+
+                    //  REDIRECT TO THE ASSESSMENT PAGE
+                    redirectTo("assessment/list", 1000);
+                });
+
+            } else {
+
+                // SHOW SUCCESS MDOAL
+                showModal("success", "Action complétée", "L'assessment est maintenant terminé avec succès. Tous les résultats sont enregistrés dans la base de données", "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "success",
+                    "id": "dqz1"
+                }, function () {
+
+
+                    //  REDIRECT TO THE ASSESSMENT PAGE
+                    redirectTo("assessment/list", 1000);
+                });
+            }
+        })
+
+
+    }, {
+        "padding": "p-5",
+        "textAligenement": "text-start"
+    })
 });
 
 function showModal(type, header, content, action, btnJson, eventHandler) {
@@ -520,8 +698,39 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
     $(modalHeaderId).text(header);
 
     // SET CONTENT
-    $(modalContentId).text(content)
+    $(modalContentId).html(content)
 
     myModal.show();
+
+}
+
+async function updateAssessment(json) {
+    let url = "http://localhost:8080/preassessment/api/v1/assessment/status/" + json.id;
+
+    return fetch(url, {
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(json)
+    }).then(
+        result => result.json
+    )
+        .then(
+            success => success
+        )
+        .catch(
+            error => console.log(error)
+        )
+}
+
+
+function redirectTo(url, timeInMilliseconds) {
+    setTimeout(function () {
+        let currentUrl = window.location.href;
+
+        window.location.href = extractDomain(currentUrl) + url;
+    },
+        timeInMilliseconds);
 
 }

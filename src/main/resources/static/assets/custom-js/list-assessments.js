@@ -249,7 +249,8 @@ function getAssessmentsDataFromJson(arrJson) {
             if (e.status === "CREATED") {
                 arr.push(`
             <div class="mt-sm-1 d-block">
-             <span class="badge bg-purple-transparent rounded-pill text-purple p-2 px-3"> Enregistré </span>
+             
+             <span class="tag tag-radius tag-round tag-outline-info">Enregistré</span>
             </div>
                 `)
             } else if (e.status === "LANCHED") {
@@ -260,10 +261,10 @@ function getAssessmentsDataFromJson(arrJson) {
 
                     arr.push(`
                 <div class="mt-sm-1 d-block">
-                    <span class="badge bg-primary-transparent rounded-pill text-primary p-2 px-3"> Lancé </span>
+                    <span class="tag tag-radius tag-round tag-outline-primary">Lancé</span>
                 </div>
                 <div class="mt-sm-1 d-block">
-                    <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3"> Dépassée </span>
+                    <span class="tag tag-radius tag-round tag-outline-danger">Dépassé le délai</span>
                 </div>
                     `)
 
@@ -271,10 +272,10 @@ function getAssessmentsDataFromJson(arrJson) {
 
                     arr.push(`
                 <div class="mt-sm-1 d-block">
-                    <span class="badge bg-primary-transparent rounded-pill text-primary p-2 px-3"> Lancé </span>
+                    <span class="tag tag-radius tag-round tag-outline-primary">Lancé</span>
                 </div>
                 <div class="mt-sm-1 d-block">
-                    <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3"> En cours </span>
+                    <span class="tag tag-radius tag-round tag-outline-warning">En cours</span>
                 </div>
                     `)
 
@@ -282,11 +283,24 @@ function getAssessmentsDataFromJson(arrJson) {
 
             } else if (e.status === "COMPLETED") {
                 arr.push(`
+
             <div class="mt-sm-1 d-block">
-                <span class="badge bg-primary-transparent rounded-pill text-primary p-2 px-3"> Lancé </span>
+                
+                <span class="tag tag-radius tag-round tag-outline-success">Terminé</span>
             </div>
+                `)
+            } else if (e.status === "SUSPENDED") {
+                arr.push(`
             <div class="mt-sm-1 d-block">
-                <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3"> Terminé </span>
+                <span class="tag tag-radius tag-round tag-outline-primary">Suspendu</span>
+            </div>
+    
+                `)
+            } else if (e.status === "ENDED") {
+                arr.push(`
+            
+            <div class="mt-sm-1 d-block">
+                <span class="tag tag-radius tag-round tag-outline-success">Terminé</span>
             </div>
                 `)
             }
@@ -299,7 +313,7 @@ function getAssessmentsDataFromJson(arrJson) {
 
             arr.push(`
             <div class="mt-sm-1 d-block">
-             <span class="badge bg-purple-transparent rounded-pill text-purple p-2 px-3"> Enregistré </span>
+             <span class="tag tag-radius tag-round tag-outline-info">Enregistré</span>
             </div>
                 `)
 
@@ -424,14 +438,14 @@ function getAssessmentInfoFromArr(assessmentName) {
 
         if (assessmentName === assessment.name) {
             return {
-                "index" : i,
-                "assessment" : assessment
+                "index": i,
+                "assessment": assessment
             }
         }
 
         return {
-            "index" : -1,
-            "assessment" : null
+            "index": -1,
+            "assessment": null
         }
     }
 }

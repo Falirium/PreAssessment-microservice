@@ -240,7 +240,7 @@ public class FicheEvaluationController {
     return ResponseEntity.status(HttpStatus.OK).body(fe);
 }
     
-    @GetMapping(path ="/{matricule}")
+    @GetMapping(path ="/manager/{matricule}")
     public ResponseEntity<List<FicheEvaluation>> getFichesByManager(@PathVariable String matricule) {
 
         List<FicheEvaluation> fichesEvaluations = new ArrayList<FicheEvaluation>();
@@ -286,5 +286,17 @@ public class FicheEvaluationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ficheEvaluationService.saveFicheEvaluation(fe));
 
 
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<FicheEvaluation> getFicheEvaluationById(@PathVariable Long id) {
+
+        FicheEvaluation ficheEvaluation = ficheEvaluationService.getFicheEvaluationById(id);
+
+        if (ficheEvaluation == null) {
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "La fiche d'évaluation n'est pas trouvé");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(ficheEvaluation);
     }
 }

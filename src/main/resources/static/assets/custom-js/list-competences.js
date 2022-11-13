@@ -13,6 +13,9 @@ const btnAddGlossaire = document.querySelector("#btn-add-glossaire");
 let matriceCompetenceDatatable;
 let listMatricesCompetences;
 
+// REMOVE  LOCALSTORAGE
+localStorage.removeItem("matriceCompetence");
+
 // GET LIST OF COMPETENCES
 getListOfMatricesCompetences().then((data) => {
 

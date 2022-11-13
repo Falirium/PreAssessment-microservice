@@ -13,6 +13,12 @@ if (localStorage.getItem("ficheEvaluation") === null) {
 
     // GET FICHE & MANAGER
     ficheEvaluation = JSON.parse(localStorage.getItem("ficheEvaluation"));
+
+    // GET  FICHE-EVALUATION OBJECT FROM DATABASE
+    (async () => {
+        ficheEvaluation = await getFicheEvaluation(ficheEvaluation.id);
+    })();
+    
     if (localStorage.getItem("user") === "admin") {
         manager = localStorage.getItem("user");
     } else {
@@ -234,24 +240,13 @@ function saveFicheEvaluationHandler(e) {
 
         }
 
-        // SAVE THE RESULT TO THE DB
-        updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
-            console.log(result);
+        // CHECK FOR ASSESSMENT STATUS
+        if (ficheEvaluation.associatedAssessment.status == "SUSPENDED") {
 
-            // SHOW SUCCESS MODAL
-            let modalHeader;
-            let modalBody;
-            if (ficheEvaluation.status.includes("1")) {
-                modalHeader = "Action complétée";
-                modalBody = "La fiche a été envoyée avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
-            } else {
-
-                modalHeader = "Action complétée";
-                modalBody = "La fiche a été enregistré avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
-            }
-            showModal("success", modalHeader, modalBody, "", {
+            // SHOW ERROR MESSAGE
+            showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette fiche d'évaluation. Parce que les administrateurs ont suspendu cette évaluation. Veuillez les contacter directement pour résoudre ce problème.", "", {
                 "text": "Revenir à l'accueil",
-                "color": "success",
+                "color": "danger",
                 "id": "dje1"
             }, function () {
                 // REDIRECT TO EVALUATION LIST PAGE
@@ -261,16 +256,63 @@ function saveFicheEvaluationHandler(e) {
                 }, 1000)
             })
 
+        } else if (ficheEvaluation.associatedAssessment.status == "ENDED") {
+
+            // SHOW ERROR MESSAGE
+            showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette assessment, car cette évaluation a été terminée. ", "", {
+                "text": "Revenir à l'accueil",
+                "color": "danger",
+                "id": "dje1"
+            }, function () {
+                // REDIRECT TO EVALUATION LIST PAGE
+                setTimeout(function () {
+                    currentUrl = window.location.href;
+                    window.location.href = extractDomain(currentUrl) + "evaluation/list";
+                }, 1000)
+            })
+        } else {
+            // SAVE THE RESULT TO THE DB
+            updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
+                console.log(result);
+
+                // UNBIDE THIS HANDLER WITH THE ELEMENT ----> IMMITATION OF ONE CLICK EVENT LISTENER
+                $(this).off(e);
+
+                // SHOW SUCCESS MODAL
+                let modalHeader;
+                let modalBody;
+                if (ficheEvaluation.status.includes("1")) {
+                    modalHeader = "Action complétée";
+                    modalBody = "La fiche a été envoyée avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
+                } else {
+
+                    modalHeader = "Action complétée";
+                    modalBody = "La fiche a été enregistré avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
+                }
+                showModal("success", modalHeader, modalBody, "", {
+                    "text": "Revenir à l'accueil",
+                    "color": "success",
+                    "id": "dje1"
+                }, function () {
+                    // REDIRECT TO EVALUATION LIST PAGE
+                    setTimeout(function () {
+                        currentUrl = window.location.href;
+                        window.location.href = extractDomain(currentUrl) + "evaluation/list";
+                    }, 1000)
+                })
 
 
 
 
-        })
+
+            })
+        }
+
+
 
     }
 
-    // UNBIDE THIS HANDLER WITH THE ELEMENT ----> IMMITATION OF ONE CLICK EVENT LISTENER
-    $(this).off(e);
+
 }
 
 function allFieldSelected() {
@@ -3474,4 +3516,20 @@ function countsInputs(json) {
 
     return compteur;
 }
+
+
+async function getFicheEvaluation(id) {
+    let url = "http://localhost:8080/preassessment/api/v1/ficheEvaluation/" + id;
+
+    return fetch(url , {
+        method : 'GET'
+    }).then(response => response.json())
+    .then(success => {
+        console.log(success);
+        return success;
+    })
+    .catch( error => console.log(error))
+}
+
+
 

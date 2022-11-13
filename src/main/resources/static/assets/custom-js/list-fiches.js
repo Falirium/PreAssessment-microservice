@@ -88,7 +88,7 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
         console.log(ficheEvaluationId, ficheFromArr)
 
 
-        // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAM MANAGER
+        // CHECK IF THE FICHE IS ALREADY EVALUATED BY THE SAME MANAGER
 
         if ((manager.type === '1' && (ficheFromArr.status === "ÉVALUÉ-0" || ficheFromArr.status === "CREATED")) || (manager.type === '2' && (ficheFromArr.status === "ÉVALUÉ-1" || ficheFromArr.status === "TERMINÉ-0"))) {
 
@@ -176,7 +176,7 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
                     errorBody = `Désolé, vous ne pouvez pas accéder aux les fiches d'évaluations qui ont été évalués par votre manager.`
                 }
 
-
+                console.log("from N+1");
                 showModal("error", "Accès Refusé", errorBody, "");
 
             } else if (manager.type === '2') {
@@ -192,29 +192,14 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
                     errorBody = `Désolé, vous ne pouvez pas accéder ou modifier les fiches d'évaluations que vous avez envoyés aux consultants DRH.`;
                 }
 
-
+                console.log("from N+2");
                 showModal("error", "Accès Refusé", errorBody, "");
 
             }
         }
 
 
-        if ((ficheFromArr.status === "ÉVALUÉ" && manager.type === '1') || (ficheFromArr.status === "TERMINÉ" && manager.type === '2')) {
 
-            // SHOW ALERT MODAL
-            showModal("error", "Accès refusé", "Vous ne pouvez pas accéder aux fiches d'évaluations que vous avez évalués.  En cas de problème, contactez-nous", "")
-
-        } else if (manager.type === '2' && ficheFromArr.status === "CREATED") {
-
-            // SHOW ALERT MODAL
-            showModal("error", "Accès refusé", "Vous n'avez pas accès. Parce que le manager N+1 n'a pas encore évalué cette fiche");
-
-
-        } else {
-
-
-
-        }
 
 
     })
@@ -232,7 +217,7 @@ function buildURL(prefix, params) {
 }
 
 async function getListOfFichesByMatricule(matricule) {
-    let url = "http://localhost:8080/preassessment/api/v1/ficheEvaluation/" + matricule;
+    let url = "http://localhost:8080/preassessment/api/v1/ficheEvaluation/manager/" + matricule;
     return fetch(url, {
         method: 'GET'
     }).then(response => response.json())
@@ -332,7 +317,7 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
 
         // IF DATE D'EVALUATION IS THE SAME AS TODAY
         let dateNow = new Date();
-        if (comparingDates(dateNow.toISOString().split("T")[0], e.dateEvaluation.split("T")[0]).includes("greater")) {
+        if (comparingDates(dateNow.toISOString().split("T")[0], e.dateEvaluation.split("T")[0]).includes("less")) {
             continue;
         }
 
@@ -369,37 +354,44 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
                     if (e.status === "CREATED") {
                         arr.push(`
                         <div class="mt-sm-1 d-block">
-                            <span class="badge bg-danger-transparent rounded-pill text-danger p-2 px-3">Non évalué</span>
+                            <span class="tag tag-radius tag-round tag-outline-danger">Non évalué</span>
                         </div>
                             `)
                     } else if (e.status.includes("ÉVALUÉ-0")) {
                         arr.push(`
                         <div class="mt-sm-1 d-block">
-                            <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Évalué</span>
+                            
+                            <span class="tag tag-radius tag-round tag-outline-warning">Évalué</span>
+                            
                         </div>
                         <div class="mt-sm-1 d-block">
-                            <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">en cours</span>
+                            
+                            <span class="tag tag-radius tag-round tag-outline-warning">En cours</span>
                         </div>
                             `)
                     } else if (e.status.includes("ÉVALUÉ-1")) {
                         arr.push(`
                         <div class="mt-sm-1 d-block">
-                            <span class="badge bg-success-transparent rounded-pill text-lime p-2 px-3">Évalué par N+1</span>
+                            
+                             <span class="tag tag-radius tag-round tag-outline-success">Évalué par N+1</span>
                         </div>
                             `)
                     } else if (e.status.includes("TERMINÉ-0")) {
                         arr.push(`
                         <div class="mt-sm-1 d-block">
                             <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Validé</span>
+                            <span class="tag tag-radius tag-round tag-outline-warning">Validé</span>
                          </div>
                          <div class="mt-sm-1 d-block">
-                            <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">En cours</span>
+                            
+                            <span class="tag tag-radius tag-round tag-outline-warning">En cours</span>
                          </div>
                         `)
-                    }  else if (e.status.includes("TERMINÉ-1")) {
+                    } else if (e.status.includes("TERMINÉ-1")) {
                         arr.push(`
                         <div class="mt-sm-1 d-block">
-                            <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">Validé par N+2</span>
+                            
+                            <span class="tag tag-radius tag-round tag-outline-success">Validé par N+2</span>
                          </div>
                         `)
                     }
@@ -485,27 +477,29 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             data-bs-dismiss="modal">${btnJson.text}</button>`);
 
         if (btnJson.hasOwnProperty('hasFermerBtn')) {
-            $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
-            data-bs-dismiss="modal">Fermer</button>`);
+            $(modalHeaderId).parent().append(`<button  data-bs-dismiss="modal" aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
+            >Fermer</button>`);
         }
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
     } else {
-        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
-        data-bs-dismiss="modal">Fermer</button>`);
+        $(modalHeaderId).parent().append(`<button  data-bs-dismiss="modal" class="btn mx-4 btn-${color} pd-x-25"
+        >Fermer</button>`);
     }
 
+   
 
-    var myModal = new bootstrap.Modal(document.getElementById(modalId));
+    // var myModal = new bootstrap.Modal(document.getElementById(modalId));
 
     // SET HEADER
     $(modalHeaderId).text(header);
 
     // SET CONTENT
     $(modalContentId).text(content)
+    console.log(content);
 
-    myModal.show();
+    $("#" + modalId).modal("show");
 
 }
 
@@ -531,15 +525,15 @@ function getFicheInfoFromArr(ficheId) {
 
         if (ficheId == ficheEva.id) {
             return {
-                "index" : i,
-                "fiche" : ficheEva
+                "index": i,
+                "fiche": ficheEva
             }
         }
 
-        
+
     }
     return {
-        "index" : -1,
-        "fiche" : null
+        "index": -1,
+        "fiche": null
     }
 }

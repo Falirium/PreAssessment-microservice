@@ -45,6 +45,7 @@ import ma.gbp.assessment.service.ManagerOneService;
 import ma.gbp.assessment.service.ManagerTwoService;
 import ma.gbp.assessment.service.NiveauService;
 
+import org.apache.catalina.connector.Response;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
@@ -128,7 +129,8 @@ public class AssessmentController {
                         // VERIFY IF THE MANAGER2 EXISTS
                         if (doesEmployeeExist(manager2.getFirstName(), manager2.getLastName(), 2)) {
 
-                                savedManager2 = managerTwoService.getManagerByFirstAndLastName(manager2.getFirstName(), manager2.getLastName());
+                                savedManager2 = managerTwoService.getManagerByFirstAndLastName(manager2.getFirstName(),
+                                                manager2.getLastName());
                         } else {
 
                                 // SAVE IT AS A NEW ENTITY
@@ -137,11 +139,10 @@ public class AssessmentController {
                                                 manager2.getLastName(),
                                                 manager2.getMatricule()));
 
-                
                         }
 
-                         // ADD DIRECTLY TO THE LIST
-                         savedListManagers2.add(savedManager2);
+                        // ADD DIRECTLY TO THE LIST
+                        savedListManagers2.add(savedManager2);
                 }
 
                 // SAVE MANAGERS 1
@@ -297,6 +298,22 @@ public class AssessmentController {
                 assessment.setListOfManagersOne(updatedAssessment.getListOfManagersOne());
                 assessment.setListOfManagersTwo(updatedAssessment.getListOfManagersTwo());
                 assessment.setExcelFile(updatedAssessment.getExcelFile());
+
+                return ResponseEntity.status(HttpStatus.OK).body(assessmentService.save(assessment));
+        }
+
+        @PutMapping(value = "/status/{id}")
+        public ResponseEntity<Assessment> updateStatusAssessment(@PathVariable String id,
+                        @RequestBody Assessment updatedAssessment) {
+
+                Assessment assessment = assessmentService.getAssessment(id);
+
+                if (assessment == null) {
+                        throw new CustomErrorException(HttpStatus.NOT_FOUND,
+                                        "L'assessment avec id : <<" + id + ">> n'est pas trouvé");
+                }
+
+                assessment.setStatus(updatedAssessment.getStatus());
 
                 return ResponseEntity.status(HttpStatus.OK).body(assessmentService.save(assessment));
         }
