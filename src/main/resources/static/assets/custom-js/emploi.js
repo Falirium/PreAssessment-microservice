@@ -198,6 +198,8 @@ $("#btn-emploi-save").one('click', function () {
         // 2 SCEANARIOS : SAVE NEW EMPLOI || EDIT A SAVED EMPLOI
         if (localStorage.getItem("emploi") != null) {
 
+            console.log(generateEmploiJson(emploiJSON));
+
             // EDIT AN EMPLOI
             updateEmploi(generateEmploiJson(emploiJSON)).then((success) => {
 
@@ -909,6 +911,13 @@ function addListenersToNewNiveau(container) {
                 focusedNiveauContainer = lastNiveauContainer();
                 currentNiveauIndex = niveauCounter - 1;
 
+
+                // UPDATE MIDDLE VARIABLES
+                exigencesArray = niveauxArray[currentNiveauIndex].exigences;
+                marqueursArray = niveauxArray[currentNiveauIndex].marqueurs;
+                competencesArray = niveauxArray[currentNiveauIndex].competences;
+
+
                 // REMOVE DISABLE EFFECT ON THE LAST NIVEAU CONTAINER
                 clearDisableFromInputsFor(focusedNiveauContainer);
 
@@ -1014,16 +1023,28 @@ function addListenersToNewNiveau(container) {
 
 
     btnAddNiveau.addEventListener("click", (e) => {
-        let niveauJson = {
-            "level": niveauCounter,
-            "exigences": exigencesArray,
-            "marqueurs": marqueursArray,
-            "competences": competencesArray
-        };
 
-        niveauxArray.push(niveauJson);
+        // CHECK IF THE DATA OF CURRENT NIVEAU IS ALREADY EXISTED
+        if (niveauxArray[currentNiveauIndex] == null) {
+            let niveauJson = {
+                "level": niveauCounter,
+                "exigences": exigencesArray,
+                "marqueurs": marqueursArray,
+                "competences": competencesArray
+            };
 
-        console.log(niveauxArray);
+            niveauxArray.push(niveauJson);
+        } else {
+
+            // UPDATES THE VALUES
+            niveauxArray[currentNiveauIndex].exigences = exigencesArray;
+            niveauxArray[currentNiveauIndex].marqueurs = marqueursArray;
+            niveauxArray[currentNiveauIndex]["competences"] = competencesArray;
+
+        }
+
+
+        // console.log(niveauxArray);
 
         // INITIALIZE ARRAYS FOR NEW NIVEAU
         exigencesArray = [];

@@ -17,10 +17,23 @@ $("#cnx-btn").click(function () {
         // SAVE MANAGER MATRICULE
         localStorage.setItem("user", "admin");
 
+        // SET AUTHORIZATION : 
+        let auth = {
+            "regex": [
+                '(\\/\\w*)(\\/\\w*)\\?*'
+            ],
+            "sections": {
+                "hide" : [],
+                "show" : [] 
+            }
+        }
+
+        localStorage.setItem("auth", JSON.stringify(auth));
+
         // REDIRECT TO HOMEPAGE
         let currentUrl = window.location.href;
         window.location.replace(extractDomain(currentUrl) + "assessment/list");
-        
+
 
     } else {
         authenticate(matricule).then((manager) => {
@@ -32,10 +45,7 @@ $("#cnx-btn").click(function () {
                 // SAVE MANAGER MATRICULE
                 localStorage.setItem("user", JSON.stringify(manager));
 
-                // REDIRECT TO HOMEPAGE
-                let currentUrl = window.location.href;
-                window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-                console.log("redirected");
+
 
 
             } else if (manager.type == "2" && password === "manager2") {
@@ -44,15 +54,55 @@ $("#cnx-btn").click(function () {
                 // SAVE MANAGER MATRICULE
                 localStorage.setItem("user", JSON.stringify(manager));
 
-                // REDIRECT TO HOMEPAGE
-                let currentUrl = window.location.href;
-                window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+                // // REDIRECT TO HOMEPAGE
+                // let currentUrl = window.location.href;
+                // window.location.replace(extractDomain(currentUrl) + "evaluation/list");
 
-                console.log("redirected");
+                // console.log("redirected");
 
             } else {
                 showModal("error", "échec", "Le mot de passe est incorrect")
             }
+
+            // SET AUTHORIZATION
+            let auth = {
+                "regex": [
+                   '\\/(evaluation)\\/(evaluate|list)\\?*',
+                
+                ],
+                "sections": {
+                    "hide" : [
+                        {
+                            "name" : "assessment",
+                            "id" : "#assessment"
+                            
+                        },
+                        {
+                            "name" : "emploi",
+                            "id" : "#emploi"
+                        },
+                        {
+                            "name" : "pv",
+                            "id" : "#pv"
+                        }
+                    ],
+                    "show" : [
+                        {
+                            "name" : "dashboard",
+                            "id" : "#dashboard",
+                            "link" : "/evaluation/list"
+                        }
+                    ]
+                }
+            }
+    
+            localStorage.setItem("auth", JSON.stringify(auth));
+
+
+            // REDIRECT TO HOMEPAGE
+            let currentUrl = window.location.href;
+            window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+            console.log("redirected");
 
         });
     }

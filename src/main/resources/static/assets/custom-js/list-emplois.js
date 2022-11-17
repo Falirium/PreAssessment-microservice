@@ -66,9 +66,8 @@ getListOfEmplois().then((data) => {
 
         // REDIRECT TO THE EMPLOI EDIT PAGE 
        
-        // let currentUrl = window.location.href;
-
-        // window.location.href = extractDomain(currentUrl) + "emploi/edit";
+        let currentUrl = window.location.href;
+         window.location.href = extractDomain(currentUrl) + "emploi/edit";
 
 
     })

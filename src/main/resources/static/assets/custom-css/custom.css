@@ -1,0 +1,8 @@
+.blur {
+    filter: blur(10px);
+}
+
+.no-blur {
+    filter: none;
+    z-index: 9999;
+}

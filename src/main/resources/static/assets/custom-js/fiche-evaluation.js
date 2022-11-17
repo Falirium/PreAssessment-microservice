@@ -253,8 +253,8 @@ function saveFicheEvaluationHandler(e) {
                 setTimeout(function () {
                     currentUrl = window.location.href;
                     window.location.href = extractDomain(currentUrl) + "evaluation/list";
-                }, 1000)
-            })
+                }, 1000);
+            });
 
         } else if (ficheEvaluation.associatedAssessment.status == "ENDED") {
 

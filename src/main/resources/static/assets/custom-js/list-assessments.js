@@ -436,16 +436,20 @@ function getAssessmentInfoFromArr(assessmentName) {
     for (var i = 0; i < listAssessments.length; i++) {
         let assessment = listAssessments[i];
 
-        if (assessmentName === assessment.name) {
+       
+
+        if (assessmentName == assessment.name) {
             return {
                 "index": i,
                 "assessment": assessment
             }
         }
 
-        return {
-            "index": -1,
-            "assessment": null
-        }
+        
+    }
+
+    return {
+        "index": -1,
+        "assessment": null
     }
 }

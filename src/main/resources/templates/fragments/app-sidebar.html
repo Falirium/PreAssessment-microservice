@@ -18,7 +18,7 @@
             <li class="sub-category">
                 <h3>Principal</h3>
             </li>
-            <li class="slide">
+            <li class="slide" id="dashboard">
                 <a class="side-menu__item has-link" th:href="@{/assessment/list}" data-bs-toggle="slide" ><i
                         class="side-menu__icon fe fe-home"></i><span class="side-menu__label">Dashboard</span></a>
             </li>
@@ -26,7 +26,7 @@
                 <h3>Général</h3>
             </li>
 
-            <li class="slide">
+            <li class="slide" id="assessment">
                 <a class="side-menu__item" data-bs-toggle="slide" ><i
                         class="side-menu__icon fe fe-slack"></i><span class="side-menu__label">Assessment</span><i
                         class="angle fe fe-chevron-right"></i></a>
@@ -38,7 +38,7 @@
                     <li><a href="javascript:void(0)" target="_self" class="slide-item"> DRH</a></li>
                 </ul>
             </li>
-            <li class="slide">
+            <li class="slide" id="emploi">
                 <a class="side-menu__item has-link" data-bs-toggle="slide" th:href="@{/pv}"><i
                         class="side-menu__icon fe fe-file-text"></i><span class="side-menu__label">Emploi</span><i
                         class="angle fe fe-chevron-right"></i></a>
@@ -49,7 +49,7 @@
                     
                 </ul>
             </li>
-            <li class="slide">
+            <li class="slide" id="pv">
                 <a class="side-menu__item has-link" data-bs-toggle="slide" th:href="@{/pv}"><i
                         class="side-menu__icon fe fe-save"></i><span class="side-menu__label">PV</span><span
                         class="badge bg-yellow br-5 side-badge blink-text pb-1">New</span></a>
