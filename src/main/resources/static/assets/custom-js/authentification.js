@@ -210,7 +210,11 @@ function showModal(type, header, content, action) {
 
     let modalId, modalHeaderId, modalContentId;
 
-
+    // HIDE LOADER IF IT EXIST
+    if ($("#loading").is(':visible')) {
+        $("#loading").modal('hide');
+    }
+    
     switch (type) {
         case "success":
             modalId = "success";

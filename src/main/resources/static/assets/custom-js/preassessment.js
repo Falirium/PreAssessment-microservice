@@ -130,6 +130,9 @@ $(function () {
     // EVENT LISTENER WHEN WE SAVE AN ASSESSMENT
     $("#btn-assessment-lanch").one('click', function (e) {
 
+        // SHOW LOADER
+        showModal("loading");
+
         // TWO SENARIOS : LANCH AN ASSESSMENT WITHOUT BEING SAVED - LANCH AN ASSESSMENT THAT IS SAVED
         let alreadySavedAssessment = (localStorage.getItem("assessmentId") === null) ? false : true;
 
@@ -171,6 +174,7 @@ $(function () {
                         //  SEND POST REQUEST TO SAVE ASSESSMENT AND ALL OTHER ENTITIES
                         postAssessment(requestBodyAssessment).then((assessment) => {
 
+
                             // SHOW SUCCESS MODAL
                             showModal("success", "Assessment est lancée ", "L'assessment a été lancé avec succès.", "", {
                                 "text": "Retour à l'accueil",
@@ -206,6 +210,9 @@ $(function () {
 
     // EVENT LISTENER TO SAVE THE ASSESSMENT 
     $("#btn-assessment-save").one('click', function (e) {
+
+        // SHOW LOADER
+        showModal("loading");
 
         let assessmentVariablesContent = {
 
@@ -707,7 +714,7 @@ async function checkForSavedEmplois(arrEmploi) {
             notSavedEmplois = arrEmploi.filter((emploi, index) => {
                 return !resolvedPromises[index];
             });
-            
+
             console.log(notSavedEmplois);
             resolve(notSavedEmplois);
             console.log("END FORLOOP");
@@ -719,7 +726,7 @@ async function checkForSavedEmplois(arrEmploi) {
         forLoop();
         console.log("END ");
 
-        
+
 
 
     })
@@ -1877,6 +1884,10 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
 
+    // HIDE LOADER IF IT EXIST
+    if ($("#loading").is(':visible')) {
+        $("#loading").modal('hide');
+    }
 
 
 
@@ -1917,13 +1928,19 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             color = "primary";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
+
+        case "loading":
+            modalId = "loading";
+
+            color = "primary";
+            break;
     }
 
     // DELETE ALL BTNS
     $(modalHeaderId).parent().find("button").remove();
 
 
-    if (btnJson != null) {
+    if (btnJson != null && modalId != "lodaing") {
         // CREATE BTNS
         $(modalHeaderId).parent()
             .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
@@ -1936,7 +1953,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
-    } else {
+    } else if (modalId != "lodaing"){
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
@@ -1944,11 +1961,14 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     var myModal = new bootstrap.Modal(document.getElementById(modalId));
 
-    // SET HEADER
-    $(modalHeaderId).text(header);
+    if (modalId != "loading") {
+        // SET HEADER
+        $(modalHeaderId).text(header);
 
-    // SET CONTENT
-    $(modalContentId).html(content)
+        // SET CONTENT
+        $(modalContentId).html(content);
+    }
+
 
     myModal.show();
 

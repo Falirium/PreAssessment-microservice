@@ -424,6 +424,10 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
 
+    // HIDE LOADER IF IT EXIST
+    if ($("#loading").is(':visible')) {
+        $("#loading").modal('hide');
+    }
 
 
 
@@ -464,42 +468,49 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             color = "primary";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
+
+        case "loading":
+            modalId = "loading";
+
+            color = "primary";
+            break;
     }
 
     // DELETE ALL BTNS
     $(modalHeaderId).parent().find("button").remove();
 
 
-    if (btnJson != null) {
+    if (btnJson != null && modalId != "lodaing") {
         // CREATE BTNS
         $(modalHeaderId).parent()
             .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
             data-bs-dismiss="modal">${btnJson.text}</button>`);
 
         if (btnJson.hasOwnProperty('hasFermerBtn')) {
-            $(modalHeaderId).parent().append(`<button  data-bs-dismiss="modal" aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
-            >Fermer</button>`);
+            $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-primary pd-x-25"
+            data-bs-dismiss="modal">Fermer</button>`);
         }
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
-    } else {
-        $(modalHeaderId).parent().append(`<button  data-bs-dismiss="modal" class="btn mx-4 btn-${color} pd-x-25"
-        >Fermer</button>`);
+    } else if (modalId != "lodaing"){
+        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
+        data-bs-dismiss="modal">Fermer</button>`);
     }
 
-   
 
-    // var myModal = new bootstrap.Modal(document.getElementById(modalId));
+    var myModal = new bootstrap.Modal(document.getElementById(modalId));
 
-    // SET HEADER
-    $(modalHeaderId).text(header);
+    if (modalId != "loading") {
+        // SET HEADER
+        $(modalHeaderId).text(header);
 
-    // SET CONTENT
-    $(modalContentId).text(content)
-    console.log(content);
+        // SET CONTENT
+        $(modalContentId).html(content);
+    }
 
-    $("#" + modalId).modal("show");
+
+    myModal.show();
 
 }
 

@@ -195,6 +195,9 @@ $("#btn-emploi-save").one('click', function () {
 
         // console.log(generateEmploiJson(emploiJSON));
 
+        // ADD LOADING MODAL
+        $("#loading").modal('show');
+
         // 2 SCEANARIOS : SAVE NEW EMPLOI || EDIT A SAVED EMPLOI
         if (localStorage.getItem("emploi") != null) {
 
@@ -1481,6 +1484,10 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
 
+    // HIDE LOADER IF IT EXIST
+    if ($("#loading").is(':visible')) {
+        $("#loading").modal('hide');
+    }
 
 
 
@@ -1521,13 +1528,19 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
             color = "primary";
             $("#confirm-yes-btn").attr("data-action", action);
             break;
+
+        case "loading":
+            modalId = "loading";
+
+            color = "primary";
+            break;
     }
 
     // DELETE ALL BTNS
     $(modalHeaderId).parent().find("button").remove();
 
 
-    if (btnJson != null) {
+    if (btnJson != null && modalId != "lodaing") {
         // CREATE BTNS
         $(modalHeaderId).parent()
             .append(`<button id="${btnJson.id}" class="btn btn-${btnJson.color} mx-4 pd-x-25"
@@ -1540,7 +1553,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
-    } else {
+    } else if (modalId != "lodaing") {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
@@ -1548,11 +1561,14 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     var myModal = new bootstrap.Modal(document.getElementById(modalId));
 
-    // SET HEADER
-    $(modalHeaderId).text(header);
+    if (modalId != "loading") {
+        // SET HEADER
+        $(modalHeaderId).text(header);
 
-    // SET CONTENT
-    $(modalContentId).text(content)
+        // SET CONTENT
+        $(modalContentId).html(content);
+    }
+
 
     myModal.show();
 
