@@ -111,7 +111,7 @@ Array.from(assessmentPropertyContainer).forEach((propertyContainer) => {
         }
 
 
-        console.log(requestBodyAssessment);
+        // console.log(requestBodyAssessment);
     })
 })
 
@@ -555,7 +555,7 @@ inputFileUploader.addEventListener('change', (e) => {
 
     // btnVisualize.classList.add("btn-loading");
 
-    parseExcelPopulation(file).then(async (data) => {
+    parseExcelPopulation(file).then((data) => {
 
         // REMOVE LOADING EFFECT
         // btnVisualize.classList.remove("btn-loading");
@@ -564,24 +564,53 @@ inputFileUploader.addEventListener('change', (e) => {
         listEmploi = data[1];
 
         // CHECK IF EMPLOIS IS SAVED IN DATABASE
-        let areEmploisFound = await checkForSavedEmplois(listEmploi);
-        console.log(areEmploisFound);
-        if (!areEmploisFound.check) {
+        checkForSavedEmplois(listEmploi).then((list) => {
+            console.log("START THEN");
+            console.log(list);
 
-            // SHOW ERROR MODAL
-            showModal("error", "VOUS NE POUVEZ PAS CONTINUER", "l'emploi <<" + areEmploisFound.notFoundEmploi + ">> non trouvé. Veuillez ajouter la fiche de cet emploi à la base de données puis créer un assessment de cet emploi.", "", {
-                "text": "Revenir à l'acceuil",
-                "color": "danger",
-                "id": "dfe1"
-            }, function () {
-                redirectTo("assessment/list", 1000);
-            });
+            if (list.length != 0) {
 
-        }
+                let listStr = `
+                    <ul><li> <br> <ul class="list-group">
+                `;
+
+                list.map((emploi, index) => {
+                    let emploiName = emploi.split("_")[0];
+                    let niveau = emploi.split("_")[1];
+
+                    listStr = listStr + `<li class="listunorder1"> L'emploi : "${emploiName}" ,avec le niveau de séniorité  "${niveau}" </li>`;
+
+                    if (index == list.length - 1) {
+                        listStr = listStr + "</ul></li></ul> <br>";
+                    }
+                });
+
+                console.log(listStr);
+                // SHOW ERROR MODAL
+                showModal("error", "VOUS NE POUVEZ PAS CONTINUER", "La liste suivantes des emplois avec leurs niveaux de séniorité n'est pas enregistrées : " + listStr + "Veuillez les ajouter  à la base de données puis créer un assessment.", "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "danger",
+                    "id": "dfe1"
+                }, function () {
+                    redirectTo("assessment/list", 1000);
+                });
+
+            }
+
+            console.log("END THEN");
+
+
+        });
+
+        // let listOfUnsavedEmplois = (async () => {
+        //     return await checkForSavedEmplois(listEmploi);
+        // });
+        // console.log(listOfUnsavedEmplois);
+
 
         populationArr = excelData;
 
-        console.log(populationArr);
+        // console.log(populationArr);
 
 
 
@@ -594,7 +623,7 @@ inputFileUploader.addEventListener('change', (e) => {
 
         let col = generateColumnsForDatatable(excelData[0]);
 
-        $("#tb1").DataTable({
+        populationTable = $("#tb1").DataTable({
             data: dataSet,
             columns: col
         });
@@ -617,40 +646,83 @@ inputFileUploader.addEventListener('change', (e) => {
 
 async function checkForSavedEmplois(arrEmploi) {
 
+
     return new Promise((resolve, reject) => {
-        if (arrEmploi.length === 0) {
-            resolve({
-                "check": false,
-                "message": "empty array"
+        // let notSavedEmplois = [];
+
+        // const forLoop = async () => {
+        //     return new Promise((resolver1, reject1) => {
+        //         for (var i = 0; i < arrEmploi.lenght; i++) {
+        //             let e = arrEmploi[i];
+        //             let eName = e.split("_")[0];
+        //             let level = e.split("_")[1];
+
+        //             let check = await getEmploiByNameAndLevel(eName, level);
+
+        //             console.log(check);
+        //             if (!check) {
+        //                 notSavedEmplois.push(e);
+        //             }
+
+        //         }
+        //     })
+
+        // };
+
+        // forLoop();
+
+
+        // resolve(notSavedEmplois);
+
+        console.log("START");
+
+
+        let notSavedEmplois = [];
+
+        const forLoop = async () => {
+
+            // for (var i = 0; i < arrEmploi.lenght; i++) {
+            //     let e = arrEmploi[i];
+            //     let eName = e.split("_")[0];
+            //     let level = e.split("_")[1];
+
+            //     let check = await getEmploiByNameAndLevel(eName, level);
+
+            //     console.log(check);
+            //     if (!check) {
+            //         notSavedEmplois.push(e);
+            //     }
+
+            // }
+
+            let promises = await arrEmploi.map((e, index) => {
+                let eName = e.split("_")[0];
+                let level = e.split("_")[1];
+
+                return getEmploiByNameAndLevel(eName, level);
             });
-        }
-        arrEmploi.map(async (e, i) => {
-            let eName = e.split("_")[0];
-            let level = e.split("_")[1];
 
-            //    let check = await getEmploiByNameAndLevel(eName, level);
+            let resolvedPromises = await Promise.all(promises);
 
-            //    console.log(check);
-            getEmploiByNameAndLevel(eName, level).then((result) => {
-                console.log(eName + " " + result + " = " + resut);
-                if (!result) {
-                    resolve({
-                        "check": false,
-                        "notFoundEmploi": " " + eName + ", niveau de séniorité : " + level + " "
-                    })
-                }
-            }).then((result) => {
-                resolve({
-                    "check": true
-                });
+            notSavedEmplois = arrEmploi.filter((emploi, index) => {
+                return !resolvedPromises[index];
             });
+            
+            console.log(notSavedEmplois);
+            resolve(notSavedEmplois);
+            console.log("END FORLOOP");
 
-        })
+
+
+        };
+
+        forLoop();
+        console.log("END ");
+
+        
 
 
     })
-
-
 
 }
 
@@ -663,7 +735,7 @@ $("#btn-suivant-category-section").click(function () {
 async function getEmploiByNameAndLevel(eName, level) {
 
     let url = "http://localhost:8080/preassessment/api/v1/emploi/niveau/emploi?eName=" + encodeURIComponent(eName.toLowerCase()) + "&level=" + level;
-    console.log(url);
+    // console.log(url);
     return fetch(url, {
         method: 'GET'
     }).then(
@@ -1876,7 +1948,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
     $(modalHeaderId).text(header);
 
     // SET CONTENT
-    $(modalContentId).text(content)
+    $(modalContentId).html(content)
 
     myModal.show();
 
