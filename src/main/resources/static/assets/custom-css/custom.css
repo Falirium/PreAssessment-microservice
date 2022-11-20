@@ -1,8 +1,7 @@
-.blur {
-    filter: blur(10px);
-}
-
-.no-blur {
-    filter: none;
-    z-index: 9999;
+.modal-is-activated > *:not(.modal) {
+    -webkit-filter: blur(1px);
+    -moz-filter: blur(1px);
+    -o-filter: blur(1px);
+    -ms-filter: blur(1px);
+    filter: blur(1px);
 }

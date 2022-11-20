@@ -12,7 +12,7 @@
 <body>
 
     <!-- CONTAINER -->
-    <div class="main-container container-fluid" layout:fragment="page-content">
+    <div class="main-container target-container container-fluid" layout:fragment="page-content">
 
         <!-- PAGE-HEADER -->
         <div class="page-header">
@@ -270,6 +270,21 @@
                             data-bs-dismiss="modal">Oui</button>
                         <button aria-label="Close" class="btn btn-primary pd-x-25"
                             data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL LOADING MESSAGE -->
+        <div class="modal fade" id="loading" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered text-center " role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="dimmer active">
+                        <div class="spinner1">
+                            <div class="double-bounce1"></div>
+                            <div class="double-bounce2"></div>
+                        </div>
                     </div>
                 </div>
             </div>

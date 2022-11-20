@@ -65,9 +65,9 @@ getListOfEmplois().then((data) => {
         localStorage.setItem("emploi", JSON.stringify(emploi));
 
         // REDIRECT TO THE EMPLOI EDIT PAGE 
-       
+
         let currentUrl = window.location.href;
-         window.location.href = extractDomain(currentUrl) + "emploi/edit";
+        window.location.href = extractDomain(currentUrl) + "emploi/edit";
 
 
     })
@@ -223,9 +223,10 @@ function getEmploiInfoFromArr(emploiName) {
             }
         }
 
-        return {
-            "index": -1,
-            "emploi": null
-        }
+
+    }
+    return {
+        "index": -1,
+        "emploi": null
     }
 }

@@ -18,7 +18,7 @@ if (localStorage.getItem("ficheEvaluation") === null) {
     (async () => {
         ficheEvaluation = await getFicheEvaluation(ficheEvaluation.id);
     })();
-    
+
     if (localStorage.getItem("user") === "admin") {
         manager = localStorage.getItem("user");
     } else {
@@ -198,8 +198,11 @@ function saveFicheEvaluationHandler(e) {
 
     } else {
 
-        // ADD LOADING MODAL
-        $("#loading").modal('show');
+        
+
+        // ADD LOADER TO BTN
+        addLoaderToBtn("#" + e.target.id);
+
 
         // UPDATE THE SCORES
         ficheEvaluation.score = score;
@@ -245,6 +248,9 @@ function saveFicheEvaluationHandler(e) {
         // CHECK FOR ASSESSMENT STATUS
         if (ficheEvaluation.associatedAssessment.status == "SUSPENDED") {
 
+            // DELETE LOADER FROM BTN
+            deleteLoaderToBtn("#" + e.target.id);
+
             // SHOW ERROR MESSAGE
             showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette fiche d'évaluation. Parce que les administrateurs ont suspendu cette évaluation. Veuillez les contacter directement pour résoudre ce problème.", "", {
                 "text": "Revenir à l'accueil",
@@ -259,6 +265,9 @@ function saveFicheEvaluationHandler(e) {
             });
 
         } else if (ficheEvaluation.associatedAssessment.status == "ENDED") {
+
+            // DELETE LOADER FROM BTN
+            deleteLoaderToBtn("#" + e.target.id);
 
             // SHOW ERROR MESSAGE
             showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette assessment, car cette évaluation a été terminée. ", "", {
@@ -276,6 +285,9 @@ function saveFicheEvaluationHandler(e) {
             // SAVE THE RESULT TO THE DB
             updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
                 console.log(result);
+
+                // DELETE LOADER FROM BTN
+                deleteLoaderToBtn("#" + e.target.id);
 
                 // UNBIDE THIS HANDLER WITH THE ELEMENT ----> IMMITATION OF ONE CLICK EVENT LISTENER
                 $(this).off(e);
@@ -957,11 +969,6 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
 
-    // HIDE LOADER IF IT EXIST
-    if ($("#loading").is(':visible')) {
-        $("#loading").modal('hide');
-    }
-
 
 
     switch (type) {
@@ -1026,7 +1033,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
-    } else if (modalId != "lodaing"){
+    } else if (modalId != "lodaing") {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
@@ -1034,13 +1041,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     var myModal = new bootstrap.Modal(document.getElementById(modalId));
 
-    if (modalId != "loading") {
-        // SET HEADER
-        $(modalHeaderId).text(header);
 
-        // SET CONTENT
-        $(modalContentId).html(content);
-    }
 
 
     myModal.show();
@@ -3536,14 +3537,27 @@ function countsInputs(json) {
 async function getFicheEvaluation(id) {
     let url = "http://localhost:8080/preassessment/api/v1/ficheEvaluation/" + id;
 
-    return fetch(url , {
-        method : 'GET'
+    return fetch(url, {
+        method: 'GET'
     }).then(response => response.json())
-    .then(success => {
-        console.log(success);
-        return success;
-    })
-    .catch( error => console.log(error))
+        .then(success => {
+            console.log(success);
+            return success;
+        })
+        .catch(error => console.log(error))
+}
+
+
+function addLoaderToBtn(btnId) {
+
+    // ADD LOADER HTML ELEMENT
+    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`)
+}
+
+function deleteLoaderToBtn(btnId) {
+
+    // REMOVE LOADER HTML ELEMENT
+    $(btnId).find("span").remove();
 }
 
 

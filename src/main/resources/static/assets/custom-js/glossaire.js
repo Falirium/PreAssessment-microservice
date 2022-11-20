@@ -102,8 +102,10 @@ $(btnSaveMatrice).click(function (e) {
 
     } else {  // STEP 2 : SAVE NEW LISTS OF COMPETENCES
 
-        // ADD LOADING MODAL
-        $("#loading").modal('show');
+
+        // ADD LOADER TO SAVE BTN
+        addLoaderToBtn("#btn-competence-save");
+
 
         // DISABLE THE EVENTHANDLER
         $(this).off(e);
@@ -148,6 +150,9 @@ $(btnSaveMatrice).click(function (e) {
 
             postMatriceCompetences(matriceCompetenceJson).then((success) => {
 
+                // DELETE LOADER FROM BTN
+                deleteLoaderToBtn("#btn-competence-save");
+
                 // SHOW SUCCESS MODEL        
                 showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi", "", {
                     "text": "Revenir à l'acceuil",
@@ -172,64 +177,6 @@ $(btnSaveMatrice).click(function (e) {
 
 
 })
-
-// btnSaveMatrice.addEventListener("click", (e) => {
-
-//     // STEP 1 : VERIFY IF ALL THE FIELD ARE FILLED
-
-
-//     // STEP 2 : SAVE NEW LISTS OF COMPETENCES
-//     if (fieldsAreChecked()) {
-
-//         // UPDATE MATRICE-COMPETENCE JSON
-//         let timeNow = new Date();
-//         matriceCompetenceJson.updatesAt = timeNow.toISOString().split('T')[0];
-//         matriceCompetenceJson.competences = competenceArray;
-
-//         console.log(matriceCompetenceJson);
-
-//         // 2 SCENARIOS : SAVE NEW ENTITY OR UPDATE AN EXISTANT ENTITY
-//         if (localStorage.getItem("matriceCompetence") != null) {
-
-//             updateMatriceCompetence(matriceCompetenceJson).then((success) => {
-
-//                 // SHOW SUCCESS MODEL        
-//                 showModal("success", "La liste des compétences a été modifiée avec succès", "Les modifications sur la liste des compétences ont été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
-
-//                 // REDIRECT TO THE LIST OF ASSESSMENTS
-//                 setTimeout(function () {
-//                     let currentUrl = window.location.href;
-
-//                     window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
-//                 }, 1000);
-//             });
-
-//             // REMOVE THE MATRICE FROM LOCAL STORAGE
-//             localStorage.removeItem("matriceCompetence");
-
-
-//         } else {
-
-//             postMatriceCompetences(matriceCompetenceJson).then((success) => {
-
-//                 // SHOW SUCCESS MODEL        
-//                 showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi");
-
-//                 // REDIRECT TO THE LIST OF ASSESSMENTS
-//                 setTimeout(function () {
-//                     let currentUrl = window.location.href;
-
-//                     window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
-//                 }, 1000);
-//             });
-
-//         }
-
-//     }
-
-// })
-
-
 
 
 btnAddGlossaire.addEventListener("click", (e) => {
@@ -1226,5 +1173,17 @@ function checkForCompetenceArray() {
     }
 
     return true;
+}
+
+function addLoaderToBtn(btnId) {
+
+    // ADD LOADER HTML ELEMENT
+    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`)
+}
+
+function deleteLoaderToBtn(btnId) {
+
+    // REMOVE LOADER HTML ELEMENT
+    $(btnId).find("span").remove();
 }
 

@@ -431,6 +431,9 @@ function buildURL(prefix, params) {
 // ADD EVENT LISTENERS TO ACTION BTN
 $("#btn-assessment-sus").click(function (e) {
 
+    // ADD LOADER TO BTN
+    addLoaderToBtn("#btn-assessment-sus");
+
     if (assessmentJson.status === "SUSPENDED") {
 
 
@@ -515,6 +518,9 @@ $("#btn-assessment-sus").click(function (e) {
         // SAVE THE RESULT TO DB
         updateAssessment(assessmentJson).then((success) => {
 
+            // REMOVE LOADER FROM BTN
+            deleteLoaderToBtn("#btn-assessment-sus");
+
             // REDIRECT TO THE ASSESSMENT PAGE 
             if (success.hasOwnProperty("message")) {
 
@@ -559,6 +565,9 @@ $("#btn-assessment-sus").click(function (e) {
 
 $("#btn-assessment-terminate").click(function (e) {
 
+    // ADD LOADER TO BTN
+    addLoaderToBtn("#btn-assessment-terminate");
+
     // SHOW CONFIRM TERMINATE MODAL
     showModal("confirm", "Confirmer l'action", `
     Vous êtes sur le point de mettre fin à cette évaluation ! Avant de confirmer cette action, veuillez vous assurer de ce qui suit :
@@ -585,6 +594,9 @@ $("#btn-assessment-terminate").click(function (e) {
 
         // SAVE THE RESULT TO DB
         updateAssessment(assessmentJson).then((success) => {
+
+            // REMOVE LOADER FROM BTN
+            deleteLoaderToBtn("#btn-assessment-terminate");
 
             // REDIRECT TO THE ASSESSMENT PAGE 
             if (success.hasOwnProperty("message")) {
@@ -627,10 +639,6 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
 
-    // HIDE LOADER IF IT EXIST
-    if ($("#loading").is(':visible')) {
-        $("#loading").modal('hide');
-    }
 
 
     switch (type) {
@@ -736,4 +744,16 @@ function redirectTo(url, timeInMilliseconds) {
     },
         timeInMilliseconds);
 
+}
+
+function addLoaderToBtn(btnId) {
+
+    // ADD LOADER HTML ELEMENT
+    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`)
+}
+
+function deleteLoaderToBtn(btnId) {
+
+    // REMOVE LOADER HTML ELEMENT
+    $(btnId).find("span").remove();
 }

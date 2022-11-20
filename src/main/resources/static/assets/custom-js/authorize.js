@@ -38,21 +38,23 @@ if (localStorage.getItem("user") === null) {
    
     if (!checkUrl(regexList, formatUrl(currentUrl))) {
 
-        currentUrl = window.location.href;
-        window.location.href = extractDomain(currentUrl) + "evaluation/list";
+        // currentUrl = window.location.href;
+        // window.location.href = extractDomain(currentUrl) + "evaluation/list";
 
-        // // SHOW ERROR MODAL;
-        // showModalV1("error", "Accès non autorisé", "Vous serez redirigé automatiquement vers la page d'accueil.", "", {
-        //     "text": "Revenir à l'accueil",
-        //     "color": "danger",
-        //     "id": "dje1"
-        // }, function () {
-        //     // REDIRECT TO EVALUATION LIST PAGE
-        //     setTimeout(function () {
-        //         currentUrl = window.location.href;
-        //         window.location.href = extractDomain(currentUrl) + "assessment/list";
-        //     }, 1000);
-        // })
+        // SHOW ERROR MODAL;
+
+        $(".target-container").addClass("modal-is-activated")
+        showModalV1("error", "Accès non autorisé", "Vous serez redirigé automatiquement vers la page d'accueil.", "", {
+            "text": "Revenir à l'accueil",
+            "color": "danger",
+            "id": "dje1"
+        }, function () {
+            // REDIRECT TO EVALUATION LIST PAGE
+            setTimeout(function () {
+                currentUrl = window.location.href;
+                window.location.href = extractDomain(currentUrl) + "evaluation/list";
+            }, 1000);
+        })
 
     }
 

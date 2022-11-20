@@ -195,13 +195,18 @@ $("#btn-emploi-save").one('click', function () {
 
         // console.log(generateEmploiJson(emploiJSON));
 
-        // ADD LOADING MODAL
-        $("#loading").modal('show');
+
+        // ADD LOADER TO SAVE BTN
+        addLoaderToBtn("#btn-emploi-save");
 
         // 2 SCEANARIOS : SAVE NEW EMPLOI || EDIT A SAVED EMPLOI
         if (localStorage.getItem("emploi") != null) {
 
             console.log(generateEmploiJson(emploiJSON));
+
+            // REMOVE LOADER TO SAVE BTN
+            deleteLoaderToBtn("#btn-emploi-save");
+
 
             // EDIT AN EMPLOI
             updateEmploi(generateEmploiJson(emploiJSON)).then((success) => {
@@ -244,6 +249,9 @@ $("#btn-emploi-save").one('click', function () {
 
         } else {
 
+            // REMOVE LOADER TO SAVE BTN
+            deleteLoaderToBtn("#btn-emploi-save");
+
             // SAVE A NEW EPLOI
             postEmploi(generateEmploiJson(emploiJSON)).then((success) => {
 
@@ -284,7 +292,7 @@ $("#btn-emploi-save").one('click', function () {
 
     }
 
-    // console.log(generateEmploiJson(emploiJSON));
+
 })
 
 
@@ -1485,9 +1493,8 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
     let modalId, modalHeaderId, modalContentId, color;
 
     // HIDE LOADER IF IT EXIST
-    if ($("#loading").is(':visible')) {
-        $("#loading").modal('hide');
-    }
+    
+
 
 
 
@@ -1559,7 +1566,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
     }
 
 
-    var myModal = new bootstrap.Modal(document.getElementById(modalId));
+    // var myModal = new bootstrap.Modal(document.getElementById(modalId));
 
     if (modalId != "loading") {
         // SET HEADER
@@ -1570,7 +1577,20 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
     }
 
 
-    myModal.show();
+    // myModal.show();
+    $("#" + modalId).modal('show');
 
+}
+
+function addLoaderToBtn(btnId) {
+
+    // ADD LOADER HTML ELEMENT
+    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`)
+}
+
+function deleteLoaderToBtn(btnId) {
+
+    // REMOVE LOADER HTML ELEMENT
+    $(btnId).find("span").remove();
 }
 

@@ -130,14 +130,19 @@ $(function () {
     // EVENT LISTENER WHEN WE SAVE AN ASSESSMENT
     $("#btn-assessment-lanch").one('click', function (e) {
 
-        // SHOW LOADER
-        showModal("loading");
+    
+        // ADD LODAER TO BTN
+        addLoaderToBtn("#btn-assessment-lanch");
 
         // TWO SENARIOS : LANCH AN ASSESSMENT WITHOUT BEING SAVED - LANCH AN ASSESSMENT THAT IS SAVED
         let alreadySavedAssessment = (localStorage.getItem("assessmentId") === null) ? false : true;
 
         // CHECK IF THERE IS SOME UNCATEGORIED COLLABORATEUR
         if (checkForUncategorizedCollaborateur()) {
+
+            // DELETE LOADER TO BTN
+            deleteLoaderToBtn("#btn-assessment-lanch");
+
             showModal("warning", "Vous ne pouvez pas sauvegarder cette évaluation", "Certains employés ne sont pas catégorisés ; veuillez retourner à la phase de catégorisation et les inclure", "")
         } else {
 
@@ -167,6 +172,9 @@ $(function () {
                     // CHECK IF SUCCESS  == 1
                     if (success != 1 && alreadySavedAssessment) {
 
+                        // DELETE LOADER TO BTN
+                        deleteLoaderToBtn("#btn-assessment-lanch");
+
                         // SHOW ERROR MODAL
 
                     } else {
@@ -174,6 +182,8 @@ $(function () {
                         //  SEND POST REQUEST TO SAVE ASSESSMENT AND ALL OTHER ENTITIES
                         postAssessment(requestBodyAssessment).then((assessment) => {
 
+                            // DELETE LOADER TO BTN
+                            deleteLoaderToBtn("#btn-assessment-lanch");
 
                             // SHOW SUCCESS MODAL
                             showModal("success", "Assessment est lancée ", "L'assessment a été lancé avec succès.", "", {
@@ -211,8 +221,10 @@ $(function () {
     // EVENT LISTENER TO SAVE THE ASSESSMENT 
     $("#btn-assessment-save").one('click', function (e) {
 
-        // SHOW LOADER
-        showModal("loading");
+        
+
+        // ADD LOADER TO BTN
+        addLoaderToBtn("#btn-assessment-save");
 
         let assessmentVariablesContent = {
 
@@ -243,6 +255,8 @@ $(function () {
             // SAVE THIS TO ASSESSMENT-TEMPORARY MODEL
             postToAssessmentTemp(savedAssessment, 'PUT').then((success) => {
 
+                // DELETE LOADER TO BTN
+                deleteLoaderToBtn("#btn-assessment-save");
 
                 // REMOVE ANY ASSESSMENT-ID
                 removeAssessmentFromStorage();
@@ -277,6 +291,9 @@ $(function () {
             // SAVE THIS TO ASSESSMENT-TEMPORARY MODEL
             postToAssessmentTemp(savedAssessment, 'POST').then((success) => {
 
+                // DELETE LOADER TO BTN
+                deleteLoaderToBtn("#btn-assessment-save");
+                
                 // REMOVE ANY ASSESSMENT-ID
                 removeAssessmentFromStorage();
 
@@ -1953,7 +1970,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
-    } else if (modalId != "lodaing"){
+    } else if (modalId != "lodaing") {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
@@ -1972,6 +1989,18 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     myModal.show();
 
+}
+
+function addLoaderToBtn(btnId) {
+
+    // ADD LOADER HTML ELEMENT
+    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`)
+}
+
+function deleteLoaderToBtn(btnId) {
+
+    // REMOVE LOADER HTML ELEMENT
+    $(btnId).find("span").remove();
 }
 
 
