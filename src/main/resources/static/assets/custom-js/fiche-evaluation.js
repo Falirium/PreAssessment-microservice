@@ -191,140 +191,20 @@ function disableModificationForAdmin() {
 function saveFicheEvaluationHandler(e) {
     // WE HAVE TWO SCENARIOS : MANAGER1 VALIDAES , MANAGER2 VALIDATES
 
+    // ADD LOADER TO BTN
+    addLoaderToBtn("#" + e.target.id);
 
-    // VERIFY IF ALL THE FIELS ARE SELECTED
-    // console.log(allFieldSelected());
-    if (!allFieldSelected()) {
+    // NEW FEATURE : WHEN CLICKING ON SAVE ---> DONT CHECK FOR TOGGLES RESULTS
+    if (!e.data.finalValidation) {
 
-    } else {
+        processSavingFicheEvaluation(e);
 
+    } else if (allFieldSelected()) {    // VERIFY IF ALL THE FIELS ARE SELECTED
+
+        processSavingFicheEvaluation(e);
         
-
-        // ADD LOADER TO BTN
-        addLoaderToBtn("#" + e.target.id);
-
-
-        // UPDATE THE SCORES
-        ficheEvaluation.score = score;
-        ficheEvaluation.sousPoints = sous_points;
-        ficheEvaluation.surPoints = sur_points;
-
-        // CHECK WHICH MANAGER IS CONNECTED
-        if (manager.type === "1") {
-
-            if (e.data.finalValidation) {
-                ficheEvaluation.status = "ÉVALUÉ-1";
-            } else {
-                ficheEvaluation.status = "ÉVALUÉ-0";
-            }
-
-
-
-            // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
-            let re = takeCopy(ficheEvaluation);
-            // console.log(re);
-            // console.log(JSON.stringify(re));
-            ficheEvaluation.re_manager1 = JSON.stringify(re);
-
-
-        } else if (manager.type === "2") {
-
-            if (e.data.finalValidation) {
-                ficheEvaluation.status = "TERMINÉ-1";
-
-            } else {
-                ficheEvaluation.status = "TERMINÉ-0";
-
-            }
-
-
-
-            // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
-            let re = takeCopy(ficheEvaluation);
-            ficheEvaluation.re_manager2 = JSON.stringify(re);
-
-        }
-
-        // CHECK FOR ASSESSMENT STATUS
-        if (ficheEvaluation.associatedAssessment.status == "SUSPENDED") {
-
-            // DELETE LOADER FROM BTN
-            deleteLoaderToBtn("#" + e.target.id);
-
-            // SHOW ERROR MESSAGE
-            showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette fiche d'évaluation. Parce que les administrateurs ont suspendu cette évaluation. Veuillez les contacter directement pour résoudre ce problème.", "", {
-                "text": "Revenir à l'accueil",
-                "color": "danger",
-                "id": "dje1"
-            }, function () {
-                // REDIRECT TO EVALUATION LIST PAGE
-                setTimeout(function () {
-                    currentUrl = window.location.href;
-                    window.location.href = extractDomain(currentUrl) + "evaluation/list";
-                }, 1000);
-            });
-
-        } else if (ficheEvaluation.associatedAssessment.status == "ENDED") {
-
-            // DELETE LOADER FROM BTN
-            deleteLoaderToBtn("#" + e.target.id);
-
-            // SHOW ERROR MESSAGE
-            showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette assessment, car cette évaluation a été terminée. ", "", {
-                "text": "Revenir à l'accueil",
-                "color": "danger",
-                "id": "dje1"
-            }, function () {
-                // REDIRECT TO EVALUATION LIST PAGE
-                setTimeout(function () {
-                    currentUrl = window.location.href;
-                    window.location.href = extractDomain(currentUrl) + "evaluation/list";
-                }, 1000)
-            })
-        } else {
-            // SAVE THE RESULT TO THE DB
-            updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
-                console.log(result);
-
-                // DELETE LOADER FROM BTN
-                deleteLoaderToBtn("#" + e.target.id);
-
-                // UNBIDE THIS HANDLER WITH THE ELEMENT ----> IMMITATION OF ONE CLICK EVENT LISTENER
-                $(this).off(e);
-
-                // SHOW SUCCESS MODAL
-                let modalHeader;
-                let modalBody;
-                if (ficheEvaluation.status.includes("1")) {
-                    modalHeader = "Action complétée";
-                    modalBody = "La fiche a été envoyée avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
-                } else {
-
-                    modalHeader = "Action complétée";
-                    modalBody = "La fiche a été enregistré avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
-                }
-                showModal("success", modalHeader, modalBody, "", {
-                    "text": "Revenir à l'accueil",
-                    "color": "success",
-                    "id": "dje1"
-                }, function () {
-                    // REDIRECT TO EVALUATION LIST PAGE
-                    setTimeout(function () {
-                        currentUrl = window.location.href;
-                        window.location.href = extractDomain(currentUrl) + "evaluation/list";
-                    }, 1000)
-                })
-
-
-
-
-
-            })
-        }
-
-
-
     }
+
 
 
 }
@@ -485,6 +365,126 @@ function allFieldSelected() {
 
 
 
+}
+
+function processSavingFicheEvaluation(e) {
+    // UPDATE THE SCORES
+    ficheEvaluation.score = score;
+    ficheEvaluation.sousPoints = sous_points;
+    ficheEvaluation.surPoints = sur_points;
+
+    // CHECK WHICH MANAGER IS CONNECTED
+    if (manager.type === "1") {
+
+        if (e.data.finalValidation) {
+            ficheEvaluation.status = "ÉVALUÉ-1";
+        } else {
+            ficheEvaluation.status = "ÉVALUÉ-0";
+        }
+
+
+
+        // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
+        let re = takeCopy(ficheEvaluation);
+        // console.log(re);
+        // console.log(JSON.stringify(re));
+        ficheEvaluation.re_manager1 = JSON.stringify(re);
+
+
+    } else if (manager.type === "2") {
+
+        if (e.data.finalValidation) {
+            ficheEvaluation.status = "TERMINÉ-1";
+
+        } else {
+            ficheEvaluation.status = "TERMINÉ-0";
+
+        }
+
+
+
+        // TAKE A COPY OF THIS FICHE + set the save the result of manager 1
+        let re = takeCopy(ficheEvaluation);
+        ficheEvaluation.re_manager2 = JSON.stringify(re);
+
+    }
+
+    // CHECK FOR ASSESSMENT STATUS
+    if (ficheEvaluation.associatedAssessment.status == "SUSPENDED") {
+
+        // DELETE LOADER FROM BTN
+        deleteLoaderToBtn("#" + e.target.id);
+
+        // SHOW ERROR MESSAGE
+        showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette fiche d'évaluation. Parce que les administrateurs ont suspendu cette évaluation. Veuillez les contacter directement pour résoudre ce problème.", "", {
+            "text": "Revenir à l'accueil",
+            "color": "danger",
+            "id": "dje1"
+        }, function () {
+            // REDIRECT TO EVALUATION LIST PAGE
+            setTimeout(function () {
+                currentUrl = window.location.href;
+                window.location.href = extractDomain(currentUrl) + "evaluation/list";
+            }, 1000);
+        });
+
+    } else if (ficheEvaluation.associatedAssessment.status == "ENDED") {
+
+        // DELETE LOADER FROM BTN
+        deleteLoaderToBtn("#" + e.target.id);
+
+        // SHOW ERROR MESSAGE
+        showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette assessment, car cette évaluation a été terminée. ", "", {
+            "text": "Revenir à l'accueil",
+            "color": "danger",
+            "id": "dje1"
+        }, function () {
+            // REDIRECT TO EVALUATION LIST PAGE
+            setTimeout(function () {
+                currentUrl = window.location.href;
+                window.location.href = extractDomain(currentUrl) + "evaluation/list";
+            }, 1000)
+        })
+    } else {
+        // SAVE THE RESULT TO THE DB
+        updateFicheEvaluation(ficheEvaluation.id, ficheEvaluation).then((result) => {
+            console.log(result);
+
+            // DELETE LOADER FROM BTN
+            deleteLoaderToBtn("#" + e.target.id);
+
+            // UNBIDE THIS HANDLER WITH THE ELEMENT ----> IMMITATION OF ONE CLICK EVENT LISTENER
+            $(this).off(e);
+
+            // SHOW SUCCESS MODAL
+            let modalHeader;
+            let modalBody;
+            if (ficheEvaluation.status.includes("1")) {
+                modalHeader = "Action complétée";
+                modalBody = "La fiche a été envoyée avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
+            } else {
+
+                modalHeader = "Action complétée";
+                modalBody = "La fiche a été enregistré avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
+            }
+            showModal("success", modalHeader, modalBody, "", {
+                "text": "Revenir à l'accueil",
+                "color": "success",
+                "id": "dje1"
+            }, function () {
+                // REDIRECT TO EVALUATION LIST PAGE
+                setTimeout(function () {
+                    currentUrl = window.location.href;
+                    window.location.href = extractDomain(currentUrl) + "evaluation/list";
+                }, 1000)
+            })
+
+
+
+
+
+        })
+    }
 }
 
 function parseManagerResult(json) {
