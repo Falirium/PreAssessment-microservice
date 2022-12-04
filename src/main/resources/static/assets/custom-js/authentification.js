@@ -23,8 +23,8 @@ $("#cnx-btn").click(function () {
                 '(\\/\\w*)(\\/\\w*)\\?*'
             ],
             "sections": {
-                "hide" : [],
-                "show" : [] 
+                "hide": [],
+                "show": []
             }
         }
 
@@ -37,13 +37,57 @@ $("#cnx-btn").click(function () {
 
     } else {
         authenticate(matricule).then((manager) => {
-            console.log(manager, password);
-            console.log(manager.type, (password === "manager2"));
+            // console.log(manager, password);
+            // console.log(manager.type, (password === "manager2"));
+
+            // SET AUTHORIZATION
+            let auth = {
+                "regex": [
+                    '\\/(evaluation)\\/(evaluate|list)\\?*',
+
+                ],
+                "sections": {
+                    "hide": [
+                        {
+                            "name": "assessment",
+                            "id": "#assessment"
+
+                        },
+                        {
+                            "name": "emploi",
+                            "id": "#emploi"
+                        },
+                        {
+                            "name": "pv",
+                            "id": "#pv"
+                        }
+                    ],
+                    "show": [
+                        {
+                            "type" : "anchor",
+                            "name": "dashboard",
+                            "id": "#dashboard",
+                            "link": "/evaluation/list"
+                        }
+                    ]
+                }
+            }
+
             if (manager.type === "1" && password === "manager1") {
                 showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
 
                 // SAVE MANAGER MATRICULE
                 localStorage.setItem("user", JSON.stringify(manager));
+
+                // CHANGE BREADCRUMB TEXT TO MANAGER N+1
+                auth.sections.show.push(
+                    {
+                        "type" : "text",
+                        "name": "breadcrumb",
+                        "id": "#breadcrumb-text",
+                        "text": "Manager N+1"
+                    }
+                );
 
 
 
@@ -60,42 +104,22 @@ $("#cnx-btn").click(function () {
 
                 // console.log("redirected");
 
+                // CHANGE BREADCRUMB TEXT TO MANAGER N+1
+                auth.sections.show.push(
+                    {
+                        "type" : "text",
+                        "name": "breadcrumb",
+                        "id": "#breadcrumb-text",
+                        "text": "Manager N+2"
+                    }
+                );
+
             } else {
                 showModal("error", "échec", "Le mot de passe est incorrect")
             }
 
-            // SET AUTHORIZATION
-            let auth = {
-                "regex": [
-                   '\\/(evaluation)\\/(evaluate|list)\\?*',
-                
-                ],
-                "sections": {
-                    "hide" : [
-                        {
-                            "name" : "assessment",
-                            "id" : "#assessment"
-                            
-                        },
-                        {
-                            "name" : "emploi",
-                            "id" : "#emploi"
-                        },
-                        {
-                            "name" : "pv",
-                            "id" : "#pv"
-                        }
-                    ],
-                    "show" : [
-                        {
-                            "name" : "dashboard",
-                            "id" : "#dashboard",
-                            "link" : "/evaluation/list"
-                        }
-                    ]
-                }
-            }
-    
+
+
             localStorage.setItem("auth", JSON.stringify(auth));
 
 
@@ -214,7 +238,7 @@ function showModal(type, header, content, action) {
     if ($("#loading").is(':visible')) {
         $("#loading").modal('hide');
     }
-    
+
     switch (type) {
         case "success":
             modalId = "success";

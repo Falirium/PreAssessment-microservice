@@ -530,10 +530,12 @@ function parseExigenceToTable(exigences, niveauContainer) {
 
             let exigenceIndex = [...allDeleteCatBtns].indexOf(aElement);
 
-            console.log(exigenceIndex);
+            console.log(exigenceIndex , exigencesArray);
             exigencesArray.splice(exigenceIndex, 1);
 
-            parseExigenceToTable(exigencesArray, focusedNiveauContainer);
+            console.log(exigencesArray);
+
+            parseExigenceToTable(exigencesArray, niveauContainer);
 
         })
     })
@@ -739,15 +741,23 @@ function parseCompetenceToTable(competences, niveauContainer) {
             }
 
             let competenceIndex = [...allEditCatBtns].indexOf(aElement);
-            console.log(competenceIndex);
+            console.log(competenceIndex, competencesArray[competenceIndex]);
 
             let nameInput = niveauContainer.querySelector("#input-nom-competence");
             let categoryInput = niveauContainer.querySelector("#input-categorie-competence");
             let niveauInput = niveauContainer.querySelector("#input-niveau-competence");
 
-            nameInput.value = competencesArray[competenceIndex].name;
-            categoryInput.value = competencesArray[competenceIndex].category;
-            niveauInput.value = competencesArray[competenceIndex].niveau;
+            console.log(nameInput, $(nameInput));
+
+            $(nameInput).val(competencesArray[competenceIndex].name);
+            // $(categoryInput).val(competencesArray[competenceIndex].category);
+            // $(niveauInput).val(competencesArray[competenceIndex].niveau);
+            $(niveauContainer).find('#input-categorie-competence option[value="' + competencesArray[competenceIndex].type + '"]').attr('selected','selected');
+            $(niveauContainer).find('#input-niveau-competence option[value="' + competencesArray[competenceIndex].niveauRequis + '"]').attr('selected','selected');
+
+            // nameInput.value = competencesArray[competenceIndex].name;
+            // categoryInput.value = competencesArray[competenceIndex].category;
+            // niveauInput.value = competencesArray[competenceIndex].niveau;
 
             // // DELETE THE VALUE FROM THE ARRAY
             // competencesArray.splice(competenceIndex, 1);
@@ -810,6 +820,14 @@ function addListenersToNewNiveau(container) {
             btnElement = e.target;
         }
         //console.log(container);
+
+
+        // INITIALIZE ALL THE EDIT INDEX OF MARQUEURS - EXIGENCES - COMPETENCES
+        lastEditedInputs.exigence = -1;
+        lastEditedInputs.competence = -1;
+        lastEditedInputs.marqueur = -1;
+        lastEditedInputs.glossaire = -1;
+
 
         // CASE OF EXISTENCE OF 1 NIVEAU
         if (niveauCounter > 1) {
@@ -894,7 +912,8 @@ function addListenersToNewNiveau(container) {
         showModal("error", "Supprimer le niveau de séniorité !", 'Vous essayez de supprimer ce niveau de séniorité. Après votre confirmation, vous ne pourrez pas restaurer les informations supprimées. Cliquez sur "Supprimer le niveau" pour confirmer', "", {
             "text": "Supprimer le niveau",
             "color": "danger",
-            "id": "dfe1"
+            "id": "dfe1",
+            "hasFermerBtn": true
         }, function () {
 
 
@@ -1057,10 +1076,10 @@ function addListenersToNewNiveau(container) {
 
         // console.log(niveauxArray);
 
-        // INITIALIZE ARRAYS FOR NEW NIVEAU
-        exigencesArray = [];
-        marqueursArray = [];
-        competencesArray = [];
+        // GET DATA OF THE PREVIOUS NIVEAU --- DIPRECATED
+        exigencesArray = [...niveauxArray[niveauCounter - 1].exigences]; 
+        marqueursArray = [...niveauxArray[niveauCounter - 1].marqueurs];
+        competencesArray = [...niveauxArray[niveauCounter - 1].competences];
 
         // DISABLE INPUTS FOR THE PREVIOUS NIVEAU
         disableInputsFor(container);
@@ -1082,6 +1101,11 @@ function addListenersToNewNiveau(container) {
 
         currentNiveauIndex = niveauCounter - 1;
         addListenersToNewNiveau(lastNiveau);
+
+        // PARSE DATA (EXIGENCES, MARQUEURS, COMPETENCES) TO THE NEW NIVEAU-CONTAINER
+        parseExigenceToTable(exigencesArray, lastNiveau);
+        parseMarqueurToTable(marqueursArray, lastNiveau);
+        parseCompetenceToTable(competencesArray, lastNiveau);
 
     })
 

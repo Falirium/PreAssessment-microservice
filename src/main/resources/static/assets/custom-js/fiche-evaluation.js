@@ -202,7 +202,7 @@ function saveFicheEvaluationHandler(e) {
     } else if (allFieldSelected()) {    // VERIFY IF ALL THE FIELS ARE SELECTED
 
         processSavingFicheEvaluation(e);
-        
+
     }
 
 
@@ -1249,7 +1249,7 @@ function populateResTable(json) {
                     $("#comp-table-body").append('<tr class="comp-dc"></tr>');
 
                     if (index === 0) {
-                        $("#comp-table-body").find("tr").last().append(`<td rowspan="${competences.length}"> Domaines de compétences </td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td rowspan="${competences.length}"> Domaines de connaissances </td>`);
                         $("#comp-table-body").find("tr").last().append(`<td id="compDc-value"> ${competence.name}</td>`);
                         $("#comp-table-body").find("tr").last().append(`<td id="compDc-requis-value" class="niveau-requis"> ${competence.requiredNiveau}</td>`);
 

@@ -274,9 +274,9 @@ function getFichesColumnFromJson(json, authorizedCol) {
                 });
             } else if (value === "evaluateurOne") {
                 colArr.push({
-                    "title": "Matriculle (Manager)"
+                    "title": "Mat. Manager N+1"
                 }, {
-                    "title": "Manager"
+                    "title": "Manager N+1"
                 });
             } else {
                 colArr.push({
@@ -379,7 +379,7 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
                     } else if (e.status.includes("TERMINÉ-0")) {
                         arr.push(`
                         <div class="mt-sm-1 d-block">
-                            <span class="badge bg-warning-transparent rounded-pill text-warning p-2 px-3">Validé</span>
+                            
                             <span class="tag tag-radius tag-round tag-outline-warning">Validé</span>
                          </div>
                          <div class="mt-sm-1 d-block">

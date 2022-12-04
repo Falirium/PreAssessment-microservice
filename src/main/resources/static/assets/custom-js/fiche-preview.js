@@ -241,7 +241,7 @@ function populateResTable(json) {
                     $("#comp-table-body").append("<tr></tr>");
 
                     if (index === 0) {
-                        $("#comp-table-body").find("tr").last().append(`<td rowspan="${competences.length}"> Domaines de compétences </td>`);
+                        $("#comp-table-body").find("tr").last().append(`<td rowspan="${competences.length}"> Domaines de connaissances </td>`);
                         $("#comp-table-body").find("tr").last().append(`<td> ${competence.name}</td>`);
                         $("#comp-table-body").find("tr").last().append(`<td class="niveau-requis"> ${competence.requiredNiveau}</td>`);
 

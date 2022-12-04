@@ -24,18 +24,28 @@ if (localStorage.getItem("user") === null) {
             $(element.id).remove();
         })
     }
-    
+
 
     // STEP 3 : CHANGE SOME PARTS
     showSections.map((element) => {
-        $(element.id).find("a").attr("href", element.link);
+        switch (element.type) {
+            case "anchor":
+                $(element.id).find("a").attr("href", element.link);
+                break;
+
+            case "text":
+                $(element.id).text(element.text);
+                break;
+
+        }
+        
     })
 
     // STEP 4 : CHECK THE TARGET URL IS AUTHORIZED
     console.log(regexList, currentUrl);
-    console.log( checkUrl(regexList, formatUrl(currentUrl)));
+    console.log(checkUrl(regexList, formatUrl(currentUrl)));
 
-   
+
     if (!checkUrl(regexList, formatUrl(currentUrl))) {
 
         // currentUrl = window.location.href;
@@ -171,9 +181,9 @@ function showModalV1(type, header, content, action, btnJson, eventHandler) {
 
 function formatUrl(url) {
     let arr = url
-            .split("//")[1]
-            .split("/");
-    
+        .split("//")[1]
+        .split("/");
+
     return "/" + arr[1] + "/" + arr[2];
-    
+
 }
