@@ -345,7 +345,47 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
                     arr.push(e.emploi.level);
                     break;
                 case "associatedAssessment":
-                    arr.push(e.associatedAssessment.name);
+                    console.log(e.associatedAssessment.status);
+                    switch (e.associatedAssessment.status) {
+                        case "LANCHED":
+                            arr.push(
+                                `
+                                <button type="button" class="btn btn-outline-primary position-relative me-5 mb-2"> ${e.associatedAssessment.name}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">active
+                                        <span class="visually-hidden">unread messages</span>
+                                    </span>
+                                </button>
+                                `
+                            );
+                            
+                            break;
+                        case "FINISHED":
+                            arr.push(
+                                `
+                                <button type="button" class="btn btn-outline-primary position-relative me-5 mb-2"> ${e.associatedAssessment.name}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">terminé
+                                        <span class="visually-hidden">unread messages</span>
+                                    </span>
+                                </button>
+                                `
+                            );
+                            break;
+
+                        case "SUSPENDED":
+                            arr.push(
+                                `
+                                <button type="button" class="btn btn-outline-primary position-relative me-5 mb-2"> ${e.associatedAssessment.name}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">suspendu
+                                        <span class="visually-hidden">unread messages</span>
+                                    </span>
+                                </button>
+
+                                `
+                            );
+                            break;
+
+                    }
+                    // arr.push(e.associatedAssessment.name);
                     break;
 
                 case "status":
@@ -493,7 +533,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
-    } else if (modalId != "lodaing"){
+    } else if (modalId != "lodaing") {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
