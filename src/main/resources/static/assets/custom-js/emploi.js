@@ -530,7 +530,7 @@ function parseExigenceToTable(exigences, niveauContainer) {
 
             let exigenceIndex = [...allDeleteCatBtns].indexOf(aElement);
 
-            console.log(exigenceIndex , exigencesArray);
+            console.log(exigenceIndex, exigencesArray);
             exigencesArray.splice(exigenceIndex, 1);
 
             console.log(exigencesArray);
@@ -714,18 +714,31 @@ function parseCompetenceToTable(competences, niveauContainer) {
                 aElement = e.target;
             }
 
-            let competenceIndex = [...allDeleteCatBtns].indexOf(aElement);
+            // SHOW A DELETE MODAL
+            showModal("error", "Supprimer la compétence ?", "Êtes-vous sûr de vouloir supprimer cette compétence ?", "", {
+                "text": "Supprimer la compétence",
+                "color": "danger",
+                "id": "dfe1",
+                "hasFermerBtn": true
+            }, function () {
 
-            console.log(competenceIndex);
 
-            if (targetIndex !== niveauCounter) {
+                let competenceIndex = [...allDeleteCatBtns].indexOf(aElement);
 
-            } else {
+                console.log(competenceIndex);
+
+                if (targetIndex !== niveauCounter) {
+
+                } else {
+                    competencesArray.splice(competenceIndex, 1);
+                }
                 competencesArray.splice(competenceIndex, 1);
-            }
-            competencesArray.splice(competenceIndex, 1);
 
-            parseCompetenceToTable(competencesArray, niveauContainer);
+                parseCompetenceToTable(competencesArray, niveauContainer);
+                
+            })
+
+
 
         })
     })
@@ -753,8 +766,8 @@ function parseCompetenceToTable(competences, niveauContainer) {
             $(nameInput).trigger('change');
             // $(categoryInput).val(competencesArray[competenceIndex].category);
             // $(niveauInput).val(competencesArray[competenceIndex].niveau);
-            $(niveauContainer).find('#input-categorie-competence option[value="' + competencesArray[competenceIndex].type + '"]').attr('selected','selected');
-            $(niveauContainer).find('#input-niveau-competence option[value="' + competencesArray[competenceIndex].niveauRequis + '"]').attr('selected','selected');
+            $(niveauContainer).find('#input-categorie-competence option[value="' + competencesArray[competenceIndex].type + '"]').attr('selected', 'selected');
+            $(niveauContainer).find('#input-niveau-competence option[value="' + competencesArray[competenceIndex].niveauRequis + '"]').attr('selected', 'selected');
 
             // nameInput.value = competencesArray[competenceIndex].name;
             // categoryInput.value = competencesArray[competenceIndex].category;
@@ -1078,7 +1091,7 @@ function addListenersToNewNiveau(container) {
         // console.log(niveauxArray);
 
         // GET DATA OF THE PREVIOUS NIVEAU --- DIPRECATED
-        exigencesArray = [...niveauxArray[niveauCounter - 1].exigences]; 
+        exigencesArray = [...niveauxArray[niveauCounter - 1].exigences];
         marqueursArray = [...niveauxArray[niveauCounter - 1].marqueurs];
         competencesArray = [...niveauxArray[niveauCounter - 1].competences];
 
@@ -1518,7 +1531,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
     let modalId, modalHeaderId, modalContentId, color;
 
     // HIDE LOADER IF IT EXIST
-    
+
 
 
 
@@ -1620,8 +1633,8 @@ function deleteLoaderToBtn(btnId) {
 }
 
 
-function getIdOfSelectedOption( arrOfSelection, selection) {
-    
+function getIdOfSelectedOption(arrOfSelection, selection) {
+
     for (var i = 0; i < arrOfSelection.length; i++) {
         let s = arrOfSelection[i];
 
