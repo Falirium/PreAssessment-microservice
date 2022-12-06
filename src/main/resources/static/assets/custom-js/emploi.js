@@ -747,9 +747,10 @@ function parseCompetenceToTable(competences, niveauContainer) {
             let categoryInput = niveauContainer.querySelector("#input-categorie-competence");
             let niveauInput = niveauContainer.querySelector("#input-niveau-competence");
 
-            console.log(nameInput, $(nameInput));
+            console.log(competencesArray[competenceIndex]);
 
-            $(nameInput).val(competencesArray[competenceIndex].name);
+            $(nameInput).val(getIdOfSelectedOption(selectionData, competencesArray[competenceIndex].name));
+            $(nameInput).trigger('change');
             // $(categoryInput).val(competencesArray[competenceIndex].category);
             // $(niveauInput).val(competencesArray[competenceIndex].niveau);
             $(niveauContainer).find('#input-categorie-competence option[value="' + competencesArray[competenceIndex].type + '"]').attr('selected','selected');
@@ -1618,3 +1619,18 @@ function deleteLoaderToBtn(btnId) {
     $(btnId).find("span").remove();
 }
 
+
+function getIdOfSelectedOption( arrOfSelection, selection) {
+    
+    for (var i = 0; i < arrOfSelection.length; i++) {
+        let s = arrOfSelection[i];
+
+        if (s.text === selection) {
+            let f = s.id;
+            console.log(f);
+            return f.toString();
+        }
+    }
+
+    return -1;
+}
