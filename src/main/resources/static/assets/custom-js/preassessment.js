@@ -577,6 +577,9 @@ inputFileUploader.addEventListener('change', (e) => {
     let input = document.getElementById('assessment-excel-file');
     let file = input.files[0];
 
+    // DISTROY DATATABLE AND RE-INITIALIZE IT
+
+
     // btnVisualize.classList.add("btn-loading");
 
     parseExcelPopulation(file).then((data) => {
@@ -641,16 +644,30 @@ inputFileUploader.addEventListener('change', (e) => {
         // console.log(fileId, data);
 
         // INITIALTE DATATABLE
+
         let dataSet = excelData.filter((element, index) => {
             if (index !== 0) return true;
         });
 
         let col = generateColumnsForDatatable(excelData[0]);
 
-        populationTable = $("#tb1").DataTable({
-            data: dataSet,
-            columns: col
-        });
+        if (populationTable != null) {
+
+            populationTable.clear();
+            populationTable.rows.add(dataSet);
+            populationTable.draw();
+
+        } else {
+
+            populationTable = $("#tb1").DataTable({
+                data: dataSet,
+                columns: col
+            });
+
+        }
+        
+
+        
 
 
         classificationColumns = getClassificationColumn(excelData[0]);
