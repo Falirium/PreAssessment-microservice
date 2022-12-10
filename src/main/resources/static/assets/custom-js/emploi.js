@@ -52,6 +52,13 @@ let focusedNiveauContainer = document.querySelector(".niveau-container");
 
 // MAIN INITIALIZATION CODE
 
+// STEP 1 : CHECK URL IN ORDER TO REMOVE ANY EMPLOI FROM LOCALSTORAGE
+if (!weEditEmploi(window.location.href)) {
+    console.log("adding");
+    localStorage.removeItem("emploi");
+}
+
+// STEP 2 : GET THE LIST OF COMPETENCES
 getListCompetences().then((success) => {
 
     fetchCompetencesArray = success;
@@ -295,7 +302,14 @@ $("#btn-emploi-save").one('click', function () {
 
 })
 
-
+function weEditEmploi(url) {
+    let lastPart = url.split("/").slice(-1);
+    if (lastPart[0] === "edit") {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 function parseResToTable(responsabilitesArray) {
 
