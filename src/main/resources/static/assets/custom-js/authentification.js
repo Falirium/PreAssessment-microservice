@@ -2,14 +2,19 @@
 let matricule;
 let password;
 
-$("#matricule-input").change(function (e) {
+$(".matricule-input").change(function (e) {
     matricule = e.target.value;
+
+    console.log("matricule :" + matricule );
 })
 
-$("#pwd-input").change(function (e) {
+$(".pwd-input").change(function (e) {
     password = e.target.value;
+
+    console.log("password :" + password);
 })
 
+// AUTHENTIFICATION BCP
 $("#cnx-btn").click(function () {
     //console.log(typeof(authenticate(matricule)), typeof(authenticate(matricule).then));
     if (validateMatriculeConsultant(matricule, password)) {
@@ -34,105 +39,164 @@ $("#cnx-btn").click(function () {
         let currentUrl = window.location.href;
         window.location.replace(extractDomain(currentUrl) + "assessment/list");
 
-
-    } else {
-        authenticate(matricule).then((manager) => {
-            // console.log(manager, password);
-            // console.log(manager.type, (password === "manager2"));
-
-            // SET AUTHORIZATION
-            let auth = {
-                "regex": [
-                    '\\/(evaluation)\\/(evaluate|list)\\?*',
-
-                ],
-                "sections": {
-                    "hide": [
-                        {
-                            "name": "assessment",
-                            "id": "#assessment"
-
-                        },
-                        {
-                            "name": "emploi",
-                            "id": "#emploi"
-                        },
-                        {
-                            "name": "pv",
-                            "id": "#pv"
-                        }
-                    ],
-                    "show": [
-                        {
-                            "type" : "anchor",
-                            "name": "dashboard",
-                            "id": "#dashboard",
-                            "link": "/evaluation/list"
-                        }
-                    ]
-                }
-            }
-
-            if (manager.type === "1" && password === "manager1") {
-                showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
-
-                // SAVE MANAGER MATRICULE
-                localStorage.setItem("user", JSON.stringify(manager));
-
-                // CHANGE BREADCRUMB TEXT TO MANAGER N+1
-                auth.sections.show.push(
-                    {
-                        "type" : "text",
-                        "name": "breadcrumb",
-                        "id": "#breadcrumb-text",
-                        "text": "Manager N+1"
-                    }
-                );
-
-
-
-
-            } else if (manager.type == "2" && password === "manager2") {
-                showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
-
-                // SAVE MANAGER MATRICULE
-                localStorage.setItem("user", JSON.stringify(manager));
-
-                // // REDIRECT TO HOMEPAGE
-                // let currentUrl = window.location.href;
-                // window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-
-                // console.log("redirected");
-
-                // CHANGE BREADCRUMB TEXT TO MANAGER N+1
-                auth.sections.show.push(
-                    {
-                        "type" : "text",
-                        "name": "breadcrumb",
-                        "id": "#breadcrumb-text",
-                        "text": "Manager N+2"
-                    }
-                );
-
-            } else {
-                showModal("error", "échec", "Le mot de passe est incorrect")
-            }
-
-
-
-            localStorage.setItem("auth", JSON.stringify(auth));
-
-
-            // REDIRECT TO HOMEPAGE
-            let currentUrl = window.location.href;
-            window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-            console.log("redirected");
-
-        });
     }
 
 })
 
+
+
+// AUTHENTIFICATION BPR
+$("#cnx-btn-bpr").click(function () {
+    //console.log(typeof(authenticate(matricule)), typeof(authenticate(matricule).then));
+
+    validateMatriculeDrh(matricule).then((manager) => {
+        
+
+        // SET AUTHORIZATION
+        let auth = {
+            "regex": [
+                '\\/(assessment)\\/(evaluate|list)\\/*',
+
+            ],
+            "sections": {
+                "hide": [
+                    
+                    {
+                        "name": "emploi",
+                        "id": "#emploi"
+                    },
+                    {
+                        "name": "pv",
+                        "id": "#pv"
+                    }
+                ],
+                "show": [
+                    {
+                        "type": "anchor",
+                        "name": "dashboard",
+                        "id": "#dashboard",
+                        "link": "/assessment/list"
+                    }
+                ]
+            }
+        }
+
+
+
+        localStorage.setItem("auth", JSON.stringify(auth));
+
+
+        // REDIRECT TO HOMEPAGE
+        let currentUrl = window.location.href;
+        window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+        console.log("redirected");
+
+    });
+
+
+})
+
+// AUTHENTIFICATION MANAGER
+
+$("#cnx-btn-manager").click(function () {
+    //console.log(typeof(authenticate(matricule)), typeof(authenticate(matricule).then));
+
+    authenticate(matricule).then((manager) => {
+        // console.log(manager, password);
+        // console.log(manager.type, (password === "manager2"));
+
+        // SET AUTHORIZATION
+        let auth = {
+            "regex": [
+                '\\/(evaluation)\\/(evaluate|list)\\?*',
+
+            ],
+            "sections": {
+                "hide": [
+                    {
+                        "name": "assessment",
+                        "id": "#assessment"
+
+                    },
+                    {
+                        "name": "emploi",
+                        "id": "#emploi"
+                    },
+                    {
+                        "name": "pv",
+                        "id": "#pv"
+                    }
+                ],
+                "show": [
+                    {
+                        "type": "anchor",
+                        "name": "dashboard",
+                        "id": "#dashboard",
+                        "link": "/evaluation/list"
+                    }
+                ]
+            }
+        }
+
+        if (manager.type === "1" && password === "manager1") {
+            showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
+
+            // SAVE MANAGER MATRICULE
+            localStorage.setItem("user", JSON.stringify(manager));
+
+            // CHANGE BREADCRUMB TEXT TO MANAGER N+1
+            auth.sections.show.push(
+                {
+                    "type": "text",
+                    "name": "breadcrumb",
+                    "id": "#breadcrumb-text",
+                    "text": "Manager N+1"
+                }
+            );
+
+
+
+
+        } else if (manager.type == "2" && password === "manager2") {
+            showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
+
+            // SAVE MANAGER MATRICULE
+            localStorage.setItem("user", JSON.stringify(manager));
+
+            // // REDIRECT TO HOMEPAGE
+            // let currentUrl = window.location.href;
+            // window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+
+            // console.log("redirected");
+
+            // CHANGE BREADCRUMB TEXT TO MANAGER N+1
+            auth.sections.show.push(
+                {
+                    "type": "text",
+                    "name": "breadcrumb",
+                    "id": "#breadcrumb-text",
+                    "text": "Manager N+2"
+                }
+            );
+
+        } else {
+            showModal("error", "échec", "Le mot de passe est incorrect")
+        }
+
+
+
+        localStorage.setItem("auth", JSON.stringify(auth));
+
+
+        // REDIRECT TO HOMEPAGE
+        let currentUrl = window.location.href;
+        window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+        console.log("redirected");
+
+    });
+
+
+})
 const extractDomain = (url) => {
     const elems = url.split("/");
     return elems[0] + "//" + elems[2] + "/";
@@ -204,6 +268,22 @@ async function validateMatriculeManagerOne(matricule) {
         })
 }
 
+async function validateMatriculeDrh(matricule) {
+    let url1 = "http://localhost:8080/preassessment/api/v1/employee/drh/" + matricule;
+
+
+    return fetch(url1, {
+        method: 'GET'
+    }).then(response => response.json())
+        .then((success) => {
+            console.log(success);
+            return success;
+        }).catch((error) => {
+            console.error(error);
+            return error;
+        })
+}
+
 async function validateMatriculeManagerTwo(matricule) {
 
     let url2 = "http://localhost:8080/preassessment/api/v1/employee/managerTwo/" + matricule;
@@ -223,8 +303,10 @@ async function validateMatriculeManagerTwo(matricule) {
 function validateMatriculeConsultant(matricule, pwd) {
 
     if (matricule === "admin" && pwd === "admin123") {
+
         return true;
     } else {
+        showModal("error", "Échec", "Le matricule ou bien le mot de passe sont incorrects. Veuillez réessayer de vous reconnecter ", "")
         return false;
     }
 }
