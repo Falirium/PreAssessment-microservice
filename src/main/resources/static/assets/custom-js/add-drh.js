@@ -339,7 +339,7 @@ async function postDrhEntity(json) {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(json) // This is your file object
+        body: JSON.stringify([json]) // This is your file object
     }).then(
         response => response.json() // if the response is a JSON object
     ).then(

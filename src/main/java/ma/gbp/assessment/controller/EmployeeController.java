@@ -17,6 +17,7 @@ import ma.gbp.assessment.model.Drh;
 import ma.gbp.assessment.model.Employee;
 import ma.gbp.assessment.model.ManagerOne;
 import ma.gbp.assessment.model.ManagerTwo;
+import ma.gbp.assessment.service.CollaborateurService;
 import ma.gbp.assessment.service.DrhService;
 import ma.gbp.assessment.service.EmployeeService;
 import ma.gbp.assessment.service.ManagerOneService;
@@ -41,6 +42,9 @@ public class EmployeeController {
     private ManagerTwoService managerTwoService;
 
     @Autowired
+    private CollaborateurService collaborateurService;
+
+    @Autowired
     private DrhService drhService;
 
     @PostMapping("/managerOne")
@@ -48,7 +52,14 @@ public class EmployeeController {
         List<ManagerOne> savedManagersOne = new ArrayList<ManagerOne>();
 
         for (ManagerOne manager : managersOne) {
-            savedManagersOne.add(employeeService.saveManagerOne(manager));
+
+            // CHECK IF MANAGERTWO EXISTS
+            if (doesEmployeeExist(manager.getFirstName(), manager.getLastName(), 1, false)) {
+                savedManagersOne.add(
+                        managerOneService.getManagerByFirstAndLastName(manager.getFirstName(), manager.getLastName()));
+            } else {
+                savedManagersOne.add(employeeService.saveManagerOne(manager));
+            }
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(savedManagersOne);
@@ -59,7 +70,15 @@ public class EmployeeController {
         List<ManagerTwo> savedManagersTwo = new ArrayList<ManagerTwo>();
 
         for (ManagerTwo manager : managersTwo) {
-            savedManagersTwo.add(employeeService.saveManagerTwo(manager));
+
+            // CHECK IF MANAGERTWO EXISTS
+            if (doesEmployeeExist(manager.getFirstName(), manager.getLastName(), 2, false)) {
+                savedManagersTwo.add(
+                        managerTwoService.getManagerByFirstAndLastName(manager.getFirstName(), manager.getLastName()));
+            } else {
+                savedManagersTwo.add(employeeService.saveManagerTwo(manager));
+            }
+
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(savedManagersTwo);
@@ -69,16 +88,37 @@ public class EmployeeController {
     public ResponseEntity<List<Collaborateur>> saveCollaborateur(@RequestBody List<Collaborateur> collaborateurs) {
         List<Collaborateur> savedCollaborateurs = new ArrayList<Collaborateur>();
 
-        for (Collaborateur manager : collaborateurs) {
-            savedCollaborateurs.add(employeeService.savCollaborateur(manager));
+        for (Collaborateur collaborateur : collaborateurs) {
+
+            // CHECK IF COLLABORATEUR EXISTS
+            if (doesEmployeeExist(collaborateur.getFirstName(), collaborateur.getLastName(), 0, false)) {
+                savedCollaborateurs.add(collaborateurService.getCollByFirstAndLastName(collaborateur.getFirstName(),
+                        collaborateur.getLastName()));
+            } else {
+                savedCollaborateurs.add(employeeService.savCollaborateur(collaborateur));
+            }
+
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(savedCollaborateurs);
     }
 
     @PostMapping("/drh")
-    public ResponseEntity<Drh> saveDrh(@RequestBody Drh drh) {
-        return ResponseEntity.status(HttpStatus.OK).body(drhService.saveDrh(drh));
+    public ResponseEntity<List<Drh>> saveDrh(@RequestBody List<Drh> listDrhs) {
+
+        List<Drh> savedDrhs = new ArrayList<Drh>();
+
+        for (Drh drh : listDrhs) {
+
+            if (doesEmployeeExist(drh.getFirstName(), drh.getLastName(), 0, true)) {
+
+                savedDrhs.add(drhService.getDrhByFirstAndLastName(drh.getFirstName(), drh.getLastName()));
+            } else {
+
+                savedDrhs.add(drhService.saveDrh(drh));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(drhService.saveListOfDrhs(savedDrhs));
     }
 
     @GetMapping("/managerOne/{matricule}")
@@ -87,17 +127,16 @@ public class EmployeeController {
         ManagerOne manager = managerOneService.getManagerOneByMatricule(matricule);
 
         if (manager == null) {
-            throw new CustomErrorException(HttpStatus.NOT_FOUND,"Manage not found");
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Manage not found");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(managerOneService.getManagerOneByMatricule(matricule));
         }
 
-    
     }
 
     @GetMapping("/managerTwo/{matricule}")
     public ResponseEntity<ManagerTwo> getManagerTwoByName(@PathVariable String matricule) {
-        
+
         ManagerTwo manager = managerTwoService.getManagerTwoByMatricule(matricule);
 
         if (manager == null) {
@@ -105,13 +144,12 @@ public class EmployeeController {
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(managerTwoService.getManagerTwoByMatricule(matricule));
         }
-        
 
     }
 
     @GetMapping("/drh/{matricule}")
     public ResponseEntity<Drh> getDrhByMatricule(@PathVariable String matricule) {
-        
+
         Drh drh = drhService.getDrhByMatricule(matricule);
 
         if (drh == null) {
@@ -119,8 +157,39 @@ public class EmployeeController {
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(drhService.getDrhByMatricule(matricule));
         }
-        
 
     }
+
+    @GetMapping("/drh")
+    public ResponseEntity<List<Drh>> getListDrhs() {
+
+        return ResponseEntity.status(HttpStatus.OK).body(drhService.getAllDrh());
+
+    }
+
+    private boolean doesEmployeeExist(String mFirstName, String mLastName, int mLevel, boolean isDrh) {
+
+        Employee m = new Employee();
+
+        if (mLevel == 1) {
+                m = managerOneService.getManagerByFirstAndLastName(mFirstName, mLastName);
+
+        } else if (mLevel == 2) {
+                m = managerTwoService.getManagerByFirstAndLastName(mFirstName, mLastName);
+        } else if (isDrh){
+            
+            
+            m = drhService.getDrhByFirstAndLastName(mFirstName, mLastName);
+        } else {
+                // CASE FOR COLLABORATEURS
+                m = collaborateurService.getCollByFirstAndLastName(mFirstName, mLastName);
+        }
+
+        if (m == null) {
+                return false;
+        } else {
+                return true;
+        }
+}
 
 }
