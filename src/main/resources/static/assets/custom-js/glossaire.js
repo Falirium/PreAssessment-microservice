@@ -38,32 +38,25 @@ const btnSaveMatrice = document.querySelector("#btn-competence-save");
 
 
 btnAddFile.addEventListener("click", (e) => {
-    // let tbody = document.querySelector("tbody");
-    // console.log(tbody.innerHTML === "");
-    // if (tbody.innerHTML === "") {
-    //     var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
-    //     myModal.show();
-    // } else {
-    //     showModal("warning", "Attention !", 'Vous ne pouvez pas ajouter une nouvelle liste de compétences sans sauvegarder la liste sur la table. Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.')
-
-    // }
-
+ 
 
     // BEHANVIOUR : ADD A LIST OF COMPETENCE FROM AN EXCEL FILE TO THE LIST ON THE TABLE
 
     // CHECK IF THE DATA-TABLE IS ALREADY INITILIZED
 
-    if (fileExcel.files.length != 0 && fileHasBeenProcessed) {
+    // if (fileExcel.files.length != 0 && fileHasBeenProcessed) {
 
-        // SHOW A WARNING MODAL
-        showModal("warning", "Attention !", 'Vous ne pouvez pas ajouter une nouvelle liste de compétences sans sauvegarder la liste sur la table. Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.')
-    } else {
+    //     // SHOW A WARNING MODAL
+    //     showModal("warning", "Attention !", 'Vous ne pouvez pas ajouter une nouvelle liste de compétences sans sauvegarder la liste sur la table. Cliquez sur le bouton "Enregistrer" pour sauvegarder la liste.')
+    // } else {
 
-        // STEP 1 : SHOW INPUT FILE MODAL
-        // STEP 2 : GET DATA  FROM THE FILE AND PUSH IT TO COMPETENCE-ARRAY
-        // STEP 3 : RE-INITILIZE THE DATATABLE WITH NEW DATA
-        showFileInputModal();
-    }
+    //     // STEP 1 : SHOW INPUT FILE MODAL
+    //     // STEP 2 : GET DATA  FROM THE FILE AND PUSH IT TO COMPETENCE-ARRAY
+    //     // STEP 3 : RE-INITILIZE THE DATATABLE WITH NEW DATA
+    //     showFileInputModal();
+    // }
+
+    showFileInputModal();
 
 })
 
@@ -504,6 +497,11 @@ async function parseExcelFile2(inputElement) {
             console.timeEnd();
             // var result = ''
 
+            // INITIALIZE SOME ARRAYS
+            competenceNameArray = [];
+            competenceDefArray = [];
+            competenceLevelsDefArray = [];
+
             const sheet = workbook.getWorksheet('Matrice');
             const c1 = sheet.getColumn('D');
             // console.log(c1);
@@ -589,7 +587,18 @@ async function parseExcelFile2(inputElement) {
             .catch(error => {
                 // SHOW MODAL ERROR
                 console.error(error);
-                showModal("error", "Erreur d'éxecution", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard. Si le problème persiste, veuillez contacter votre consultant DRH.", "");
+                showModal("error", "Erreur d'éxecution", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard. Si le problème persiste, veuillez contacter votre consultant DRH.", "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "danger",
+                    "id": "sdq1"
+                }, function () {
+                    // REDIRECT TO THE LIST OF ASSESSMENTS
+                    setTimeout(function () {
+                        let currentUrl = window.location.href;
+
+                        window.location.href = extractDomain(currentUrl) + "competence/list";
+                    }, 1000);
+                })
 
                 // //HIDE LOADER
                 $("#btn-add-file").removeClass("btn-loading");
@@ -600,6 +609,9 @@ async function parseExcelFile2(inputElement) {
 
 // THIS FUNCTION GETS THE FINAL FORMAT OF THE ARRAY HOLDING ALL THE COMPETENCES ----> USED TO POST ARRAYS
 function getGlossaireOfCompentence(names, defs, levels) {
+
+    // INITIALIZE THE COMPETENCE ARRAY
+    competenceArray = [];
     names.map((e, index) => {
         let competenceJson = {
             "name": e,

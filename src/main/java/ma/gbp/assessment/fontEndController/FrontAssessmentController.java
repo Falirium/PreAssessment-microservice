@@ -166,6 +166,22 @@ public class FrontAssessmentController {
     public String getAssessmentResults(@PathVariable String id) {
         return "assesment-result";
     }
+
+    @GetMapping(path = "/drh/list")
+    public String getListDrh() {
+        return "drh-list";
+    }
+
+    @GetMapping(path = "/drh/edit")
+    public String editDrh() {
+        return "drh-edit";
+    }
+
+
+    @GetMapping(path = "/drh/add")
+    public String addDrh() {
+        return "drh-add";
+    }
     
 
 

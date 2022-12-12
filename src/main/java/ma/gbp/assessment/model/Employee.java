@@ -24,6 +24,8 @@ public class Employee {
     private String topDirection;
     private String direction;
     private String role;
+    private String phoneNumber;
+    private String workEmail;
 
     public Employee(String firstName, String lastName, String matricule) {
         this.firstName = firstName;

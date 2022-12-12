@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import ma.gbp.assessment.exception.CustomErrorException;
 import ma.gbp.assessment.model.Collaborateur;
+import ma.gbp.assessment.model.Drh;
 import ma.gbp.assessment.model.Employee;
 import ma.gbp.assessment.model.ManagerOne;
 import ma.gbp.assessment.model.ManagerTwo;
+import ma.gbp.assessment.service.DrhService;
 import ma.gbp.assessment.service.EmployeeService;
 import ma.gbp.assessment.service.ManagerOneService;
 import ma.gbp.assessment.service.ManagerTwoService;
@@ -37,6 +39,9 @@ public class EmployeeController {
 
     @Autowired
     private ManagerTwoService managerTwoService;
+
+    @Autowired
+    private DrhService drhService;
 
     @PostMapping("/managerOne")
     public ResponseEntity<List<ManagerOne>> saveManagersOne(@RequestBody List<ManagerOne> managersOne) {
@@ -71,6 +76,11 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.OK).body(savedCollaborateurs);
     }
 
+    @PostMapping("/drh")
+    public ResponseEntity<Drh> saveDrh(@RequestBody Drh drh) {
+        return ResponseEntity.status(HttpStatus.OK).body(drhService.saveDrh(drh));
+    }
+
     @GetMapping("/managerOne/{matricule}")
     public ResponseEntity<ManagerOne> getMananagerOneByName(@PathVariable String matricule) {
 
@@ -82,8 +92,7 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.OK).body(managerOneService.getManagerOneByMatricule(matricule));
         }
 
-        
-
+    
     }
 
     @GetMapping("/managerTwo/{matricule}")
@@ -95,6 +104,20 @@ public class EmployeeController {
             throw new CustomErrorException(HttpStatus.NOT_FOUND, "Manager not found");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(managerTwoService.getManagerTwoByMatricule(matricule));
+        }
+        
+
+    }
+
+    @GetMapping("/drh/{matricule}")
+    public ResponseEntity<Drh> getDrhByMatricule(@PathVariable String matricule) {
+        
+        Drh drh = drhService.getDrhByMatricule(matricule);
+
+        if (drh == null) {
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Drh not found");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(drhService.getDrhByMatricule(matricule));
         }
         
 
