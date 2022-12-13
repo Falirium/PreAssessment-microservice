@@ -3,11 +3,14 @@ package ma.gbp.assessment.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -114,11 +117,50 @@ public class EmployeeController {
 
                 savedDrhs.add(drhService.getDrhByFirstAndLastName(drh.getFirstName(), drh.getLastName()));
             } else {
+                drh.setHashedPwd(BCrypt.hashpw(drh.getHashedPwd(), BCrypt.gensalt()));
 
                 savedDrhs.add(drhService.saveDrh(drh));
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(drhService.saveListOfDrhs(savedDrhs));
+    }
+
+    @PutMapping("/drh/update")
+    public ResponseEntity<Drh> updateDrh(@RequestBody Drh updatedDrh) {
+
+        Drh targetedDrh = drhService.getDrhByMatricule(updatedDrh.getMatricule());
+
+        if (targetedDrh == null) {
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Drh not found");
+        }
+
+        targetedDrh.setCodePrefix(updatedDrh.getCodePrefix());
+        targetedDrh.setCodeSuffix(updatedDrh.getCodeSuffix());
+        targetedDrh.setDirection(updatedDrh.getDirection());
+        targetedDrh.setFirstName(updatedDrh.getFirstName());
+        targetedDrh.setLastName(updatedDrh.getLastName());
+        targetedDrh.setTopDirection(updatedDrh.getTopDirection());
+        targetedDrh.setMatricule(updatedDrh.getMatricule());
+        targetedDrh.setPhoneNumber(updatedDrh.getPhoneNumber());
+        targetedDrh.setWorkEmail(updatedDrh.getWorkEmail());
+        targetedDrh.setTag(updatedDrh.getTag());
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(drhService.saveDrh(targetedDrh));
+    }
+
+    @PatchMapping("/drh/pwd")
+    public ResponseEntity<Drh> changeDrhPwd(@RequestBody Drh drh) {
+
+        Drh targetedDrh = drhService.getDrhByMatricule(drh.getMatricule());
+
+        if (targetedDrh == null) {
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Drh not found");
+        }
+
+        targetedDrh.setHashedPwd(BCrypt.hashpw(drh.getHashedPwd(), BCrypt.gensalt()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(drhService.saveDrh(targetedDrh));
     }
 
     @GetMapping("/managerOne/{matricule}")
@@ -172,24 +214,23 @@ public class EmployeeController {
         Employee m = new Employee();
 
         if (mLevel == 1) {
-                m = managerOneService.getManagerByFirstAndLastName(mFirstName, mLastName);
+            m = managerOneService.getManagerByFirstAndLastName(mFirstName, mLastName);
 
         } else if (mLevel == 2) {
-                m = managerTwoService.getManagerByFirstAndLastName(mFirstName, mLastName);
-        } else if (isDrh){
-            
-            
+            m = managerTwoService.getManagerByFirstAndLastName(mFirstName, mLastName);
+        } else if (isDrh) {
+
             m = drhService.getDrhByFirstAndLastName(mFirstName, mLastName);
         } else {
-                // CASE FOR COLLABORATEURS
-                m = collaborateurService.getCollByFirstAndLastName(mFirstName, mLastName);
+            // CASE FOR COLLABORATEURS
+            m = collaborateurService.getCollByFirstAndLastName(mFirstName, mLastName);
         }
 
         if (m == null) {
-                return false;
+            return false;
         } else {
-                return true;
+            return true;
         }
-}
+    }
 
 }

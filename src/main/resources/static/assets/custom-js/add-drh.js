@@ -72,10 +72,17 @@ $(document).ready(function () {
 
 // EVENT LISTENER ON BUTTONS
 
+
+
 $("#save-btn").click(function (e) {
+
+
 
     // CHECK IF ANY FIELD IS EMPTY 
     if (checkInputsFields()) {
+
+        // ADD LOADER 
+        addLoaderToBtn("#save-btn");
 
         // GET ALL INPUT DATA
         drhJson["firstName"] = $("#first-name-drh-input").val();
@@ -86,49 +93,102 @@ $("#save-btn").click(function (e) {
         drhJson["phoneNumber"] = "+212" + $("#phone-drh-input").val();
         drhJson["direction"] = $("#direction-drh-input").val();
         drhJson["codeSuffix"] = getSelectedValuesFromSelect2($("#code-suffix-drh-input").select2('data'));
-        drhJson["codePrefix"]= getSelectedValuesFromSelect2($("#code-prefix-drh-input").select2('data'));
+        drhJson["codePrefix"] = getSelectedValuesFromSelect2($("#code-prefix-drh-input").select2('data'));
         drhJson["topDirection"] = $("#bpr-drh-input").select2('data')[0].id;
 
         drhJson["tag"] = $("#bpr-drh-input").select2('data')[0].id;
         drhJson["role"] = "DRH";
         console.log(drhJson);
 
-        postDrhEntity(drhJson).then((response) => {
+        if (localStorage.getItem("drh") == null) {
+            postDrhEntity(drhJson).then((response) => {
 
-            if (response.status == '400') {
+                // DELETE LOADER
+                deleteLoaderToBtn("#save-btn");
 
-                console.log("error");
-                showModal("error", "Échec", "Un problème interne doit être résolu : " + response.message, "");
+                if (response.status == '400') {
 
-            } else {
-                console.log(response);
+                    console.log("error");
+                    showModal("error", "Échec", "Un problème interne doit être résolu : " + response.message, "");
 
-                showModal("success", "Complété", `
-                Un nouveau compte DRH a été créé avec succès. Le mot de passe généré pour ce compte est :
-                    <h2 class="text-center text-red">${drhJson["hashedPwd"]}</h2>
-                `, "",
-                    {
-                        "text": "Retour à l'accueil",
-                        "color": "success",
-                        "id": "btn-save"
-                    }, function () {
-                        redirectTo("employee/drh/list", 1000);
-                    });
+                } else {
+                    console.log(response);
 
-            }
+                    showModal("success", "Complété", `
+                    Un nouveau compte DRH a été créé avec succès. Le mot de passe généré pour ce compte est :
+                        <h2 class="text-center text-red">${drhJson["hashedPwd"]}</h2>
+                    `, "",
+                        {
+                            "text": "Retour à l'accueil",
+                            "color": "success",
+                            "id": "btn-save"
+                        }, function () {
+                            redirectTo("employee/drh/list", 1000);
+                        });
+
+                }
 
 
 
-        }).catch((error) => {
-            console.log(error);
-            showModal("error", "Échec", "Un problème interne doit être résolu : " + error, "", {
-                "text": "Revenir à l'acceuil",
-                "color": "danger",
-                "id": "dfe1"
-            }, function () {
-                redirectTo("employee/drh/list", 500);
+            }).catch((error) => {
+                console.log(error);
+                showModal("error", "Échec", "Un problème interne doit être résolu : " + error, "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "danger",
+                    "id": "dfe1"
+                }, function () {
+                    redirectTo("employee/drh/list", 500);
+                });
             });
-        })
+
+        } else {
+
+            updateDrh(drhJson).then((response) => {
+
+                // DELETE LOADER
+                deleteLoaderToBtn("#save-btn");
+
+                if (response.status == '400') {
+
+                    console.log("error");
+                    showModal("error", "Échec", "Un problème interne doit être résolu : " + response.message, "");
+
+                } else {
+                    console.log(response);
+
+                    showModal("success", "Complété", `
+                    Les informations du compte DRH ont été modifiées avec succès.
+                    `, "",
+                        {
+                            "text": "Retour à l'accueil",
+                            "color": "success",
+                            "id": "btn-save"
+                        }, function () {
+                            redirectTo("employee/drh/list", 1000);
+                        });
+
+                }
+
+
+
+            }).catch((error) => {
+
+                 // DELETE LOADER
+                 deleteLoaderToBtn("#save-btn");
+                 
+                console.log(error);
+                showModal("error", "Échec", "Un problème interne doit être résolu : " + error, "", {
+                    "text": "Revenir à l'acceuil",
+                    "color": "danger",
+                    "id": "dfe1"
+                }, function () {
+                    redirectTo("employee/drh/list", 500);
+                });
+            });
+
+        }
+
+
 
     }
 
@@ -184,7 +244,43 @@ $("#update-pwd-btn").click(function (e) {
 
     } else {
 
+        // ADD LOADER
+        addLoaderToBtn("#update-pwd-btn");
+
         // SEND REQUEST TO CHANGE THE PASSWORD
+        drhJson["hashedPwd"] = $("#pwd-input").val();
+        updatePwd(drhJson).then((res) => {
+
+
+            // DELETE LOADER
+            deleteLoaderToBtn("#update-pwd-btn");
+
+            showModal("success", "Complété", `
+                Le mot de passe a été changé avec succès. Envoyez le nouveau mot de passe à l'utilisateur DRH :
+                    <h2 class="text-center text-red">${drhJson["hashedPwd"]}</h2>
+                    `, "",
+                {
+                    "text": "Retour à l'accueil",
+                    "color": "success",
+                    "id": "btn-save"
+                }, function () {
+                    redirectTo("employee/drh/list", 1000);
+                });
+
+        }).catch((error) => {
+
+            // DELETE LOADER
+            deleteLoaderToBtn("#update-pwd-btn");
+
+            console.log(error);
+            showModal("error", "Échec", "Un problème interne doit être résolu : " + error, "", {
+                "text": "Revenir à l'acceuil",
+                "color": "danger",
+                "id": "dfe1"
+            }, function () {
+                redirectTo("employee/drh/list", 500);
+            });
+        });
 
     }
 })
@@ -361,7 +457,11 @@ function getSelectedValuesFromSelect2(arrObj) {
     return finalArr;
 }
 
-function redirectTo(url, timeInMilliseconds) {
+function redirectTo(url, timeInMilliseconds, data) {
+
+    // REMOVE ANY DATA SAVED IN LOCALSTORAGE
+    localStorage.removeItem("drh");
+
     setTimeout(function () {
         let currentUrl = window.location.href;
 
@@ -371,3 +471,36 @@ function redirectTo(url, timeInMilliseconds) {
 }
 
 
+async function updatePwd(json) {
+
+    let url = "http://localhost:8080/preassessment/api/v1/employee/drh/pwd";
+
+    return fetch(url, { // Your POST endpoint
+        method: 'PATCH',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(json) // This is your file object
+    }).then(
+        response => response.json() // if the response is a JSON object
+    ).then(
+        success => {
+            console.log(success);
+            return success;
+        }
+    ).catch(
+        error => console.log(error) // Handle the error response object
+    );
+}
+
+function addLoaderToBtn(btnId) {
+
+    // ADD LOADER HTML ELEMENT
+    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`)
+}
+
+function deleteLoaderToBtn(btnId) {
+
+    // REMOVE LOADER HTML ELEMENT
+    $(btnId).find("span").remove();
+}
