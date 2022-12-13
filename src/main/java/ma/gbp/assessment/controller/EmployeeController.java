@@ -20,6 +20,7 @@ import ma.gbp.assessment.model.Drh;
 import ma.gbp.assessment.model.Employee;
 import ma.gbp.assessment.model.ManagerOne;
 import ma.gbp.assessment.model.ManagerTwo;
+import ma.gbp.assessment.request.AuthReqBody;
 import ma.gbp.assessment.service.CollaborateurService;
 import ma.gbp.assessment.service.DrhService;
 import ma.gbp.assessment.service.EmployeeService;
@@ -125,6 +126,36 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.OK).body(drhService.saveListOfDrhs(savedDrhs));
     }
 
+    @PostMapping("/drh/auth")
+    public ResponseEntity<Boolean> authenticateDrh(@RequestBody AuthReqBody auth) {
+
+        boolean isAuth = false;
+
+        
+
+        switch (auth.getType()) {
+            case "drh":
+                Drh targetedUser = drhService.getDrhByMatricule(auth.getMatricule());
+
+                if (targetedUser == null) {
+                    throw new CustomErrorException(HttpStatus.NOT_FOUND, "Matricule not found");
+                }
+        
+                isAuth = BCrypt.checkpw(auth.getPwd(), targetedUser.getHashedPwd());
+                break;
+            case "manager":
+
+                break;
+            case "admin":
+
+                break;
+
+        }
+
+        
+        return ResponseEntity.status(HttpStatus.OK).body(isAuth);
+    }
+
     @PutMapping("/drh/update")
     public ResponseEntity<Drh> updateDrh(@RequestBody Drh updatedDrh) {
 
@@ -144,7 +175,6 @@ public class EmployeeController {
         targetedDrh.setPhoneNumber(updatedDrh.getPhoneNumber());
         targetedDrh.setWorkEmail(updatedDrh.getWorkEmail());
         targetedDrh.setTag(updatedDrh.getTag());
-
 
         return ResponseEntity.status(HttpStatus.OK).body(drhService.saveDrh(targetedDrh));
     }

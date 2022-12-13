@@ -5,7 +5,7 @@ let password;
 $(".matricule-input").change(function (e) {
     matricule = e.target.value;
 
-    console.log("matricule :" + matricule );
+    console.log("matricule :" + matricule);
 })
 
 $(".pwd-input").change(function (e) {
@@ -49,48 +49,81 @@ $("#cnx-btn").click(function () {
 $("#cnx-btn-bpr").click(function () {
     //console.log(typeof(authenticate(matricule)), typeof(authenticate(matricule).then));
 
-    validateMatriculeDrh(matricule).then((manager) => {
-        
+    let authObj = {
+        "type": "drh",
+        "matricule": matricule,
+        "pwd": password
+    }
+    console.log(authObj);
+    validateMatriculeDrh(authObj).then((isValid) => {
 
-        // SET AUTHORIZATION
-        let auth = {
-            "regex": [
-                '\\/(assessment)\\/(evaluate|list)\\/*',
+       
 
-            ],
-            "sections": {
-                "hide": [
-                    
-                    {
-                        "name": "emploi",
-                        "id": "#emploi"
-                    },
-                    {
-                        "name": "pv",
-                        "id": "#pv"
-                    }
+        if (isValid.code === 404) {
+
+            console.log("error 2");
+
+            // SHOW ERROR MODAL
+            showModal("error", "Échec", "L'authentification a échoué, car la matrice et/ou les données sont incorrectes. Veuillez réessayer avec des informations d'identification valides.", "");
+
+
+        } else if (isValid == true) {
+
+            // SET AUTHORIZATION
+            let auth = {
+                "regex": [
+                    '\\/(assessment)\\/(evaluate|list)\\/*',
+
                 ],
-                "show": [
-                    {
-                        "type": "anchor",
-                        "name": "dashboard",
-                        "id": "#dashboard",
-                        "link": "/assessment/list"
-                    }
-                ]
+                "sections": {
+                    "hide": [
+
+                        {
+                            "name": "emploi",
+                            "id": "#emploi"
+                        },
+                        {
+                            "name": "pv",
+                            "id": "#pv"
+                        }
+                    ],
+                    "show": [
+                        {
+                            "type": "anchor",
+                            "name": "dashboard",
+                            "id": "#dashboard",
+                            "link": "/assessment/list"
+                        }
+                    ]
+                }
             }
+
+
+
+            localStorage.setItem("auth", JSON.stringify(auth));
+
+
+            // REDIRECT TO HOMEPAGE
+            let currentUrl = window.location.href;
+            window.location.replace(extractDomain(currentUrl) + "assessment/list");
+            console.log("redirected");
+
+
+        } else if (isValid == false) {
+
+            console.log("error 2");
+
+            // SHOW ERROR MODAL
+            showModal("error", "Échec", "L'authentification a échoué, car la matrice et/ou les données sont incorrectes. Veuillez réessayer avec des informations d'identification valides.", "");
+
         }
 
 
 
-        localStorage.setItem("auth", JSON.stringify(auth));
+    }).catch((error) => {
 
-
-        // REDIRECT TO HOMEPAGE
-        let currentUrl = window.location.href;
-        window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-        console.log("redirected");
-
+        // SHOW ERROR MODAL
+        showModal("error", "Échec", "L'authentification a échoué, car la matrice et/ou les données sont incorrectes. Veuillez réessayer avec des informations d'identification valides.", "");
     });
 
 
@@ -268,18 +301,24 @@ async function validateMatriculeManagerOne(matricule) {
         })
 }
 
-async function validateMatriculeDrh(matricule) {
-    let url1 = "http://localhost:8080/preassessment/api/v1/employee/drh/" + matricule;
-
+async function validateMatriculeDrh(json) {
+    let url1 = "http://localhost:8080/preassessment/api/v1/employee/drh/auth";
 
     return fetch(url1, {
-        method: 'GET'
+        method: 'POST',
+        headers: {
+            // Content-Type may need to be completely **omitted**
+            // or you may need something
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(json) // This is your file object
     }).then(response => response.json())
         .then((success) => {
             console.log(success);
             return success;
         }).catch((error) => {
             console.error(error);
+            console.log("error 1");
             return error;
         })
 }
@@ -316,10 +355,7 @@ function showModal(type, header, content, action) {
 
     let modalId, modalHeaderId, modalContentId;
 
-    // HIDE LOADER IF IT EXIST
-    if ($("#loading").is(':visible')) {
-        $("#loading").modal('hide');
-    }
+
 
     switch (type) {
         case "success":
@@ -362,7 +398,7 @@ function showModal(type, header, content, action) {
     $(modalHeaderId).text(header);
 
     // SET CONTENT
-    $(modalContentId).text(content)
+    $(modalContentId).html(content)
 
     myModal.show();
 
