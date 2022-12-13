@@ -57,7 +57,7 @@ $("#cnx-btn-bpr").click(function () {
     console.log(authObj);
     validateMatriculeDrh(authObj).then((isValid) => {
 
-       
+
 
         if (isValid.code === 404) {
 
@@ -96,17 +96,37 @@ $("#cnx-btn-bpr").click(function () {
                         }
                     ]
                 }
-            }
-
-
+            };
 
             localStorage.setItem("auth", JSON.stringify(auth));
 
 
-            // REDIRECT TO HOMEPAGE
-            let currentUrl = window.location.href;
-            window.location.replace(extractDomain(currentUrl) + "assessment/list");
-            console.log("redirected");
+            getDrhInfo(authObj.matricule).then((drh) => {
+
+                // SET USER INFO
+                let user = {
+                    "type": "drh",
+                    "data": drh
+                };
+
+
+                localStorage.setItem("user", JSON.stringify(user));
+            }).then((next) => {
+
+                // REDIRECT TO HOMEPAGE
+                let currentUrl = window.location.href;
+                window.location.replace(extractDomain(currentUrl) + "assessment/list");
+                console.log("redirected");
+
+            }).catch((error) => {
+
+                console.log(error);
+
+                // SHOW ERROR MODAL
+                showModal("error", "Échec", "Un problème interne a interrompu le processus. Veuillez actualiser la page et réessayer.", "");    
+            })
+
+
 
 
         } else if (isValid == false) {
@@ -326,6 +346,20 @@ async function validateMatriculeDrh(json) {
 async function validateMatriculeManagerTwo(matricule) {
 
     let url2 = "http://localhost:8080/preassessment/api/v1/employee/managerTwo/" + matricule;
+
+    return fetch(url2, {
+        method: 'GET'
+    }).then(response => response.json())
+        .then((success) => {
+            console.log(success);
+            return success;
+        }).catch((error) => {
+            console.error(error);
+            return error;
+        })
+}
+async function getDrhInfo(matricule) {
+    let url2 = "http://localhost:8080/preassessment/api/v1/employee/drh/" + matricule;
 
     return fetch(url2, {
         method: 'GET'

@@ -54,7 +54,7 @@ public class EmploiController {
             Niveau niveau = savedEmploi.getNiveaux().get(i);
 
             // CHECK IF NIVEAU IS ALREADY EXIST
-            Niveau n = niveauService.getNiveauByNameAndByLevel(niveau.getIntitule(), niveau.getLevel());
+            Niveau n = niveauService.getNiveauByNameAndByLevel(niveau.getIntitule().toLowerCase(), niveau.getLevel());
 
             if (n != null) {
                 throw new CustomErrorException(HttpStatus.NOT_ACCEPTABLE, "L'emploi " + niveau.getIntitule()
@@ -63,7 +63,7 @@ public class EmploiController {
 
             // Create an istance of Niveau
             Niveau newNiveau = new Niveau(
-                    niveau.getIntitule(),
+                    niveau.getIntitule().toLowerCase(),
                     niveau.getFiliere(),
                     niveau.getSousFiliere(),
                     niveau.getDateMaj(),
@@ -167,7 +167,7 @@ public class EmploiController {
             if (associatedNiveau == null) {
                 // Create an istance of Niveau
                 Niveau newNiveau = new Niveau(
-                        niveau.getIntitule(),
+                        niveau.getIntitule().toLowerCase(),
                         niveau.getFiliere(),
                         niveau.getSousFiliere(),
                         niveau.getDateMaj(),

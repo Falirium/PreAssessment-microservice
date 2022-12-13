@@ -173,9 +173,9 @@ $("#save-btn").click(function (e) {
 
             }).catch((error) => {
 
-                 // DELETE LOADER
-                 deleteLoaderToBtn("#save-btn");
-                 
+                // DELETE LOADER
+                deleteLoaderToBtn("#save-btn");
+
                 console.log(error);
                 showModal("error", "Échec", "Un problème interne doit être résolu : " + error, "", {
                     "text": "Revenir à l'acceuil",

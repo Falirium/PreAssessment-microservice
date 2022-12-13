@@ -11,34 +11,44 @@ let authorizedCol = ["id", "name", "startedAt", "finishesAt", "status"];
 let assessmentDatatable;
 
 
+
 let listAssessments;
 
 // GET LIST OF ASSESSMENTS
 getListOfTempAssessments().then((data) => {
+
+
 
     // APPEND THE TEMP RESULTS TO  TEMP OF ASSESSMENTS  FIRST
     listAssessments = data;
     console.log(listAssessments);
 
 
-
-
 }).then((data) => {
 
     getListOfAssessments().then((temp) => {
 
-        //console.log(temp);
+        let user = (localStorage.getItem("user") === "admin") ? "admin" : JSON.parse(localStorage.getItem("user"));
+
+        console.log(user);
 
         // APPEND THE PUBLISHED LIST OF ASSESSMENTS
         listAssessments.push(...temp);
 
-        console.log(listAssessments);
+        let dataSet = []
+        let col = []
 
+        // CHECK IF WE ARE IN DRH SESSION
+        if (user.type === "drh") {
+            listAssessments = filterAssessmentsByBpr(listAssessments, user.data.topDirection);
 
-        // INITIALIZE DATATABLE
+            dataSet = getAssessmentsDataFromJson(listAssessments, true);
+            col = getAssessmentColumnFromJson(listAssessments[0], authorizedCol);
 
-        let dataSet = getAssessmentsDataFromJson(listAssessments);
-        let col = getAssessmentColumnFromJson(listAssessments[0], authorizedCol);
+        } else {
+            dataSet = getAssessmentsDataFromJson(listAssessments, false);
+            col = getAssessmentColumnFromJson(listAssessments[0], authorizedCol);
+        }
 
         assessmentDatatable = $("#tbs2").DataTable({
             data: dataSet
@@ -233,7 +243,7 @@ function getAssessmentColumnFromJson(json, authorizedCol) {
     return colArr;
 }
 
-function getAssessmentsDataFromJson(arrJson) {
+function getAssessmentsDataFromJson(arrJson, isDrh = false) {
     let finalArr = [];
     arrJson.map((e, i) => {
         console.log(i);
@@ -325,7 +335,16 @@ function getAssessmentsDataFromJson(arrJson) {
 
 
         // ACTION COL
-        arr.push(`
+        if (isDrh) {
+            arr.push(`
+            <div class="g-2">
+                <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
+                        data-bs-original-title="Voir les résultas"><span
+                            class="fe fe-eye fs-14"></span></a>
+            </div>
+            `);
+        } else {
+            arr.push(`
             <div class="g-2">
                 <a class="btn text-primary btn-sm edit-btn" data-bs-toggle="tooltip"
                     data-bs-original-title="Éditer l'assessment"><span
@@ -334,7 +353,9 @@ function getAssessmentsDataFromJson(arrJson) {
                         data-bs-original-title="Voir les résultas"><span
                             class="fe fe-eye fs-14"></span></a>
             </div>
-            `)
+            `);
+        }
+
 
 
 
@@ -423,7 +444,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
-    } else if (modalId != "lodaing"){
+    } else if (modalId != "lodaing") {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
@@ -449,7 +470,7 @@ function getAssessmentInfoFromArr(assessmentName) {
     for (var i = 0; i < listAssessments.length; i++) {
         let assessment = listAssessments[i];
 
-       
+
 
         if (assessmentName == assessment.name) {
             return {
@@ -458,11 +479,35 @@ function getAssessmentInfoFromArr(assessmentName) {
             }
         }
 
-        
+
     }
 
     return {
         "index": -1,
         "assessment": null
     }
+}
+
+function filterAssessmentsByBpr(arr, bpr) {
+
+    // ASSESSMENT COULD BE SAVED OR PUBLISHED
+
+
+    let newArr = arr.filter((assessment, index) => {
+
+        let targetDirection;
+
+        if (assessment.hasOwnProperty('content')) {
+            let content = JSON.parse(assessment.content);
+            targetDirection = content.targetedDirection;
+
+        } else {
+            targetDirection = assessment.targetedDirection;
+        }
+
+        return targetDirection.includes(bpr);
+    });
+
+    return newArr;
+
 }

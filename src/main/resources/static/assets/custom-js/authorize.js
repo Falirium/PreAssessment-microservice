@@ -94,10 +94,7 @@ function showModalV1(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
 
-    // HIDE LOADER IF IT EXIST
-    if ($("#loading").is(':visible')) {
-        $("#loading").modal('hide');
-    }
+   
 
 
     switch (type) {
