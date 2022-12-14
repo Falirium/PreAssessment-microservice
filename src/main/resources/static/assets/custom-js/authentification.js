@@ -72,7 +72,7 @@ $("#cnx-btn-bpr").click(function () {
             // SET AUTHORIZATION
             let auth = {
                 "regex": [
-                    '\\/(assessment)\\/(.*|list)',
+                    '\\/(evaluation|assessment)\\/(.*|list)',
 
                 ],
                 "sections": {

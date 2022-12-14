@@ -73,7 +73,7 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
     let ficheAnswers;
 
 
-    if (manager === "admin") {
+    if (manager === "admin" || manager.type === 'drh') {
         if (ficheEvaluation.re_manager1 != null && ficheEvaluation.re_manager2 != null) {
 
             ficheAnswers = JSON.parse(ficheEvaluation.re_manager2);
@@ -136,8 +136,8 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
         displaySurPoints();
 
         // CASE OF ADMIN DISABLE MODIFICATION
-        if (manager === 'admin') {
-            disableModificationForAdmin();
+        if (manager === 'admin' || manager.type =='drh') {
+            disableModificationForAdminAndDrh();
         }
     });
 
@@ -154,8 +154,8 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
         populateResTable(json);
 
         // CASE OF ADMIN DISABLE MODIFICATION
-        if (manager === 'admin') {
-            disableModificationForAdmin();
+        if (manager === 'admin' || manager.type =='drh') {
+            disableModificationForAdminAndDrh();
         }
     });
 
@@ -178,7 +178,7 @@ $("#btn-fiche-send").click({
 }, saveFicheEvaluationHandler)
 
 
-function disableModificationForAdmin() {
+function disableModificationForAdminAndDrh() {
 
     // DISABLE ACTIONS BTN || DELETE THEM 
     $(".action-btn").prop('disabled', true);
@@ -3446,7 +3446,7 @@ function populateResTable(json) {
 
 // CALCULATE SCORE AND DISPLAY IT ON THE ELEMENT
 function calculateScore() {
-    score = (((totalPoints / elementsNumbers)) * 100).toFixed(2);
+    score = Number((((totalPoints / elementsNumbers)) * 100).toFixed(1));
 
     $("#score").text(score.toString() + "%");
 }
