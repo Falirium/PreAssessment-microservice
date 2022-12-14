@@ -24,7 +24,7 @@ getListOfDrhs().then((data) => {
 
     drhDataTable = $("#tbs2").DataTable({
         data: dataSet,
-        columns: col
+        // columns: col
     })
 
     // ADD EVENTLISTENERS TO VIEW BTN

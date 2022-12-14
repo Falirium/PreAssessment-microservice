@@ -46,11 +46,27 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
 
 
     // DISPLAY THE LIST OF FICHES
+    let dataSet = [];
+    let col = [];
+
+    // STEP 1 : FILTER OUT THE LIST OF COLLABORATEURS
+
+    let user = JSON.parse(localStorage.getItem("user"));
+    if (user.type === "drh") {
+        
+        fichesArrJson = filterCollorateursByBpr(fichesArrJson, user.data.codePrefix, user.data.codeSuffix);
+
+        dataSet = getFichesDataFromJson(fichesArrJson);
+        col = getFichesColumnFromJson(fichesArrJson[0], authorizedCol);
+
+    } else {
+        dataSet = getFichesDataFromJson(fichesArrJson);
+        col = getFichesColumnFromJson(fichesArrJson[0], authorizedCol);
+    }
 
     // INITIALIZE DATATABLE
 
-    let dataSet = getFichesDataFromJson(fichesArrJson);
-    let col = getFichesColumnFromJson(fichesArrJson[0], authorizedCol);
+
     let fileTitle = assessmentJson.name + "_At_" + new Date().toISOString().split("T")[0];
 
     ficheDatatable = $("#tb4").DataTable({
@@ -249,8 +265,8 @@ function getFichesColumnFromJson(json, authorizedCol) {
 
     authorizedCol.map((col, index) => {
         let value;
-        console.log(col);
-        console.log(json.hasOwnProperty(col));
+        // console.log(col);
+        // console.log(json.hasOwnProperty(col));
         if (json.hasOwnProperty(col)) {
             switch (col) {
                 case "collaborateur":
@@ -276,7 +292,7 @@ function getFichesColumnFromJson(json, authorizedCol) {
                     break;
             }
 
-            console.log(value);
+            // console.log(value);
 
             if (value === "collaborateur") {
                 colArr.push({
@@ -446,44 +462,44 @@ $("#btn-assessment-sus").click(function (e) {
             "hasFermerBtn": true
         }, function () {
             // alert("Assessment terminer");
-    
+
             // CHANGE THE STATUS TO LANCHED
             assessmentJson.status = "LANCHED";
-    
+
             // SAVE THE RESULT TO DB
             updateAssessment(assessmentJson).then((success) => {
-    
+
                 // REDIRECT TO THE ASSESSMENT PAGE 
                 if (success.hasOwnProperty("message")) {
-    
+
                     // SHOW ERROR MODAL
                     showModal("error", "Action échouée", success.message, "", {
                         "text": "Revenir à l'acceuil",
                         "color": "error",
                         "id": "dqz1"
                     }, function () {
-    
+
                         //  REDIRECT TO THE ASSESSMENT PAGE
                         redirectTo("assessment/list", 1000);
                     });
-    
+
                 } else {
-    
+
                     // SHOW SUCCESS MDOAL
                     showModal("success", "Action complétée", "L'assessment est maintenant repris. Tous les managers peuvent compléter leurs évaluations", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "success",
                         "id": "dqz1"
                     }, function () {
-    
-    
+
+
                         //  REDIRECT TO THE ASSESSMENT PAGE
                         redirectTo("assessment/list", 1000);
                     });
                 }
                 // })
-    
-    
+
+
             }, {
                 "padding": "p-5",
                 "textAligenement": "text-start"
@@ -492,7 +508,7 @@ $("#btn-assessment-sus").click(function (e) {
 
     } else {
         // SHOW CONFIRM SUSPEND MODAL
-    showModal("confirm", "Confirmer l'action", `
+        showModal("confirm", "Confirmer l'action", `
     Vous êtes sur le point de mettre fin à cette évaluation ! Avant de confirmer cette action, veuillez vous assurer de ce qui suit :
     <ul class="list-style-1">
         <li>Tous les managers ont complété leurs fiches d'évaluations.</li>
@@ -505,61 +521,61 @@ $("#btn-assessment-sus").click(function (e) {
     </ul>
      
     `, "", {
-        "text": "Suspendre l'assessment",
-        "color": "warning",
-        "id": "dqz1",
-        "hasFermerBtn": true
-    }, function () {
-        // alert("Assessment terminer");
+            "text": "Suspendre l'assessment",
+            "color": "warning",
+            "id": "dqz1",
+            "hasFermerBtn": true
+        }, function () {
+            // alert("Assessment terminer");
 
-        // CHANGE THE STATUS TO SUSPEND
-        assessmentJson.status = "SUSPENDED";
+            // CHANGE THE STATUS TO SUSPEND
+            assessmentJson.status = "SUSPENDED";
 
-        // SAVE THE RESULT TO DB
-        updateAssessment(assessmentJson).then((success) => {
+            // SAVE THE RESULT TO DB
+            updateAssessment(assessmentJson).then((success) => {
 
-            // REMOVE LOADER FROM BTN
-            deleteLoaderToBtn("#btn-assessment-sus");
+                // REMOVE LOADER FROM BTN
+                deleteLoaderToBtn("#btn-assessment-sus");
 
-            // REDIRECT TO THE ASSESSMENT PAGE 
-            if (success.hasOwnProperty("message")) {
+                // REDIRECT TO THE ASSESSMENT PAGE 
+                if (success.hasOwnProperty("message")) {
 
-                // SHOW ERROR MODAL
-                showModal("error", "Action échouée", success.message, "", {
-                    "text": "Revenir à l'acceuil",
-                    "color": "error",
-                    "id": "dqz1"
-                }, function () {
+                    // SHOW ERROR MODAL
+                    showModal("error", "Action échouée", success.message, "", {
+                        "text": "Revenir à l'acceuil",
+                        "color": "error",
+                        "id": "dqz1"
+                    }, function () {
 
-                    //  REDIRECT TO THE ASSESSMENT PAGE
-                    redirectTo("assessment/list", 1000);
-                });
+                        //  REDIRECT TO THE ASSESSMENT PAGE
+                        redirectTo("assessment/list", 1000);
+                    });
 
-            } else {
+                } else {
 
-                // SHOW SUCCESS MDOAL
-                showModal("success", "Action complétée", "L'assessment est maintenant suspendu avec succès. Tous les résultats sont enregistrés dans la base de données", "", {
-                    "text": "Revenir à l'acceuil",
-                    "color": "success",
-                    "id": "dqz1"
-                }, function () {
-
-
-                    //  REDIRECT TO THE ASSESSMENT PAGE
-                    redirectTo("assessment/list", 1000);
-                });
-            }
-            // })
+                    // SHOW SUCCESS MDOAL
+                    showModal("success", "Action complétée", "L'assessment est maintenant suspendu avec succès. Tous les résultats sont enregistrés dans la base de données", "", {
+                        "text": "Revenir à l'acceuil",
+                        "color": "success",
+                        "id": "dqz1"
+                    }, function () {
 
 
-        }, {
-            "padding": "p-5",
-            "textAligenement": "text-start"
-        })
-    });
+                        //  REDIRECT TO THE ASSESSMENT PAGE
+                        redirectTo("assessment/list", 1000);
+                    });
+                }
+                // })
+
+
+            }, {
+                "padding": "p-5",
+                "textAligenement": "text-start"
+            })
+        });
     }
 
-    
+
 });
 
 
@@ -756,4 +772,62 @@ function deleteLoaderToBtn(btnId) {
 
     // REMOVE LOADER HTML ELEMENT
     $(btnId).find("span").remove();
+}
+
+
+// THIS FUNCTION CHECKS ONLY THE PREFIX , NOT YET THE SUFFIX
+function filterCollorateursByBpr(list, prefix, suffix) {
+
+    let finalArr = [];
+    // console.log(prefix, suffix);
+
+    finalArr = list.filter((fiche, index) => {
+
+        let mat = fiche.collaborateur.matricule;
+
+        // console.log("Matricule : " + mat);
+
+        if (prefix.length != 0) {
+
+            for (var i = 0; i < prefix.length; i++) {
+                let code = prefix[i] + "";
+
+                // console.log("Code : " + code );
+
+                // ITERATE OVER CODE
+                let counter = 0;
+                for (var j = 0; j < code.length; j++) {
+
+                    // console.log(mat[j],code[j], mat[j] == code[j])
+
+                    if (mat[j] == code[j] && j < mat.length) {
+                        counter++;
+                    } else {
+
+                        // CHECK THE NEXT CODE
+                        console.error(" maybe : prefix lenght > matricule lenght");
+                        break;
+
+                    }
+
+                    
+                };
+
+                if (counter == code.length) {
+                    // WE VALIDATE A PREFIX
+                    // console.log(" VALID CODE");
+                    return true;
+                }
+
+            }
+
+            // WE COMPLETE THE LIST OF PREFIX
+            return false;
+        }
+    });
+
+    console.log(finalArr);
+
+    return finalArr;
+
 }

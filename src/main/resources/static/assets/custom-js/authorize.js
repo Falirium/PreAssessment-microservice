@@ -5,11 +5,21 @@ let auth = null
 let regexList = []
 let hiddenSections = []
 let showSections = []
+let defaultHomePage = "";
 if (localStorage.getItem("user") === null) {
     window.location.replace(extractDomain(currentUrl));
 
 } else {
 
+    // SET DEFAULT HOMEPAGE
+    let user = (localStorage.getItem("user") === "admin") ? ("admin") : ( JSON.parse(localStorage.getItem("user")) ) ;
+    if (user.type === "drh") {
+        defaultHomePage = "assessment/list";
+    } else if (user.type === "1" || user.type === "2") {
+        defaultHomePage = "evaluation/list";
+    } else {
+        defaultHomePage = "assessment/list";
+    }
 
     // STEP 1 : GET THE LIST OF AUTHORIZED URLS
     auth = JSON.parse(localStorage.getItem("auth"));
@@ -62,7 +72,7 @@ if (localStorage.getItem("user") === null) {
             // REDIRECT TO EVALUATION LIST PAGE
             setTimeout(function () {
                 currentUrl = window.location.href;
-                window.location.href = extractDomain(currentUrl) + "evaluation/list";
+                window.location.href = extractDomain(currentUrl) + defaultHomePage;
             }, 1000);
         })
 
