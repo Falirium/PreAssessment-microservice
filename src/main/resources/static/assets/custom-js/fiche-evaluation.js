@@ -225,7 +225,7 @@ function allFieldSelected(e) {
 
     // DELETE LOADER FROM BTN
     deleteLoaderToBtn("#" + e.target.id);
-    
+
     // REMOVE DANGER BACKGROUNDS FRON TD ELEMENTS
     $("td").removeClass("btn-danger-light");
 
@@ -1069,6 +1069,9 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     var myModal = new bootstrap.Modal(document.getElementById(modalId));
 
+
+    $(modalHeaderId).text(header);
+    $(modalContentId).html(content);
 
 
 

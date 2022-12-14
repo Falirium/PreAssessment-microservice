@@ -464,13 +464,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
 
-    // HIDE LOADER IF IT EXIST
-    if ($("#loading").is(':visible')) {
-        $("#loading").modal('hide');
-    }
-
-
-
+  
     switch (type) {
         case "success":
             modalId = "success";
@@ -541,13 +535,8 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     var myModal = new bootstrap.Modal(document.getElementById(modalId));
 
-    if (modalId != "loading") {
-        // SET HEADER
-        $(modalHeaderId).text(header);
-
-        // SET CONTENT
-        $(modalContentId).html(content);
-    }
+    $(modalHeaderId).text(header);
+    $(modalContentId).html(content);
 
 
     myModal.show();
