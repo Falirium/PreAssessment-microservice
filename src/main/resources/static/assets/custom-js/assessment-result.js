@@ -6,7 +6,7 @@ console.log(idParam);
 
 // THIS VARIABLE DEFINED THE SHOWN COLUMN ON THE TABLE
 
-let authorizedCol = ["id", "collaborateur", "evaluateurOne", "evaluateurTwo", "emploi", "niveau", "Score", "status"];
+let authorizedCol = ["id", "collaborateur", "evaluateurOne", "evaluateurTwo", "emploi", "niveau", "Score", "% Res", "% Exi", "% Marq", "% D.C", "% S.E", "% S.F","status"];
 
 
 let assessmentJson;
@@ -53,7 +53,7 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
 
     let user = JSON.parse(localStorage.getItem("user"));
     if (user.type === "drh") {
-        
+
         fichesArrJson = filterCollorateursByBpr(fichesArrJson, user.data.codePrefix, user.data.codeSuffix);
 
         dataSet = getFichesDataFromJson(fichesArrJson);
@@ -73,7 +73,10 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
         data: dataSet,
         columns: col,
         columnDefs: [
-            { "width": "6%", "targets": 2 }
+            { "width": "6%", "targets": 2 },
+            {"className" : "success-light-cell" , "targets" : 9},
+            {"className" : "info-light-cell " , "targets" : [10,11,12,13,14,15]}
+
         ],
         autoWidth: false,
         ordering: false,
@@ -85,7 +88,9 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
                 title: fileTitle,
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                }
+                },
+                autoFilter: true,
+                sheetName: assessmentJson.name
             }
         ]
     })
@@ -287,6 +292,24 @@ function getFichesColumnFromJson(json, authorizedCol) {
                 case "Score":
                     value = "score";
                     break;
+                case "section_res":
+                    value = "% Res";
+                    break;
+                case "section_exi":
+                    value = "% Exi";
+                    break;
+                case "section_marq":
+                    value = "% Marq";
+                    break;
+                case "section_dc":
+                    value = "% D.C";
+                    break;
+                case "section_se":
+                    value = "% S.Ê";
+                    break;
+                case "section_sf":
+                    value = "% S.F";
+                    break;
                 case "status":
                     value = "status"
                     break;
@@ -355,6 +378,15 @@ function getFichesDataFromJson(arrJson) {
         arr.push(e.emploi.intitule);
         arr.push(e.emploi.level);
         arr.push(e.score);
+
+        // ADD % DES SECTIONS
+        arr.push(e.sectionRes);
+        arr.push(e.sectionExi);
+        arr.push(e.sectionMarq);
+        arr.push(e.sectionCompDc);
+        arr.push(e.sectionCompSf);
+        arr.push(e.sectionCompSe);
+
 
         // Status attribute has special style
         if (e.status === "CREATED") {
@@ -810,7 +842,7 @@ function filterCollorateursByBpr(list, prefix, suffix) {
 
                     }
 
-                    
+
                 };
 
                 if (counter == code.length) {

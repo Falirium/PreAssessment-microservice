@@ -275,10 +275,24 @@ public class FicheEvaluationController {
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<FicheEvaluation> updateFicheEvaluation(@PathVariable Long id, @RequestBody FicheEvaluation updatedFiche) {
         FicheEvaluation fe = ficheEvaluationService.getFicheEvaluationById(id);
+
+        if (fe == null) {
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Fiche not found");
+        }
         
         fe.setScore(updatedFiche.getScore());
         fe.setSousPoints(updatedFiche.getSousPoints());
         fe.setSurPoints(updatedFiche.getSurPoints());
+        
+        fe.setSectionCompDc(Float.valueOf(updatedFiche.getSectionCompDc()));
+        fe.setSectionCompSe(Float.valueOf(updatedFiche.getSectionCompSe()));
+        fe.setSectionCompSf(Float.valueOf(updatedFiche.getSectionCompSf()));
+        fe.setSectionRes(Float.valueOf(updatedFiche.getSectionRes()));
+        fe.setSectionExi(Float.valueOf(updatedFiche.getSectionMarq()));
+        fe.setSectionMarq(Float.valueOf(updatedFiche.getSectionMarq()));
+
+
+        
         fe.setStatus(updatedFiche.getStatus());
         fe.setRe_manager1(updatedFiche.getRe_manager1());
         fe.setRe_manager2(updatedFiche.getRe_manager2());

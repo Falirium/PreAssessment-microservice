@@ -1,5 +1,6 @@
 // CHECK IF FICHE EVALUATION IS AVAILABLE
 let ficheEvaluation;
+let fichePreviewJson; // HOLDS THE VALUE THAT IS FETCHED FROM THE SERVER
 let manager;
 
 // CHECK IF FICHEEVALUATION IS AVAILABLE
@@ -45,6 +46,14 @@ let totalPoints = 0;
 let score = 0;
 let sur_points = 0;
 let sous_points = 0;
+let percentagePerSection = {
+    "section_res": 0,
+    "section_exi": 0,
+    "section_marq": 0,
+    "section_dc": 0,
+    "section_sf": 0,
+    "section_se": 0
+}
 
 let elementsNumbers = 0;
 
@@ -120,6 +129,7 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
     // PARSE THE THE FICHE 
     getFicheEmploiPreview(urlParams).then((json) => {
         populateResTable(json);
+        fichePreviewJson = json;
 
         // FILL IT WITH RESPONSE OF MANAGER 1
         parseManagerResult(ficheAnswers);
@@ -136,7 +146,7 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
         displaySurPoints();
 
         // CASE OF ADMIN DISABLE MODIFICATION
-        if (manager === 'admin' || manager.type =='drh') {
+        if (manager === 'admin' || manager.type == 'drh') {
             disableModificationForAdminAndDrh();
         }
     });
@@ -152,9 +162,10 @@ if (ficheEvaluation.re_manager1 != null || ficheEvaluation.re_manager2 != null) 
     // POPULATE FIHCE EVALUATION
     getFicheEmploiPreview(urlParams).then((json) => {
         populateResTable(json);
+        fichePreviewJson = json;
 
         // CASE OF ADMIN DISABLE MODIFICATION
-        if (manager === 'admin' || manager.type =='drh') {
+        if (manager === 'admin' || manager.type == 'drh') {
             disableModificationForAdminAndDrh();
         }
     });
@@ -199,7 +210,7 @@ function saveFicheEvaluationHandler(e) {
 
         processSavingFicheEvaluation(e);
 
-    } else if (allFieldSelected()) {    // VERIFY IF ALL THE FIELS ARE SELECTED
+    } else if (allFieldSelected(e)) {    // VERIFY IF ALL THE FIELS ARE SELECTED
 
         processSavingFicheEvaluation(e);
 
@@ -209,9 +220,12 @@ function saveFicheEvaluationHandler(e) {
 
 }
 
-function allFieldSelected() {
+function allFieldSelected(e) {
     let radioNames = ["custom-switch-radio-", "comp-switch-radio-", "comp-se-switch-radio-", "comp-sf-switch-radio-"];
 
+    // DELETE LOADER FROM BTN
+    deleteLoaderToBtn("#" + e.target.id);
+    
     // REMOVE DANGER BACKGROUNDS FRON TD ELEMENTS
     $("td").removeClass("btn-danger-light");
 
@@ -358,6 +372,8 @@ function allFieldSelected() {
 
     console.log(isChecked);
 
+
+
     return isChecked;
 
 
@@ -368,10 +384,22 @@ function allFieldSelected() {
 }
 
 function processSavingFicheEvaluation(e) {
+
     // UPDATE THE SCORES
     ficheEvaluation.score = score;
     ficheEvaluation.sousPoints = sous_points;
     ficheEvaluation.surPoints = sur_points;
+
+    calculateCompletionOfAllSections();
+
+    ficheEvaluation.sectionRes = percentagePerSection.section_res;
+    ficheEvaluation.sectionExi = percentagePerSection.section_exi;
+    ficheEvaluation.sectionMarq = percentagePerSection.section_marq;
+    ficheEvaluation.sectionCompDc = percentagePerSection.section_dc;
+    ficheEvaluation.sectionCompSf = percentagePerSection.section_sf;
+    ficheEvaluation.sectionCompSe = percentagePerSection.section_se;
+
+
 
     // CHECK WHICH MANAGER IS CONNECTED
     if (manager.type === "1") {
@@ -3560,5 +3588,321 @@ function deleteLoaderToBtn(btnId) {
     $(btnId).find("span").remove();
 }
 
+
+function calculateCompletionOfAllSections() {
+
+    // SECTION : RESPONSABILITES
+    let resSize = $(".responsabilites").length;
+    let resCounter = 0;
+    $(".responsabilites").find("input[type='radio']:checked").each(function (index, element) {
+        console.log($(element).val());
+        if ($(element).val() == 1) {
+            resCounter++;
+        }
+    })
+    percentagePerSection.section_res = Number((resCounter / resSize) * 100).toFixed(1);
+
+    // SECTION : EXIGENCES
+    let exiSize = $(".exigences").length;
+    let exiCounter = 0;
+    $(".exigences").find("input[type='radio']:checked").each(function (index, element) {
+        console.log($(element).val());
+        if ($(element).val() == 1) {
+            exiCounter++;
+        }
+    })
+    percentagePerSection.section_exi = Number((exiCounter / exiSize) * 100).toFixed(1);
+
+    // SECTION : MARQUEURES
+    let marqSize = $(".marqueurs").length;
+    let marqCounter = 0;
+    $(".marqueurs").find("input[type='radio']:checked").each(function (index, element) {
+        console.log($(element).val());
+        if ($(element).val() == 1) {
+            marqCounter++;
+        }
+    })
+    percentagePerSection.section_marq = Number((marqCounter / marqSize) * 100).toFixed(1);
+
+
+
+
+
+    // SECTION : COMPETENCES-DC
+    let listCompetencesDc = fichePreviewJson["competences_dc"];
+    if (listCompetencesDc.length != 0) {
+        let compDcSize = $(".comp-dc").length;
+        let compDcCounter = 0;
+
+        $(".comp-dc").find("input[type='radio']:checked").each(function (i, element) {
+
+
+            // GET THE INDEX OF COMPETENCE
+            let index = $(element).attr("id").split("-")[1];
+
+            let reqNiveau = listCompetencesDc[index].requiredNiveau;
+
+
+            if (reqNiveau === "E") {
+
+                switch ($(element).val()) {
+                    case "E":
+                        compDcCounter++;
+                        break;
+                    case "M":
+                        compDcCounter++;
+                        break;
+                    case "A":
+                        compDcCounter++;
+                        break;
+                    case "X":
+                        compDcCounter++;
+                        break;
+
+                }
+
+            } else if (reqNiveau === "M") {
+                switch ($(element).val()) {
+                    case "E":
+                        break;
+                    case "M":
+                        compDcCounter++;
+                        break;
+                    case "A":
+                        compDcCounter++;
+                        break;
+                    case "X":
+                        compDcCounter++;
+                        break;
+
+                }
+
+            } else if (reqNiveau === "A") {
+                switch ($(element).val()) {
+                    case "E":
+
+                        break;
+                    case "M":
+
+                        break;
+                    case "A":
+                        compDcCounter++;
+                        break;
+                    case "X":
+                        compDcCounter++;
+                        break;
+
+                }
+
+            } else if (reqNiveau === "X") {
+                switch ($(element).val()) {
+                    case "E":
+
+                        break;
+                    case "M":
+
+                        break;
+                    case "A":
+
+                        break;
+                    case "X":
+                        compDcCounter++;
+                        break;
+
+                }
+
+            }
+
+        })
+        // console.log(Number((compDcCounter / compDcSize) * 100).toFixed(1));
+        percentagePerSection.section_dc = Number((compDcCounter / compDcSize) * 100).toFixed(1);
+    }
+
+    // SECTION : COMPETENCES-SE
+    let listCompetencesSe = fichePreviewJson["competences_se"];
+    if (listCompetencesSe.length != 0) {
+        let compSeSize = $(".comp-se").length;
+        let compSeCounter = 0;
+
+        $(".comp-se").find("input[type='radio']:checked").each(function (i, element) {
+
+
+            // GET THE INDEX OF COMPETENCE
+            let index = $(element).attr("id").split("-")[1];
+
+            let reqNiveau = listCompetencesSe[index].requiredNiveau;
+
+
+            if (reqNiveau === "E") {
+
+                switch ($(element).val()) {
+                    case "E":
+                        compSeCounter++;
+                        break;
+                    case "M":
+                        compSeCounter++;
+                        break;
+                    case "A":
+                        compSeCounter++;
+                        break;
+                    case "X":
+                        compSeCounter++;
+                        break;
+
+                }
+
+            } else if (reqNiveau === "M") {
+                switch ($(element).val()) {
+                    case "E":
+                        break;
+                    case "M":
+                        compSeCounter++;
+                        break;
+                    case "A":
+                        compSeCounter++;
+                        break;
+                    case "X":
+                        compSeCounter++;
+                        break;
+
+                }
+
+            } else if (reqNiveau === "A") {
+                switch ($(element).val()) {
+                    case "E":
+
+                        break;
+                    case "M":
+
+                        break;
+                    case "A":
+                        compSeCounter++;
+                        break;
+                    case "X":
+                        compSeCounter++;
+                        break;
+
+                }
+
+            } else if (reqNiveau === "X") {
+                switch ($(element).val()) {
+                    case "E":
+
+                        break;
+                    case "M":
+
+                        break;
+                    case "A":
+
+                        break;
+                    case "X":
+                        compSeCounter++;
+                        break;
+
+                }
+
+            }
+
+        })
+        // console.log(Number((compSeCounter / compSeSize) * 100).toFixed(1))
+        percentagePerSection.section_se = Number((compSeCounter / compSeSize) * 100).toFixed(1);
+    }
+
+    // SECTION : COMPETENCES-SF
+    let listCompetencesSf = fichePreviewJson["competences_sf"];
+    if (listCompetencesSf.length != 0) {
+        let compSfSize = $(".comp-sf").length;
+        let compSfCounter = 0;
+        $(".comp-sf").find("input[type='radio']:checked").each(function (i, element) {
+
+
+            // GET THE INDEX OF COMPETENCE
+            let index = $(element).attr("id").split("-")[1];
+
+            let reqNiveau = listCompetencesSf[index].requiredNiveau;
+
+
+            if (reqNiveau === "E") {
+
+                switch ($(element).val()) {
+                    case "E":
+                        compSfCounter++;
+                        break;
+                    case "M":
+                        compSfCounter++;
+                        break;
+                    case "A":
+                        compSfCounter++;
+                        break;
+                    case "X":
+                        compSfCounter++;
+                        break;
+
+                }
+
+            } else if (reqNiveau === "M") {
+                switch ($(element).val()) {
+                    case "E":
+                        break;
+                    case "M":
+                        compSfCounter++;
+                        break;
+                    case "A":
+                        compSfCounter++;
+                        break;
+                    case "X":
+                        compSfCounter++;
+                        break;
+
+                }
+
+            } else if (reqNiveau === "A") {
+                switch ($(element).val()) {
+                    case "E":
+
+                        break;
+                    case "M":
+
+                        break;
+                    case "A":
+                        compSfCounter++;
+                        break;
+                    case "X":
+                        compSfCounter++;
+                        break;
+
+                }
+
+            } else if (reqNiveau === "X") {
+                switch ($(element).val()) {
+                    case "E":
+
+                        break;
+                    case "M":
+
+                        break;
+                    case "A":
+
+                        break;
+                    case "X":
+                        compSfCounter++;
+                        break;
+
+                }
+
+            }
+
+        });
+        // console.log(Number((compSfCounter / compSfSize) * 100).toFixed(1));
+        percentagePerSection.section_sf = Number((compSfCounter / compSfSize) * 100).toFixed(1);
+    }
+
+    console.log(percentagePerSection);
+
+
+
+
+
+}
 
 

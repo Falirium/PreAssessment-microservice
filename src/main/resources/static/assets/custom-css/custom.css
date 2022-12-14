@@ -5,3 +5,23 @@
     -ms-filter: blur(5px);
     filter: blur(5px);
 }
+
+/* SPECIFIC FOR DATATABLE COLUMNS */
+
+.info-light-cell {
+   
+    background: #d0e2f7 !important;
+    border-color: #d0e2f7
+}
+
+.success-light-cell {
+   
+    background: #a6efe4 !important;
+    border-color: #a6efe4;
+}
+
+.danger-light-cell {
+    
+    background: #f8ccd3 !important;
+    border-color: #f8ccd3;
+}

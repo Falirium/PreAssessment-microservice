@@ -30,8 +30,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "fiche_evaluation")
 @TypeDefs({
-    @TypeDef(name = "list-array", typeClass = ListArrayType.class),
-    
+        @TypeDef(name = "list-array", typeClass = ListArrayType.class),
+
 })
 public class FicheEvaluation {
 
@@ -42,6 +42,14 @@ public class FicheEvaluation {
     private float score;
     private float sousPoints;
     private float surPoints;
+
+    private float sectionRes;
+    private float sectionExi;
+    private float sectionMarq;
+    private float sectionCompDc;
+    private float sectionCompSf;
+    private float sectionCompSe;
+
     private String status;
 
     private Date createdAt;
@@ -51,10 +59,10 @@ public class FicheEvaluation {
     @Column(columnDefinition = "text[]", length = 2048)
     private List<String> ficheContent;
 
-    @Column(columnDefinition = "TEXT" ,length = 2048)
+    @Column(columnDefinition = "TEXT", length = 2048)
     private String re_manager1;
 
-    @Column(columnDefinition = "TEXT" ,length = 2048)
+    @Column(columnDefinition = "TEXT", length = 2048)
     private String re_manager2;
 
     @ManyToOne
@@ -76,8 +84,6 @@ public class FicheEvaluation {
     @ManyToOne
     @JoinColumn(name = "assessment_id")
     private Assessment associatedAssessment;
-
-    
 
     public FicheEvaluation(float score, float sousPoints, float surPoints, Date createdAt) {
         this.score = score;
@@ -108,7 +114,8 @@ public class FicheEvaluation {
         this.dateEvaluation = dateEvaluation;
     }
 
-    public FicheEvaluation(float score, float sousPoints, float surPoints, Date createdAt, Date dateEvaluation, String status, List<String> ficheContent) {
+    public FicheEvaluation(float score, float sousPoints, float surPoints, Date createdAt, Date dateEvaluation,
+            String status, List<String> ficheContent) {
         this.score = score;
         this.sousPoints = sousPoints;
         this.surPoints = surPoints;
@@ -118,5 +125,4 @@ public class FicheEvaluation {
         this.ficheContent = ficheContent;
     }
 
-    
 }
