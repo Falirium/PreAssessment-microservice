@@ -6,15 +6,31 @@ console.log(idParam);
 
 // THIS VARIABLE DEFINED THE SHOWN COLUMN ON THE TABLE
 
-let authorizedCol = ["id", "collaborateur", "evaluateurOne", "evaluateurTwo", "emploi", "niveau", "Score", "% Res", "% Exi", "% Marq", "% D.C", "% S.E", "% S.F","status"];
+let authorizedCol = ["id", "collaborateur", "evaluateurOne", "evaluateurTwo", "emploi", "niveau", "Score", "% Res", "% Exi", "% Marq", "% D.C", "% S.E", "% S.F", "status"];
 
 
 let assessmentJson;
+
+// INITIALIZATION
+
+
+// END INITIALIZATION
 
 // GET THE ASSESSMENT JSON
 getFicheEvaluationsByAssessment(idParam).then((fiches) => {
 
     fichesArrJson = fiches;
+
+    // FILTER LIST OF FICHE EVALUATION BASED ON THE CONNECTED DRH
+    let user = (localStorage.getItem("user") != "admin") ? JSON.parse(localStorage.getItem("user")) : ("admin");
+    if (user.type === "drh") {
+
+        // REMOVE SUSPEND AND TERMINATE BTNS
+        removeElements(["#btn-assessment-terminate", "#btn-assessment-sus"]);
+
+        fichesArrJson = filterCollorateursByBpr(fiches, user.data.codePrefix, user.data.codeSuffix);
+
+    }
 
     // GET ASSESSMENTJSON FROM FICHE EVALUATION
     assessmentJson = fiches[0].associatedAssessment;
@@ -49,20 +65,9 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
     let dataSet = [];
     let col = [];
 
-    // STEP 1 : FILTER OUT THE LIST OF COLLABORATEURS
+    dataSet = getFichesDataFromJson(fichesArrJson);
+    col = getFichesColumnFromJson(fichesArrJson[0], authorizedCol);
 
-    let user = JSON.parse(localStorage.getItem("user"));
-    if (user.type === "drh") {
-
-        fichesArrJson = filterCollorateursByBpr(fichesArrJson, user.data.codePrefix, user.data.codeSuffix);
-
-        dataSet = getFichesDataFromJson(fichesArrJson);
-        col = getFichesColumnFromJson(fichesArrJson[0], authorizedCol);
-
-    } else {
-        dataSet = getFichesDataFromJson(fichesArrJson);
-        col = getFichesColumnFromJson(fichesArrJson[0], authorizedCol);
-    }
 
     // INITIALIZE DATATABLE
 
@@ -74,8 +79,8 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
         columns: col,
         columnDefs: [
             { "width": "6%", "targets": 2 },
-            {"className" : "success-light-cell" , "targets" : 9},
-            {"className" : "info-light-cell " , "targets" : [10,11,12,13,14,15]}
+            { "className": "success-light-cell", "targets": 9 },
+            { "className": "default-light-cell ", "targets": [10, 11, 12, 13, 14, 15] }
 
         ],
         autoWidth: false,
@@ -87,7 +92,7 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
                 extend: 'excelHtml5',
                 title: fileTitle,
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15]
                 },
                 autoFilter: true,
                 sheetName: assessmentJson.name
@@ -683,6 +688,11 @@ $("#btn-assessment-terminate").click(function (e) {
     })
 });
 
+$("#btn-assessment-inform").click(function (e) {
+    console.log("here");
+    showModal("info", "Information", "Cette fonctionnalité est en cours de test. Elle sera disponible dans la prochaine version de la plateforme. Merci de votre compréhension", "");
+})
+
 function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
@@ -746,7 +756,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
     } else {
-        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
+        $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn btn-primary mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
 
@@ -861,5 +871,14 @@ function filterCollorateursByBpr(list, prefix, suffix) {
     console.log(finalArr);
 
     return finalArr;
+
+}
+
+function removeElements(arrIds) {
+    if (arrIds.length != 0) {
+        arrIds.map((id, index) => {
+            $(id).remove();
+        });
+    }
 
 }

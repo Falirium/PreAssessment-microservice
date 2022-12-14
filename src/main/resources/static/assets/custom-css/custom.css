@@ -25,3 +25,14 @@
     background: #f8ccd3 !important;
     border-color: #f8ccd3;
 }
+.warning-light-cell {
+
+    background: #f8e8c6 !important;
+    border-color: #f8e8c6;
+}
+
+.default-light-cell {
+
+    background: #e9e9f1 !important;
+    border-color: #e9e9f1;
+}
