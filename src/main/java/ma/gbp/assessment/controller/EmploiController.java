@@ -86,7 +86,9 @@ public class EmploiController {
                 if (!doesCompetenceReExist(cr.getName(), cr.getType(), cr.getNiveauRequis())) {
                     competenceRe = competenceReService.saveCompetenceRequis(cr);
                 } else {
-                    competenceRe = competenceReService.getCompetenceReByName(cr.getName());
+                    
+                    competenceRe = competenceReService.getCompetenceReByNameAndTypeAndNiveau(cr.getName(),cr.getType(),cr.getNiveauRequis());
+
                 }
 
                 listOfCompetencesRe.add(competenceRe);

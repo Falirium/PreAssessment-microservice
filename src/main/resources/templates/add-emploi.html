@@ -235,22 +235,24 @@
                                             Ce champ ne doit pas être vide.
                                         </div>
                                     </div>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <label for="" class="form-label"></label>
                                         <select name="categorie-competence" id="input-categorie-competence"
                                             class="form-select form-control">
+                                            <option value="0">CHOISIR UNE CATÉGORIE</option>
                                             <option value="Domaines de connaissance">Domaines de connaissance </option>
                                             <option value="Savoir-faire">Savoir-faire </option>
-                                            <option value="Savoir-etre">Savoir-être </option>
+                                            <option value="Savoir-être">Savoir-être </option>
                                         </select>
                                         <div class="invalid-feedback">
                                             Ce champ ne doit pas être vide.
                                         </div>
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-3">
                                         <label for="" class="form-label"></label>
                                         <select name="niveau-competence" id="input-niveau-competence"
                                             class="form-select form-control">
+                                            <option value="0">CHOISIR UN NIVEAU </option>
                                             <option value="E">E </option>
                                             <option value="M">M </option>
                                             <option value="A">A </option>
@@ -292,7 +294,8 @@
                         <i class="icon icon-close fs-70 text-danger lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-error-header" class="text-danger">Attention: vous êtes sûr de vouloir supprimer
                             cette entrée!</h4>
-                        <p id="modal-error-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le bouton "oui", vous
+                        <p id="modal-error-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le
+                            bouton "oui", vous
                             ne récupérerez pas ces
                             informations.</p>
                     </div>
@@ -312,7 +315,8 @@
                         <i class="icon icon-close fs-70 text-warning lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-warning-header" class="text-warning">Attention: vous êtes sûr de vouloir supprimer
                             cette entrée!</h4>
-                        <p id="modal-warning-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le bouton "oui",
+                        <p id="modal-warning-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le
+                            bouton "oui",
                             vous
                             ne récupérerez pas ces
                             informations.</p>
@@ -331,7 +335,8 @@
                                 aria-hidden="true">&times;</span></button>
                         <i class="icon icon-check fs-70 text-success lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-success-header" class="text-success tx-semibold">Complété!</h4>
-                        <p id="modal-success-content" class="mg-b-20 text-start px-3 mg-x-20">La liste des compétences a été sauvegardée
+                        <p id="modal-success-content" class="mg-b-20 text-start px-3 mg-x-20">La liste des compétences a
+                            été sauvegardée
                             avec succès. .</p>
                     </div>
                 </div>
@@ -348,7 +353,8 @@
                                 aria-hidden="true">&times;</span></button>
                         <i class="icon icon-clock fs-70 text-primary lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-info-header" class="text-primary tx-semibold">Complété!</h4>
-                        <p id="modal-info-content" class="mg-b-20 text-start px-3 mg-x-20">La liste des compétences a été sauvegardée
+                        <p id="modal-info-content" class="mg-b-20 text-start px-3 mg-x-20">La liste des compétences a
+                            été sauvegardée
                             avec succès. .</p>
                     </div>
                 </div>
@@ -366,7 +372,8 @@
                         <i class="fe fe-alert-circle fs-70 text-warning lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-confirm-header" class="text-warning">Attention: vous êtes sûr de vouloir supprimer
                             cette entrée!</h4>
-                        <p id="modal-confirm-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le bouton "oui",
+                        <p id="modal-confirm-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le
+                            bouton "oui",
                             vous
                             ne récupérerez pas ces
                             informations.</p>
@@ -446,6 +453,12 @@
         <script th:src="@{/assets/plugins/p-scroll/perfect-scrollbar.js}"></script>
         <script th:src="@{/assets/plugins/p-scroll/pscroll.js}"></script>
         <script th:src="@{/assets/plugins/p-scroll/pscroll-1.js}"></script>
+
+        <!-- INTERNAL Notifications js -->
+        <script th:src="@{/assets/plugins/notify/js/rainbow.js}"></script>
+        <script th:src="@{/assets/plugins/notify/js/sample.js}"></script>
+        <script th:src="@{/assets/plugins/notify/js/jquery.growl.js}"></script>
+        <script th:src="@{/assets/plugins/notify/js/notifIt.js}"></script>
 
         <!-- INTERNAL Edit-Table JS
         <script th:src="@{/assets/plugins/edit-table/bst-edittable.js}"></script>

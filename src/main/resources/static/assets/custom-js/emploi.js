@@ -200,7 +200,7 @@ $("#btn-emploi-save").one('click', function () {
         emploiJSON["niveaux"] = niveauxArray;
 
 
-        // console.log(generateEmploiJson(emploiJSON));
+        console.log(generateEmploiJson(emploiJSON));
 
 
         // ADD LOADER TO SAVE BTN
@@ -749,7 +749,10 @@ function parseCompetenceToTable(competences, niveauContainer) {
                 competencesArray.splice(competenceIndex, 1);
 
                 parseCompetenceToTable(competencesArray, niveauContainer);
-                
+
+                // SHOW SUCCESS NOTIFICATION
+                showNotification("<b>succès :</b> compétence supprimée", "success", "center");
+
             })
 
 
@@ -780,8 +783,10 @@ function parseCompetenceToTable(competences, niveauContainer) {
             $(nameInput).trigger('change');
             // $(categoryInput).val(competencesArray[competenceIndex].category);
             // $(niveauInput).val(competencesArray[competenceIndex].niveau);
-            $(niveauContainer).find('#input-categorie-competence option[value="' + competencesArray[competenceIndex].type + '"]').attr('selected', 'selected');
-            $(niveauContainer).find('#input-niveau-competence option[value="' + competencesArray[competenceIndex].niveauRequis + '"]').attr('selected', 'selected');
+            $(niveauContainer).find('#input-categorie-competence option[value="' + competencesArray[competenceIndex].type + '"]').prop('selected', true);
+
+            $(niveauContainer).find('#input-niveau-competence option[value="' + competencesArray[competenceIndex].niveauRequis + '"]').prop('selected', true);
+
 
             // nameInput.value = competencesArray[competenceIndex].name;
             // categoryInput.value = competencesArray[competenceIndex].category;
@@ -1059,12 +1064,28 @@ function addListenersToNewNiveau(container) {
 
             competencesArray[index] = competenceJson;
 
-            //INITIALIZE THE INDEX
+            //INITIALIZE THE INDEX + SELECTIONS
             lastEditedInputs.competence = -1;
+
+            $(container).find('#input-categorie-competence option[value="' + competencesArray[index].type + '"]').prop('selected', false);
+            $(container).find('#input-niveau-competence option[value="' + competencesArray[index].niveauRequis + '"]').prop('selected', false);
+
+            $(container).find('#input-categorie-competence option[value="0"]').prop('selected', true);
+            $(container).find('#input-niveau-competence option[value="0"]').prop('selected', true);
+
+            parseCompetenceToTable(competencesArray, container);
+
+            // SHOW SUCCESS NOTIFICATION
+            showNotification("<b>succès :</b> compétence ajoutée", "success", "center");
 
 
         } else {
             competencesArray.push(competenceJson);
+
+            parseCompetenceToTable(competencesArray, container);
+
+            // SHOW SUCCESS NOTIFICATION
+            showNotification("<b>succès :</b> compétence modifiée", "success", "center");
         }
 
 
@@ -1075,7 +1096,11 @@ function addListenersToNewNiveau(container) {
 
 
 
-        parseCompetenceToTable(competencesArray, container);
+        // parseCompetenceToTable(competencesArray, container);
+
+        // // SHOW SUCCESS NOTIFICATION
+        // showNotification("<b>succès :</b> compétence ajoutée", "success", "center");
+
     })
 
 
@@ -1237,10 +1262,11 @@ function addNewNiveauHTML(niveauCounter) {
                                                 Ce champ ne doit pas être vide.
                                             </div>
                                     </div>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <label for="" class="form-label"></label>
                                         <select name="categorie-competence" id="input-categorie-competence"
                                             class="form-select form-control">
+                                            <option value="0">CHOISIR UNE CATÉGORIE </option>
                                             <option value="Domaines de connaissance">Domaines de connaissance </option>
                                             <option value="Savoir-faire">Savoir-faire </option>
                                             <option value="Savoir-être">Savoir-être </option>
@@ -1249,10 +1275,11 @@ function addNewNiveauHTML(niveauCounter) {
                                             Ce champ ne doit pas être vide.
                                         </div>
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-3">
                                         <label for="" class="form-label"></label>
                                         <select name="niveau-competence" id="input-niveau-competence"
                                             class="form-select form-control">
+                                            <option value="0">CHOISIR UN NIVEAU </option>
                                             <option value="E">E </option>
                                             <option value="M">M </option>
                                             <option value="A">A </option>
@@ -1660,4 +1687,66 @@ function getIdOfSelectedOption(arrOfSelection, selection) {
     }
 
     return -1;
+}
+
+function showNotification(msg, type, position) {
+
+    notif({
+        "msg": msg,
+        "type": type,
+        "position": position
+    });
+}
+
+function not1() {
+    notif({
+        msg: "<b>Success:</b> Well done Details Submitted Successfully",
+        type: "success"
+    });
+}
+
+function not2() {
+    notif({
+        msg: "<b>Oops!</b> An Error Occurred",
+        type: "error",
+        position: "center"
+    });
+}
+
+function not3() {
+    notif({
+        type: "warning",
+        msg: "<b>Warning:</b> Something Went Wrong",
+        position: "left"
+    });
+}
+
+function not4() {
+    notif({
+        type: "info",
+        msg: "<b>Info: </b>Some info here.",
+        width: "all",
+        height: 100,
+        position: "center"
+    });
+}
+
+function not5() {
+    notif({
+        type: "error",
+        msg: "<b>Error: </b>This error will stay here until you click it.",
+        position: "center",
+        width: 500,
+        height: 60,
+        autohide: false
+    });
+}
+
+function not6() {
+    notif({
+        type: "warning",
+        msg: "Opacity is cool!",
+        position: "center",
+        opacity: 0.8
+    });
 }

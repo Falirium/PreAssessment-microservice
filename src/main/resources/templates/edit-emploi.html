@@ -235,22 +235,24 @@
                                             Ce champ ne doit pas être vide.
                                         </div>
                                     </div>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <label for="" class="form-label"></label>
                                         <select name="categorie-competence" id="input-categorie-competence"
                                             class="form-select form-control">
+                                            <option value="0">CHOISIR UNE CATÉGORIE </option>
                                             <option value="Domaines de connaissance">Domaines de connaissance </option>
                                             <option value="Savoir-faire">Savoir-faire </option>
-                                            <option value="Savoir-etre">Savoir-être </option>
+                                            <option value="Savoir-être">Savoir-être </option>
                                         </select>
                                         <div class="invalid-feedback">
                                             Ce champ ne doit pas être vide.
                                         </div>
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-3">
                                         <label for="" class="form-label"></label>
                                         <select name="niveau-competence" id="input-niveau-competence"
                                             class="form-select form-control">
+                                            <option value="0">CHOISIR UN NIVEAU </option>
                                             <option value="E">E </option>
                                             <option value="M">M </option>
                                             <option value="A">A </option>
@@ -448,6 +450,12 @@
         <script th:src="@{/assets/plugins/p-scroll/perfect-scrollbar.js}"></script>
         <script th:src="@{/assets/plugins/p-scroll/pscroll.js}"></script>
         <script th:src="@{/assets/plugins/p-scroll/pscroll-1.js}"></script>
+
+        <!-- INTERNAL Notifications js -->
+        <script th:src="@{/assets/plugins/notify/js/rainbow.js}"></script>
+        <script th:src="@{/assets/plugins/notify/js/sample.js}"></script>
+        <script th:src="@{/assets/plugins/notify/js/jquery.growl.js}"></script>
+        <script th:src="@{/assets/plugins/notify/js/notifIt.js}"></script>
 
         <!-- INTERNAL Edit-Table JS
         <script th:src="@{/assets/plugins/edit-table/bst-edittable.js}"></script>

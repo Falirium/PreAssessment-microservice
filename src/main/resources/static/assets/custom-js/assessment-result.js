@@ -19,6 +19,19 @@ let assessmentJson;
 // GET THE ASSESSMENT JSON
 getFicheEvaluationsByAssessment(idParam).then((fiches) => {
 
+    if (fiches.hasOwnProperty("status")) {
+        if (fiches.status === 500) {
+            showModal("error", "Échec", fiches.error, "", {
+                "text": "Revenir à l'acceuil",
+                "color": "danger",
+                "id": "dqz1"
+            }, function () {
+
+                //  REDIRECT TO THE ASSESSMENT PAGE
+                redirectTo("assessment/list", 1000);
+            });
+        }
+    }
     fichesArrJson = fiches;
 
     // FILTER LIST OF FICHE EVALUATION BASED ON THE CONNECTED DRH
@@ -92,7 +105,7 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
                 extend: 'excelHtml5',
                 title: fileTitle,
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15]
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
                 },
                 autoFilter: true,
                 sheetName: assessmentJson.name
@@ -512,7 +525,7 @@ $("#btn-assessment-sus").click(function (e) {
                     // SHOW ERROR MODAL
                     showModal("error", "Action échouée", success.message, "", {
                         "text": "Revenir à l'acceuil",
-                        "color": "error",
+                        "color": "danger",
                         "id": "dqz1"
                     }, function () {
 
@@ -762,6 +775,12 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
 
     var myModal = new bootstrap.Modal(document.getElementById(modalId));
+    $(modalId).modal(
+        {
+            backdrop: 'static',
+            keyboard: false
+        }
+    )
 
     // SET HEADER
     $(modalHeaderId).text(header);
