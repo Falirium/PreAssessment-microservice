@@ -27,6 +27,8 @@ public class Employee {
     private String phoneNumber;
     private String workEmail;
 
+    private String hashedPwd;
+
     public Employee(String firstName, String lastName, String matricule) {
         this.firstName = firstName;
         this.lastName = lastName;

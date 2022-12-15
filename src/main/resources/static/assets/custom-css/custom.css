@@ -36,3 +36,7 @@
     background: #e9e9f1 !important;
     border-color: #e9e9f1;
 }
+
+.bg-error {
+    background: linear-gradient(to right, #e67900 0%, #00A2E6 100%) !important;
+}

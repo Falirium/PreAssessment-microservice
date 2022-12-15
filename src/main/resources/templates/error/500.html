@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+    layout:decorate="~{/layouts/layout2.html}">
+
+<head>
+
+    <title>Manager</title>
+</head>
+
+<body>
+
+    <!-- PAGE CONTENT -->
+    <div class="page" layout:fragment="page-content">
+        <div class="page-content error-page error2 text-white">
+            <div class="container text-center">
+                <div class="error-template">
+                    <h1 class="display-1 mb-2">5<span class="custom-emoji"><svg xmlns="http://www.w3.org/2000/svg" height="140" width="140" data-name="Layer 1" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e67900"/><circle cx="15" cy="10" r="1" fill="#995200"/><circle cx="9" cy="10" r="1" fill="#995200"/><path fill="#995200" d="M11.499,17.05957a1,1,0,0,1-.87109-1.48926A5.02491,5.02491,0,0,1,15,13a1,1,0,0,1,0,2,3.02357,3.02357,0,0,0-2.62793,1.54883A.99968.99968,0,0,1,11.499,17.05957Z"/></svg></span>0</h1>
+
+                    <h5 class="error-details">
+                        Désolé, une erreur s'est produite, la page demandée n'a pas été trouvée !
+                    </h5>
+                    <div class="text-center">
+                        <a id="homepage-link" class="btn btn-secondary mt-5 mb-5" th:href="@{/assessment/list}"> <i class="fa fa-long-arrow-left"></i> Retour à la page d'accueil </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PAGE CONTENTCLOSED -->
+
+
+
+
+
+
+    <!-- SCRIPT -->
+    <th:block layout:fragment="script">
+
+        <!-- BACK-TO-TOP -->
+        <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
+
+        <!-- JQUERY JS -->
+        <script th:src="@{/assets/js/jquery.min.js}"></script>
+
+
+
+        <!-- BOOTSTRAP JS -->
+        <script th:src="@{/assets/plugins/bootstrap/js/popper.min.js}"></script>
+        <script th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script>
+
+
+        <!-- AUTHORIZE -->
+        <script th:src="@{/assets/custom-js/authorize.js}"></script>
+
+
+        <!-- Perfect SCROLLBAR JS-->
+        <script th:src="@{/assets/plugins/p-scroll/perfect-scrollbar.js}"></script>
+        <script th:src="@{/assets/plugins/p-scroll/pscroll.js}"></script>
+        <script th:src="@{/assets/plugins/p-scroll/pscroll-1.js}"></script>
+
+        
+
+        <!-- Color Theme js -->
+        <script th:src="@{/assets/js/themeColors.js}"></script>
+
+        <!-- Sticky js -->
+        <script th:src="@{/assets/js/sticky.js}"></script>
+
+
+        <!-- CUSTOM JS -->
+        <script th:src="@{/assets/js/custom.js}"></script>
+
+        <!-- 404 -->
+        <script th:src="@{/assets/custom-js/error.js}"></script>
+
+
+    </th:block>
+
+    <!-- END SCRIPT -->

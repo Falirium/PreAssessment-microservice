@@ -9,6 +9,8 @@ public class DashboardController {
 
     @RequestMapping("/")
     public String index() {
-        return "index";
+        return "list-assessment";
     }
+
+
 }

@@ -20,7 +20,7 @@ public class Drh extends Employee{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idDrh;
 
-    private String hashedPwd;
+    
 
     // EX : BANQUE REGIONALE DE TEOUANE-TANGER
     private String tag;
