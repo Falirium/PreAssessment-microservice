@@ -22,7 +22,8 @@ let lastEditedInputs = {
     "marqueur": -1,
     "competence": -1,
     "glossaire": -1,
-    "responsabilites": [-1, -1]
+    "responsabilites": [-1, -1],
+    "targetedRow" : null
 }
 var currentNiveauIndex = 0;
 
@@ -699,7 +700,7 @@ function parseCompetenceToTable(competences, niveauContainer) {
         let actionCell = tr.insertCell(-1);
         actionCell.innerHTML = `
         <div class="g-2">
-                <a id="comp-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
+                <a href="#edit-competence-wrapper" id="comp-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
                     data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
                 <a id="comp-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
                     data-bs-original-title="Delete"><span
@@ -770,12 +771,18 @@ function parseCompetenceToTable(competences, niveauContainer) {
                 aElement = e.target;
             }
 
+            let editWrapperElement = $("#edit-competence-wrapper").get(0);
+
+            // SCROLL DOWN TO EDIT COMPETENCE AREA
+            $('html, body').animate({
+                scrollTop: $(editWrapperElement).offset().top
+            }, 500);
+
             let competenceIndex = [...allEditCatBtns].indexOf(aElement);
             console.log(competenceIndex, competencesArray[competenceIndex]);
 
             let nameInput = niveauContainer.querySelector("#input-nom-competence");
-            let categoryInput = niveauContainer.querySelector("#input-categorie-competence");
-            let niveauInput = niveauContainer.querySelector("#input-niveau-competence");
+            
 
             console.log(competencesArray[competenceIndex]);
 
@@ -788,6 +795,9 @@ function parseCompetenceToTable(competences, niveauContainer) {
             $(niveauContainer).find('#input-niveau-competence option[value="' + competencesArray[competenceIndex].niveauRequis + '"]').prop('selected', true);
 
 
+
+            
+
             // nameInput.value = competencesArray[competenceIndex].name;
             // categoryInput.value = competencesArray[competenceIndex].category;
             // niveauInput.value = competencesArray[competenceIndex].niveau;
@@ -795,8 +805,9 @@ function parseCompetenceToTable(competences, niveauContainer) {
             // // DELETE THE VALUE FROM THE ARRAY
             // competencesArray.splice(competenceIndex, 1);
 
-            // ADD INDEX TO LASTEDITED VAR
+            // ADD INDEX TO LAST EDITED-VARIABLE
             lastEditedInputs.competence = competenceIndex;
+            lastEditedInputs.targetedRow = $(aElement).closest("tr");
 
 
 
@@ -997,6 +1008,9 @@ function addListenersToNewNiveau(container) {
 
         let exigenceInput = container.querySelector("#input-exigence-emploi");
 
+        // REMOVE EDIT-EFFECT;
+        removeEditEffect();
+
         let exigenceJson = {
             "valeur": exigenceInput.value
         }
@@ -1007,6 +1021,9 @@ function addListenersToNewNiveau(container) {
 
             //INITIALIZE THE INDEX
             lastEditedInputs.exigence = -1;
+
+            // ADD EDIT EFFECT
+            $(lastEditedInputs.targetedRow.get(0)).addClass("edit-effect");
 
         } else {
             exigencesArray.push(exigenceJson);
@@ -1023,6 +1040,9 @@ function addListenersToNewNiveau(container) {
     btnAddMarqueur.addEventListener("click", (e) => {
         let marqueurInput = container.querySelector("#input-marqueur-emploi");
 
+        // REMOVE EDIT-EFFECT;
+        removeEditEffect();
+
         let marqueurJson = {
             "valeur": marqueurInput.value
         }
@@ -1034,6 +1054,9 @@ function addListenersToNewNiveau(container) {
 
             //INITIALIZE THE INDEX
             lastEditedInputs.marqueur = -1;
+
+            // ADD EDIT EFFECT
+            $(lastEditedInputs.targetedRow.get(0)).addClass("edit-effect");
 
         } else {
             marqueursArray.push(marqueurJson);
@@ -1051,6 +1074,9 @@ function addListenersToNewNiveau(container) {
         let categoryInput = container.querySelector("#input-categorie-competence");
         let niveauInput = container.querySelector("#input-niveau-competence");
 
+        // REMOVE EDIT-EFFECT;
+        removeEditEffect();
+
 
 
         let competenceJson = {
@@ -1064,8 +1090,7 @@ function addListenersToNewNiveau(container) {
 
             competencesArray[index] = competenceJson;
 
-            //INITIALIZE THE INDEX + SELECTIONS
-            lastEditedInputs.competence = -1;
+            
 
             $(container).find('#input-categorie-competence option[value="' + competencesArray[index].type + '"]').prop('selected', false);
             $(container).find('#input-niveau-competence option[value="' + competencesArray[index].niveauRequis + '"]').prop('selected', false);
@@ -1075,8 +1100,15 @@ function addListenersToNewNiveau(container) {
 
             parseCompetenceToTable(competencesArray, container);
 
+            // ADD EDIT EFFECT
+            addEditEffectToCompetenceRow(competencesArray[index].name);
+
             // SHOW SUCCESS NOTIFICATION
-            showNotification("<b>succès :</b> compétence ajoutée", "success", "center");
+            showNotification("<b>succès :</b> compétence modifiée", "success", "right");
+
+            //INITIALIZE THE INDEX + SELECTIONS
+            lastEditedInputs.competence = -1;
+            lastEditedInputs.targetedRow = null;
 
 
         } else {
@@ -1085,7 +1117,8 @@ function addListenersToNewNiveau(container) {
             parseCompetenceToTable(competencesArray, container);
 
             // SHOW SUCCESS NOTIFICATION
-            showNotification("<b>succès :</b> compétence modifiée", "success", "center");
+            
+            showNotification("<b>succès :</b> compétence ajoutée", "success", "center");
         }
 
 
@@ -1749,4 +1782,27 @@ function not6() {
         position: "center",
         opacity: 0.8
     });
+}
+
+function removeEditEffect() {
+    $(".edit-effect").removeClass("edit-effect");
+}
+
+function addEditEffectToCompetenceRow(competenceName) {
+    let rows = $("#competence-table-body").find("tr");
+
+    for (var i = 0; i < rows.length; i++) {
+        let row = rows[i];
+
+        let compName = $(row).find("td").first().text();
+
+        if (compName === competenceName) {
+            $(row).addClass("edit-effect");
+            break;
+
+        } else {
+            continue;
+        }
+        
+    }
 }
