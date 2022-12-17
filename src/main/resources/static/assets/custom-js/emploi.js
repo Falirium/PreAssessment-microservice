@@ -23,7 +23,7 @@ let lastEditedInputs = {
     "competence": -1,
     "glossaire": -1,
     "responsabilites": [-1, -1],
-    "targetedRow" : null
+    "targetedRow": null
 }
 var currentNiveauIndex = 0;
 
@@ -773,16 +773,16 @@ function parseCompetenceToTable(competences, niveauContainer) {
 
             let editWrapperElement = $("#edit-competence-wrapper").get(0);
 
-            // SCROLL DOWN TO EDIT COMPETENCE AREA
-            $('html, body').animate({
-                scrollTop: $(editWrapperElement).offset().top
-            }, 500);
+            // // SCROLL DOWN TO EDIT COMPETENCE AREA
+            // $('html, body').animate({
+            //     scrollTop: $(editWrapperElement).offset().top
+            // }, 500);
 
             let competenceIndex = [...allEditCatBtns].indexOf(aElement);
             console.log(competenceIndex, competencesArray[competenceIndex]);
 
             let nameInput = niveauContainer.querySelector("#input-nom-competence");
-            
+
 
             console.log(competencesArray[competenceIndex]);
 
@@ -796,7 +796,7 @@ function parseCompetenceToTable(competences, niveauContainer) {
 
 
 
-            
+
 
             // nameInput.value = competencesArray[competenceIndex].name;
             // categoryInput.value = competencesArray[competenceIndex].category;
@@ -1090,7 +1090,7 @@ function addListenersToNewNiveau(container) {
 
             competencesArray[index] = competenceJson;
 
-            
+
 
             $(container).find('#input-categorie-competence option[value="' + competencesArray[index].type + '"]').prop('selected', false);
             $(container).find('#input-niveau-competence option[value="' + competencesArray[index].niveauRequis + '"]').prop('selected', false);
@@ -1112,13 +1112,19 @@ function addListenersToNewNiveau(container) {
 
 
         } else {
-            competencesArray.push(competenceJson);
 
-            parseCompetenceToTable(competencesArray, container);
+            // CHECK FOR THE EXISTENCE OF THE COMPETENCE ON THE LIST
+            if (!competenceDoesExist(competenceJson.name, competencesArray)) {
 
-            // SHOW SUCCESS NOTIFICATION
-            
-            showNotification("<b>succès :</b> compétence ajoutée", "success", "center");
+                competencesArray.push(competenceJson);
+
+                parseCompetenceToTable(competencesArray, container);
+
+                // SHOW SUCCESS NOTIFICATION
+
+                showNotification("<b>succès :</b> compétence ajoutée", "success", "center");
+            }
+
         }
 
 
@@ -1803,6 +1809,29 @@ function addEditEffectToCompetenceRow(competenceName) {
         } else {
             continue;
         }
-        
+
     }
+}
+
+function competenceDoesExist(competenceName, arr) {
+    /* IT RESTRICTS ADDING A COMPETENCE THAT IS ALREADY ADDED TO THE LIST */
+
+    console.log(arr);
+    for(var i = 0; i < arr.length; i++) {
+
+        let competenceJson = arr[i];
+        console.log(competenceJson.name);
+        if (competenceJson.name === competenceName) {
+            console.log("competence exist");
+            // SHOW ERROR NOTIFICATION
+            showNotification("<b>Erreur :</b> Le nom de la compétence est déjà ajouté à la liste", "error", "right");
+
+            return true;
+        }
+    }
+
+
+    console.log("competence does not exist");
+    return false;
+
 }
