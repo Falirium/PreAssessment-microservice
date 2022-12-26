@@ -13,6 +13,9 @@ function lanchEditScript() {
         // STEP 4 : START PARSING DATA INTO TABLES
         // 1 - PARSE BASE INFO OF EMPLOI
         $("#input-name-emploi").val(emploiJSON["intitulé"]);
+        // DISABLE THIS INPUT
+        $("#input-name-emploi").attr('disabled', "");
+
         $("#input-filiere-emploi").val(emploiJSON["filière"]);
         $("#input-sousFiliere-emploi").val(emploiJSON["sous-filière"]);
         $("#input-date-emploi").val(emploiJSON["date Maj"].split("T")[0]);
@@ -21,10 +24,13 @@ function lanchEditScript() {
 
 
         // 2 - PARSE NIVEAUX OF EMPLOI
-        emploi.niveaux.map((niveau, index) => {
+        let sortedEmploiNiveaux = sortingAsc(emploi.niveaux);
+        console.log(sortedEmploiNiveaux);
+        sortedEmploiNiveaux.map((niveau, index) => {
 
             // GET THE CONTAINER
             let container = lastNiveauContainer();
+            console.log( "ORDER OF LEVELS : " + niveau.level);
 
 
 
@@ -130,10 +136,13 @@ function populateMainVariabes(emploi) {
 function populateMiddleVariabes(emploi) {
 
     // FILL WITH FIRST NIVEAU DATA
-    responsabilitesArray = emploi.niveaux[0].responsabilites;
-    exigencesArray = emploi.niveaux[0].exigences;
-    marqueursArray = emploi.niveaux[0].marqueurs;
-    competencesArray = emploi.niveaux[0].competencesRequis;
+    
+    let sortedNiveaux = sortingAsc(emploi.niveaux);
+    console.log(sortedNiveaux);
+    responsabilitesArray = sortedNiveaux[0].responsabilites;
+    exigencesArray = sortedNiveaux[0].exigences;
+    marqueursArray = sortedNiveaux[0].marqueurs;
+    competencesArray = sortedNiveaux[0].competencesRequis;
 
 }
 
@@ -195,5 +204,20 @@ function adapteToOldFormat(arr) {
 
     return finalArr;
 
+}
 
+function sortingAsc(arr) {
+   return arr.sort((a,b) => {
+    const levelA = a.level;
+    const levelB = b.level;
+
+    if (levelA > levelB) {
+        return 1;
+    } else if (levelA < levelB) {
+        return -1;
+    } else {
+        return 0;
+    }
+    
+   })
 }

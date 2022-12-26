@@ -6,11 +6,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import groovy.transform.ToString;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @Table(name="drh")
 @NoArgsConstructor
 public class Drh extends Employee{

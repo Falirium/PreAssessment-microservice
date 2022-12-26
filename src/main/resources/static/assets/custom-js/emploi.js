@@ -93,10 +93,29 @@ btnAddResponsabilite.addEventListener('click', (e) => {
     let inputCatRes = document.querySelector("#input-categorie-responsabilites");
     let inputResValeur = document.querySelector("#input-valeur-responsabilites");
 
-    let resJson = {
-        "categorie": inputCatRes.options[inputCatRes.selectedIndex].value,
-        "valeur": inputResValeur.value
+    // CHECK FOR MULTIPLE VALUES
+    let values = inputResValeur.value.replace(/(\s|•)+/g, ' ').trim().split(";");
+    let resJson;
+
+    if (values.length == 1) {
+        resJson = {
+            "categorie": inputCatRes.options[inputCatRes.selectedIndex].value,
+            "valeur": inputResValeur.value
+        }
+    } else {
+        resJson = values.map((e, i) => {
+            return {
+                "categorie": inputCatRes.options[inputCatRes.selectedIndex].value,
+                "valeur": e
+            }
+        });
+
+        // resJson = {
+        //     "categorie": inputCatRes.options[inputCatRes.selectedIndex].value,
+        //     "valeur": valuesArr
+        // }
     }
+
 
     if (lastEditedInputs.responsabilites[0] !== -1 && lastEditedInputs.responsabilites[1] !== -1) {
         let catIndex = lastEditedInputs.responsabilites[0];
@@ -109,7 +128,15 @@ btnAddResponsabilite.addEventListener('click', (e) => {
 
     } else {
 
-        responsabilitesArray = categorizeArray(responsabilitesArray, resJson);
+        if (values.length == 1) {
+            responsabilitesArray = categorizeArray(responsabilitesArray, resJson);
+        } else {
+
+            resJson.map((e, i) => {
+                responsabilitesArray = categorizeArray(responsabilitesArray, e);
+            })
+        }
+
     }
     // responsabilitesArray = categorizeArray(responsabilitesArray, resJson);
 
@@ -179,9 +206,9 @@ $(".base-emploi-info").change(function (index) {
     //console.log(emploiJSON);
 })
 
-$("#btn-emploi-save").one('click', function () {
+$("#btn-emploi-save").click(function () {
 
-    // WHEN THE USER CLICK DIRECTLY ON SAVE WITHOUT ANY ERROR
+    // WHEN THE USER CLICK DIRECTLY ON SAVE WHILE WE ARE IN THE LAST NIVEAU CONTAINER
     if (niveauxArray.length !== $(".niveau-container").length) {
 
         let niveauJson = {
@@ -195,22 +222,26 @@ $("#btn-emploi-save").one('click', function () {
     }
 
     console.log(niveauxArray.length, $(".niveau-container").length);
+    console.log(niveauxArray);
 
     if (checkInputsConstraints()) {
         emploiJSON["responsabilités"] = responsabilitesArray;
         emploiJSON["niveaux"] = niveauxArray;
 
 
-        console.log(generateEmploiJson(emploiJSON));
+        // console.log(generateEmploiJson(emploiJSON));
 
 
         // ADD LOADER TO SAVE BTN
         addLoaderToBtn("#btn-emploi-save");
 
+        // REMOVE EVENT HANDLER;
+        $("#btn-emploi-save").off();
+
         // 2 SCEANARIOS : SAVE NEW EMPLOI || EDIT A SAVED EMPLOI
         if (localStorage.getItem("emploi") != null) {
 
-            console.log(generateEmploiJson(emploiJSON));
+            // console.log(generateEmploiJson(emploiJSON));
 
             // REMOVE LOADER TO SAVE BTN
             deleteLoaderToBtn("#btn-emploi-save");
@@ -700,7 +731,7 @@ function parseCompetenceToTable(competences, niveauContainer) {
         let actionCell = tr.insertCell(-1);
         actionCell.innerHTML = `
         <div class="g-2">
-                <a href="#edit-competence-wrapper" id="comp-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
+                <a id="comp-table-btn-edit" class="btn text-primary btn-sm" data-bs-toggle="tooltip"
                     data-bs-original-title="Edit"><span class="fe fe-edit fs-14"></span></a>
                 <a id="comp-table-btn-delete" class="btn text-danger btn-sm" data-bs-toggle="tooltip"
                     data-bs-original-title="Delete"><span
@@ -771,12 +802,12 @@ function parseCompetenceToTable(competences, niveauContainer) {
                 aElement = e.target;
             }
 
-            let editWrapperElement = $("#edit-competence-wrapper").get(0);
+            let editWrapperElement = $(niveauContainer).find("#edit-competence-wrapper").get(0);
 
-            // // SCROLL DOWN TO EDIT COMPETENCE AREA
-            // $('html, body').animate({
-            //     scrollTop: $(editWrapperElement).offset().top
-            // }, 500);
+            // SCROLL DOWN TO EDIT COMPETENCE AREA
+            $('html, body').animate({
+                scrollTop: $(editWrapperElement).offset().top - 400
+            }, 500);
 
             let competenceIndex = [...allEditCatBtns].indexOf(aElement);
             console.log(competenceIndex, competencesArray[competenceIndex]);
@@ -881,11 +912,15 @@ function addListenersToNewNiveau(container) {
 
             console.log(currentNiveauIndex, clickedNiveauIndex);
 
+            let clickedNiveau;
+
 
             // SAVE ARRAYS TO NIVEAUX-ARRAY
             if (typeof (niveauxArray[currentNiveauIndex]) === 'undefined') { // SAVE THIS AS NEW ENTRY TO NIVEAUX ARRAY
 
-                let niveauJson = {
+                
+
+                let niveauJsclickedNiveauIndexon = {
                     "level": niveauCounter,
                     "exigences": exigencesArray,
                     "marqueurs": marqueursArray,
@@ -895,15 +930,23 @@ function addListenersToNewNiveau(container) {
                 niveauxArray.push(niveauJson);
 
             } else {
-                niveauxArray[currentNiveauIndex].exigences = exigencesArray;
-                niveauxArray[currentNiveauIndex].marqueurs = marqueursArray;
-                niveauxArray[currentNiveauIndex]["competences"] = competencesArray;
+
+                // console.log(getNiveauByIndex(currentNiveauIndex + 1, niveauxArray));
+                clickedNiveau = getNiveauByIndex(currentNiveauIndex + 1, niveauxArray);
+
+                clickedNiveau.exigences = exigencesArray;
+                clickedNiveau.marqueurs = marqueursArray;
+                clickedNiveau["competences"] = competencesArray;
             }
 
             // GET THE VALUES OF THE CLICKED NIVEAU FROM NIVEAUXARRAY
-            exigencesArray = niveauxArray[clickedNiveauIndex].exigences;
-            marqueursArray = niveauxArray[clickedNiveauIndex].marqueurs;
-            competencesArray = niveauxArray[clickedNiveauIndex]["competences"];
+            
+            clickedNiveau = getNiveauByIndex(clickedNiveauIndex + 1, niveauxArray);
+            exigencesArray = clickedNiveau.exigences;
+            marqueursArray = clickedNiveau.marqueurs;
+            competencesArray = clickedNiveau["competences"];
+
+            console.log(exigencesArray, marqueursArray, competencesArray);
 
 
             // CLEAR DISABLED-READONLY FROM INPUTS
@@ -1011,9 +1054,24 @@ function addListenersToNewNiveau(container) {
         // REMOVE EDIT-EFFECT;
         removeEditEffect();
 
-        let exigenceJson = {
-            "valeur": exigenceInput.value
+        // CHECK FOR MULTIPLE VALUES
+        let values = exigenceInput.value.split(".");
+
+        let exigenceJson
+
+        if (values.length == 1) {
+            exigenceJson = {
+                "valeur": exigenceInput.value
+            }
+        } else {
+            exigenceJson = values.map((e, i) => {
+                return {
+                    "valeur": e
+                }
+            })
         }
+
+
         // CHECK IF THE VALUE ALREADY EXISTS
         if (lastEditedInputs.exigence !== -1) {
             let index = lastEditedInputs.exigence;
@@ -1022,11 +1080,15 @@ function addListenersToNewNiveau(container) {
             //INITIALIZE THE INDEX
             lastEditedInputs.exigence = -1;
 
-            // ADD EDIT EFFECT
-            $(lastEditedInputs.targetedRow.get(0)).addClass("edit-effect");
+
 
         } else {
-            exigencesArray.push(exigenceJson);
+            if (values.length == 1) {
+                exigencesArray.push(exigenceJson);
+            } else {
+                exigencesArray.push(...exigenceJson);
+            }
+
         }
 
 
@@ -1043,9 +1105,24 @@ function addListenersToNewNiveau(container) {
         // REMOVE EDIT-EFFECT;
         removeEditEffect();
 
-        let marqueurJson = {
-            "valeur": marqueurInput.value
+        // CHECK FOR MULTIPLE VALUES
+        let values = marqueurInput.value.split(".");
+
+        let marqueurJson;
+        if (values.length == 1) {
+            marqueurJson = {
+                "valeur": marqueurInput.value
+            }
+        } else {
+            marqueurJson = values.map((e, i) => {
+                return {
+                    "valeur": e
+                }
+            });
         }
+
+
+
 
         // CHECK IF THE VALUE ALREADY EXISTS
         if (lastEditedInputs.marqueur !== -1) {
@@ -1055,11 +1132,15 @@ function addListenersToNewNiveau(container) {
             //INITIALIZE THE INDEX
             lastEditedInputs.marqueur = -1;
 
-            // ADD EDIT EFFECT
-            $(lastEditedInputs.targetedRow.get(0)).addClass("edit-effect");
 
         } else {
-            marqueursArray.push(marqueurJson);
+
+            if (values.length == 1) {
+                marqueursArray.push(marqueurJson);
+            } else {
+                marqueursArray.push(...marqueurJson);
+            }
+
         }
 
 
@@ -1101,7 +1182,7 @@ function addListenersToNewNiveau(container) {
             parseCompetenceToTable(competencesArray, container);
 
             // ADD EDIT EFFECT
-            addEditEffectToCompetenceRow(competencesArray[index].name);
+            addEditEffectToCompetenceRow(container, competencesArray[index].name);
 
             // SHOW SUCCESS NOTIFICATION
             showNotification("<b>succès :</b> compétence modifiée", "success", "right");
@@ -1293,7 +1374,7 @@ function addNewNiveauHTML(niveauCounter) {
                                     </table>
                                 </div>
 
-                                <div class="form-group form-row">
+                                <div id="edit-competence-wrapper" class="form-group form-row">
                                     <div class="col-sm-5">
                                         <label for="" class="form-label"></label>
                                         <select name="competence" id="input-nom-competence" class="form-control form-select nom-competence"></select>
@@ -1588,6 +1669,13 @@ function generateEmploiJson(json) {
 
 
     })
+    console.log(
+        {
+            "id": emploiJSON.id === null ? null : emploiJSON.id,
+            "intitule": niveauArr[0].intitule,
+            "niveaux": niveauArr
+        }
+    );
     return {
         "id": emploiJSON.id === null ? null : emploiJSON.id,
         "intitule": niveauArr[0].intitule,
@@ -1794,16 +1882,19 @@ function removeEditEffect() {
     $(".edit-effect").removeClass("edit-effect");
 }
 
-function addEditEffectToCompetenceRow(competenceName) {
-    let rows = $("#competence-table-body").find("tr");
+function addEditEffectToCompetenceRow(containerWrapper, competenceName) {
+    let rows = $(containerWrapper).find("#competence-table-body").find("tr");
+
 
     for (var i = 0; i < rows.length; i++) {
         let row = rows[i];
 
         let compName = $(row).find("td").first().text();
 
+        console.log(i, competenceName, compName === competenceName);
         if (compName === competenceName) {
             $(row).addClass("edit-effect");
+            console.log("effect added");
             break;
 
         } else {
@@ -1817,7 +1908,7 @@ function competenceDoesExist(competenceName, arr) {
     /* IT RESTRICTS ADDING A COMPETENCE THAT IS ALREADY ADDED TO THE LIST */
 
     console.log(arr);
-    for(var i = 0; i < arr.length; i++) {
+    for (var i = 0; i < arr.length; i++) {
 
         let competenceJson = arr[i];
         console.log(competenceJson.name);
@@ -1835,3 +1926,20 @@ function competenceDoesExist(competenceName, arr) {
     return false;
 
 }
+
+function getNiveauByIndex(index, arr) {
+    console.log("heere :", index);
+
+    for (var i = 0; i < arr.length ; i++) {
+        let niveau = arr[i];
+
+        console.log(i, niveau);
+        console.log(niveau.level == index);
+        if (niveau.level === index) {
+            return niveau;
+        }
+    }
+
+    return null;
+}
+

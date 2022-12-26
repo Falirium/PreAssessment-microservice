@@ -30,13 +30,18 @@ import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 
+import groovy.transform.ToString;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "niveau")
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 
 @TypeDefs({

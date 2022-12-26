@@ -8,13 +8,16 @@ import javax.persistence.MappedSuperclass;
 
 import org.springframework.stereotype.Component;
 
+import groovy.transform.ToString;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @MappedSuperclass
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class Employee {
     
