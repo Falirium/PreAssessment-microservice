@@ -97,6 +97,9 @@ btnAddResponsabilite.addEventListener('click', (e) => {
     let values = inputResValeur.value.replace(/(\s|•)+/g, ' ').trim().split(";");
     let resJson;
 
+    // REMOVE EDIT-EFFECT;
+    removeEditEffect();
+
     if (values.length == 1) {
         resJson = {
             "categorie": inputCatRes.options[inputCatRes.selectedIndex].value,
@@ -110,10 +113,6 @@ btnAddResponsabilite.addEventListener('click', (e) => {
             }
         });
 
-        // resJson = {
-        //     "categorie": inputCatRes.options[inputCatRes.selectedIndex].value,
-        //     "valeur": valuesArr
-        // }
     }
 
 
@@ -122,6 +121,11 @@ btnAddResponsabilite.addEventListener('click', (e) => {
         let resIndex = lastEditedInputs.responsabilites[1];
 
         responsabilitesArray[catIndex]["valeur"][resIndex] = inputResValeur.value;
+
+        parseResToTable(responsabilitesArray);
+
+        // ADD EFFECT
+        addEditEffectToSectionRow(null, "responsabilite", responsabilitesArray[catIndex]["valeur"][resIndex]);
 
         //INITIALIZE THE INDEX
         lastEditedInputs.responsabilites = [-1, -1];
@@ -137,6 +141,8 @@ btnAddResponsabilite.addEventListener('click', (e) => {
             })
         }
 
+        parseResToTable(responsabilitesArray);
+
     }
     // responsabilitesArray = categorizeArray(responsabilitesArray, resJson);
 
@@ -145,7 +151,7 @@ btnAddResponsabilite.addEventListener('click', (e) => {
     inputResValeur.value = "";
 
 
-    parseResToTable(responsabilitesArray);
+
 })
 
 // btnConfirmDeleteNiveau.addEventListener("click", (e) => {
@@ -417,43 +423,56 @@ function parseResToTable(responsabilitesArray) {
                 aElement = e.target;
             }
 
-            let categoriesLength = [];
-            console.log(categoriesLength);
+            // SHOW A DELETE MODAL
+            showModal("error", "Supprimer ce champ ?", "Êtes-vous sûr de vouloir supprimer ce champ de responsabilité ?", "", {
+                "text": "Supprimer la responsabilité",
+                "color": "danger",
+                "id": "dfe1",
+                "hasFermerBtn": true
+            }, function () {
 
-            responsabilitesArray.forEach((categorie, index) => {
-                categoriesLength.push(categorie["valeur"].length);
+
+                let categoriesLength = [];
+                console.log(categoriesLength);
+
+                responsabilitesArray.forEach((categorie, index) => {
+                    categoriesLength.push(categorie["valeur"].length);
+                })
+
+                let btnIndex = [...allDeleteCatBtns].indexOf(aElement);
+
+                // DETERMINE CATEGORIE INDEX BASED ON THE NUMBER OF VALUES ON EACH CATEGORY
+                let cateIndex;
+                let resIndex;
+                if (btnIndex < categoriesLength[0]) {
+                    cateIndex = 0;
+                    resIndex = btnIndex;
+                } else if (btnIndex < categoriesLength[0] + categoriesLength[1]) {
+                    cateIndex = 1;
+                    resIndex = btnIndex - (categoriesLength[0]);
+
+                } else if (btnIndex < categoriesLength[0] + categoriesLength[1] + categoriesLength[2]) {
+                    cateIndex = 2;
+                    resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1]);
+
+                } else {
+                    cateIndex = 3;
+                    resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1] + categoriesLength[2]);
+                }
+
+                // console.log(btnIndex, cateIndex, resIndex);
+
+                // console.log(competenceIndex);
+                responsabilitesArray[cateIndex]["valeur"].splice(resIndex, 1);
+
+                parseResToTable(responsabilitesArray);
+
+
+                // SHOW SUCCESS NOTIFICATION
+                showNotification("<b>succès :</b> Responsabilité supprimée", "success", "center");
+
             })
 
-            let btnIndex = [...allDeleteCatBtns].indexOf(aElement);
-
-            // DETERMINE CATEGORIE INDEX BASED ON THE NUMBER OF VALUES ON EACH CATEGORY
-            let cateIndex;
-            let resIndex;
-            if (btnIndex < categoriesLength[0]) {
-                cateIndex = 0;
-                resIndex = btnIndex;
-            } else if (btnIndex < categoriesLength[0] + categoriesLength[1]) {
-                cateIndex = 1;
-                resIndex = btnIndex - (categoriesLength[0]);
-
-            } else if (btnIndex < categoriesLength[0] + categoriesLength[1] + categoriesLength[2]) {
-                cateIndex = 2;
-                resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1]);
-
-            } else {
-                cateIndex = 3;
-                resIndex = btnIndex - (categoriesLength[0] + categoriesLength[1] + categoriesLength[2]);
-            }
-
-
-
-
-            // console.log(btnIndex, cateIndex, resIndex);
-
-            // console.log(competenceIndex);
-            responsabilitesArray[cateIndex]["valeur"].splice(resIndex, 1);
-
-            parseResToTable(responsabilitesArray);
 
         })
     })
@@ -574,14 +593,29 @@ function parseExigenceToTable(exigences, niveauContainer) {
                 aElement = e.target;
             }
 
-            let exigenceIndex = [...allDeleteCatBtns].indexOf(aElement);
 
-            console.log(exigenceIndex, exigencesArray);
-            exigencesArray.splice(exigenceIndex, 1);
+            // SHOW A DELETE MODAL
+            showModal("error", "Supprimer l'éxigence ?", "Êtes-vous sûr de vouloir supprimer cette exigence ?", "", {
+                "text": "Supprimer l'éxigence",
+                "color": "danger",
+                "id": "dfe1",
+                "hasFermerBtn": true
+            }, function () {
 
-            console.log(exigencesArray);
 
-            parseExigenceToTable(exigencesArray, niveauContainer);
+                let exigenceIndex = [...allDeleteCatBtns].indexOf(aElement);
+
+                console.log(exigenceIndex, exigencesArray);
+                exigencesArray.splice(exigenceIndex, 1);
+
+                console.log(exigencesArray);
+
+                parseExigenceToTable(exigencesArray, niveauContainer);
+
+                // SHOW SUCCESS NOTIFICATION
+                showNotification("<b>succès :</b> Exigence supprimée", "success", "center");
+
+            })
 
         })
     })
@@ -662,12 +696,28 @@ function parseMarqueurToTable(marqueurs, niveauContainer) {
                 aElement = e.target;
             }
 
-            let marqueurIndex = [...allDeleteCatBtns].indexOf(aElement);
 
-            console.log(marqueurIndex);
-            marqueursArray.splice(marqueurIndex, 1);
+            // SHOW A DELETE MODAL
+            showModal("error", "Supprimer ce marqueur de séniorité ?", "Êtes-vous sûr de vouloir supprimer ce marqueur de séniorité ?", "", {
+                "text": "Supprimer ce marqueur de séniorité",
+                "color": "danger",
+                "id": "dfe1",
+                "hasFermerBtn": true
+            }, function () {
 
-            parseMarqueurToTable(marqueursArray, niveauContainer);
+                let marqueurIndex = [...allDeleteCatBtns].indexOf(aElement);
+
+                console.log(marqueurIndex);
+                marqueursArray.splice(marqueurIndex, 1);
+
+                parseMarqueurToTable(marqueursArray, niveauContainer);
+
+                // SHOW SUCCESS NOTIFICATION
+                showNotification("<b>succès :</b> Marqueur de séniorité supprimée", "success", "center");
+
+            })
+
+
 
         })
     })
@@ -918,7 +968,7 @@ function addListenersToNewNiveau(container) {
             // SAVE ARRAYS TO NIVEAUX-ARRAY
             if (typeof (niveauxArray[currentNiveauIndex]) === 'undefined') { // SAVE THIS AS NEW ENTRY TO NIVEAUX ARRAY
 
-                
+
 
                 let niveauJsclickedNiveauIndexon = {
                     "level": niveauCounter,
@@ -940,7 +990,7 @@ function addListenersToNewNiveau(container) {
             }
 
             // GET THE VALUES OF THE CLICKED NIVEAU FROM NIVEAUXARRAY
-            
+
             clickedNiveau = getNiveauByIndex(clickedNiveauIndex + 1, niveauxArray);
             exigencesArray = clickedNiveau.exigences;
             marqueursArray = clickedNiveau.marqueurs;
@@ -1077,6 +1127,14 @@ function addListenersToNewNiveau(container) {
             let index = lastEditedInputs.exigence;
             exigencesArray[index] = exigenceJson;
 
+            parseExigenceToTable(exigencesArray, container);
+
+            // ADD EDIT EFFECT
+            addEditEffectToSectionRow(container, "exigence", exigencesArray[index].valeur);
+
+
+
+
             //INITIALIZE THE INDEX
             lastEditedInputs.exigence = -1;
 
@@ -1089,18 +1147,21 @@ function addListenersToNewNiveau(container) {
                 exigencesArray.push(...exigenceJson);
             }
 
+            parseExigenceToTable(exigencesArray, container);
+
         }
 
 
         exigenceInput.value = "";
 
-        parseExigenceToTable(exigencesArray, container);
+
 
 
     })
 
     btnAddMarqueur.addEventListener("click", (e) => {
         let marqueurInput = container.querySelector("#input-marqueur-emploi");
+
 
         // REMOVE EDIT-EFFECT;
         removeEditEffect();
@@ -1127,10 +1188,20 @@ function addListenersToNewNiveau(container) {
         // CHECK IF THE VALUE ALREADY EXISTS
         if (lastEditedInputs.marqueur !== -1) {
             let index = lastEditedInputs.marqueur;
+
+
             marqueursArray[index] = marqueurJson;
+
+            parseMarqueurToTable(marqueursArray, container);
+
+
+            // ADD EDIT EFFECT
+            addEditEffectToSectionRow(container, "marqueur", marqueursArray[index].valeur);
 
             //INITIALIZE THE INDEX
             lastEditedInputs.marqueur = -1;
+
+
 
 
         } else {
@@ -1141,12 +1212,14 @@ function addListenersToNewNiveau(container) {
                 marqueursArray.push(...marqueurJson);
             }
 
+            parseMarqueurToTable(marqueursArray, container);
+
         }
 
 
         marqueurInput.value = "";
 
-        parseMarqueurToTable(marqueursArray, container);
+
 
     })
 
@@ -1182,7 +1255,7 @@ function addListenersToNewNiveau(container) {
             parseCompetenceToTable(competencesArray, container);
 
             // ADD EDIT EFFECT
-            addEditEffectToCompetenceRow(container, competencesArray[index].name);
+            addEditEffectToSectionRow(container, "competence", competencesArray[index].name);
 
             // SHOW SUCCESS NOTIFICATION
             showNotification("<b>succès :</b> compétence modifiée", "success", "right");
@@ -1882,17 +1955,50 @@ function removeEditEffect() {
     $(".edit-effect").removeClass("edit-effect");
 }
 
-function addEditEffectToCompetenceRow(containerWrapper, competenceName) {
-    let rows = $(containerWrapper).find("#competence-table-body").find("tr");
+function addEditEffectToSectionRow(containerWrapper, section, editedValue) {
+
+    // GET THE ASSOCIATED ID FOR A SECTION
+    let targetId = "";
+    let targetedRowValue = editedValue;
+    switch (section) {
+        case "competence":
+            targetId = "#competence-table-body";
+            break;
+
+        case "marqueur":
+            targetId = "#marqueur-table-body";
+            break;
+
+        case "exigence":
+            targetId = "#exigence-table-body"
+            break;
+
+        case "responsabilite":
+            targetId = "#responsabilites-table-body";
+            break;
+    }
+    
+    let rows = null;
+
+    if (containerWrapper === null) {
+        rows = $(targetId).find("tr");
+    } else {
+        rows = $(containerWrapper).find(targetId).find("tr");
+    }
 
 
     for (var i = 0; i < rows.length; i++) {
         let row = rows[i];
 
-        let compName = $(row).find("td").first().text();
+        console.log(section === "responsabilite");
+        let rowValue = (section === "responsabilite") ? ($(row).find("td:not([rowspan])").first().text()) : ($(row).find("td").first().text());
+       
 
-        console.log(i, competenceName, compName === competenceName);
-        if (compName === competenceName) {
+        console.log(i, rowValue, targetedRowValue, rowValue === targetedRowValue);
+
+        if (rowValue === targetedRowValue) {
+            console.log(row);
+            console.log(i, rowValue, targetedRowValue, rowValue === targetedRowValue);
             $(row).addClass("edit-effect");
             console.log("effect added");
             break;
@@ -1930,7 +2036,7 @@ function competenceDoesExist(competenceName, arr) {
 function getNiveauByIndex(index, arr) {
     console.log("heere :", index);
 
-    for (var i = 0; i < arr.length ; i++) {
+    for (var i = 0; i < arr.length; i++) {
         let niveau = arr[i];
 
         console.log(i, niveau);
