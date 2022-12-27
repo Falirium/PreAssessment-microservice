@@ -399,6 +399,8 @@ function processSavingFicheEvaluation(e) {
     ficheEvaluation.sectionCompSf = percentagePerSection.section_sf;
     ficheEvaluation.sectionCompSe = percentagePerSection.section_se;
 
+    console.log(percentagePerSection);
+    console.log(ficheEvaluation);
 
 
     // CHECK WHICH MANAGER IS CONNECTED

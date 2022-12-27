@@ -402,8 +402,8 @@ function getFichesDataFromJson(arrJson) {
         arr.push(e.sectionExi);
         arr.push(e.sectionMarq);
         arr.push(e.sectionCompDc);
-        arr.push(e.sectionCompSf);
         arr.push(e.sectionCompSe);
+        arr.push(e.sectionCompSf);
 
 
         // Status attribute has special style

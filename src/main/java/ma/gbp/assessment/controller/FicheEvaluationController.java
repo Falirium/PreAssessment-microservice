@@ -61,13 +61,13 @@ public class FicheEvaluationController {
 
     @Autowired
     private CompetenceService competenceService;
-    
 
-    // FETCH LIST OF FICHE EVALUATION BASED ON : MANAGERS IDS, ASSESSMENT ID, EMPLOI ID
+    // FETCH LIST OF FICHE EVALUATION BASED ON : MANAGERS IDS, ASSESSMENT ID, EMPLOI
+    // ID
     @GetMapping("/")
-    public ResponseEntity<List<FicheEvaluation>> getListOfFiches( Map<String,String> allParams) {
+    public ResponseEntity<List<FicheEvaluation>> getListOfFiches(Map<String, String> allParams) {
         List<FicheEvaluation> listOfFiches = new ArrayList<FicheEvaluation>();
-        if( ! allParams.get("manager1Id").equals(null) ) {
+        if (!allParams.get("manager1Id").equals(null)) {
             // MEANS WE HAVE A MANAGERONE ID
             Long manager1 = Long.parseLong(allParams.get("manager1Id"));
 
@@ -76,7 +76,7 @@ public class FicheEvaluationController {
 
             listOfFiches = managerOne.getFichesEvaluations();
 
-        } else if( ! allParams.get("manager2Id").equals(null) ) {
+        } else if (!allParams.get("manager2Id").equals(null)) {
             // MEANS WE HAVE A MANAGERTWO ID
             Long manager2 = Long.parseLong(allParams.get("manager2Id"));
 
@@ -85,7 +85,7 @@ public class FicheEvaluationController {
 
             listOfFiches = managerTwo.getFichesEvaluations();
 
-        } else if( ! allParams.get("assessmentId").equals(null) ) {
+        } else if (!allParams.get("assessmentId").equals(null)) {
             // MEANS WE HAVE A ASSESSMENT ID
             String assessmentId = allParams.get("assessmentId");
 
@@ -94,7 +94,7 @@ public class FicheEvaluationController {
 
             listOfFiches = assessment.getFichesEvaluations();
 
-        } else if( ! allParams.get("emploiId").equals(null) ) {
+        } else if (!allParams.get("emploiId").equals(null)) {
             // MEANS WE HAVE A EMPLOI ID
             Long emploiId = Long.parseLong(allParams.get("emploiId"));
 
@@ -102,7 +102,7 @@ public class FicheEvaluationController {
             Niveau emploi = niveauService.getNiveau(emploiId);
 
             listOfFiches = emploi.getAssociatedFichesEvaluations();
-    
+
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(listOfFiches);
@@ -111,10 +111,9 @@ public class FicheEvaluationController {
     @PostMapping("/")
     public ResponseEntity<List<FicheEvaluation>> saveListOfFiches(@RequestBody List<FicheEvaluationReqBody> fiches) {
         List<FicheEvaluation> savedFiches = new ArrayList<FicheEvaluation>();
-        
+
         for (int i = 0; i < fiches.size(); i++) {
-            FicheEvaluation savedSingleFiche = ficheEvaluationService.saveFicheEvaluation(new FicheEvaluation
-                (
+            FicheEvaluation savedSingleFiche = ficheEvaluationService.saveFicheEvaluation(new FicheEvaluation(
                     fiches.get(i).getScore(),
                     fiches.get(i).getSousPoints(),
                     fiches.get(i).getSurPoints(),
@@ -123,15 +122,12 @@ public class FicheEvaluationController {
                     managerTwoService.getManagerById(fiches.get(i).getEvaluateurTwo()),
                     collaborateurSevice.getCollaborateur(fiches.get(i).getCollaborateur()),
                     niveauService.getNiveau(fiches.get(i).getEmploi()),
-                    assessmentService.getAssessment(fiches.get(i).getAssociatedAssessment())
-                )
-            );
+                    assessmentService.getAssessment(fiches.get(i).getAssociatedAssessment())));
 
             // SET RELATIONSHIP ENTITIES
 
             savedFiches.add(savedSingleFiche);
         }
-
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedFiches);
     }
@@ -143,110 +139,108 @@ public class FicheEvaluationController {
 
     @GetMapping(path = "/preview")
     public ResponseEntity<FicheEvaluationPreview> buildFicheEvaluationPreviewFor(
-        @RequestParam(name = "eName") String emploiName,
-        @RequestParam(name = "level") int level,
-        @RequestParam(name = "marqueurs") Boolean marqueurs,
-        @RequestParam(name = "exigences") Boolean exigences,
-        @RequestParam(name = "responsabilites") Boolean responsabilites,
-        @RequestParam(name = "competences_dc") Boolean competences_dc,
-        @RequestParam(name = "competences_se") Boolean competences_se,
-        @RequestParam(name = "competences_sf") Boolean competences_sf) {
+            @RequestParam(name = "eName") String emploiName,
+            @RequestParam(name = "level") int level,
+            @RequestParam(name = "marqueurs") Boolean marqueurs,
+            @RequestParam(name = "exigences") Boolean exigences,
+            @RequestParam(name = "responsabilites") Boolean responsabilites,
+            @RequestParam(name = "competences_dc") Boolean competences_dc,
+            @RequestParam(name = "competences_se") Boolean competences_se,
+            @RequestParam(name = "competences_sf") Boolean competences_sf) {
 
-    FicheEvaluationPreview fe = new FicheEvaluationPreview();
+        FicheEvaluationPreview fe = new FicheEvaluationPreview();
 
-    Niveau niveau = niveauService.getNiveauByNameAndByLevel(emploiName.toLowerCase(), level);
+        Niveau niveau = niveauService.getNiveauByNameAndByLevel(emploiName.toLowerCase(), level);
 
-    // BASES INFORMATIONS
-    fe.setIntitule(niveau.getIntitule());
-    fe.setFiliere(niveau.getFiliere());
-    fe.setSousFiliere(niveau.getSousFiliere());
-    fe.setLevel(niveau.getLevel());
-    fe.setVocation(niveau.getVocation());
-    fe.setDateMaj(niveau.getDateMaj());
+        // BASES INFORMATIONS
+        fe.setIntitule(niveau.getIntitule());
+        fe.setFiliere(niveau.getFiliere());
+        fe.setSousFiliere(niveau.getSousFiliere());
+        fe.setLevel(niveau.getLevel());
+        fe.setVocation(niveau.getVocation());
+        fe.setDateMaj(niveau.getDateMaj());
 
-    // MARQUEURS
-    if (marqueurs) {
-        fe.setMarqueurs(niveau.getMarqueurs());
-    } else {
-        fe.setMarqueurs(null);
-    }
-
-    // EXIGENCES
-    if (exigences) {
-        fe.setExigences(niveau.getExigences());
-    } else {
-        fe.setExigences(null);
-    }
-
-    // RESPONSABILITES
-    if (responsabilites) {
-        fe.setResponsabilites(niveau.getResponsabilites());
-    } else {
-        fe.setResponsabilites(null);
-    }
-
-    List<CompetenceRe> niveauCompetencesReq = niveau.getCompetencesRequis();
-
-    // COMPETENCES
-    List<FullCompetenceRequis> dc = new ArrayList<FullCompetenceRequis>();
-    List<FullCompetenceRequis> se = new ArrayList<FullCompetenceRequis>();
-    List<FullCompetenceRequis> sf = new ArrayList<FullCompetenceRequis>();
-
-    for (CompetenceRe competence : niveauCompetencesReq) {
-
-        FullCompetenceRequis fullCompetenceRequis = new FullCompetenceRequis();
-
-        // GET THE FULL COMPETENCE METADATA -> GET DEFINITION OF NIVEAUX
-        Competence fullCompetence = competenceService.getCompetenceByName(competence.getName());
-
-        // CASE 1 : DOMAINNES DE CONNAISSANCE
-        if (competence.getType().equals("Domaines de connaissance") && competences_dc) {
-            fullCompetenceRequis.setName(competence.getName());
-            fullCompetenceRequis.setRequiredNiveau(competence.getNiveauRequis());
-            fullCompetenceRequis.setNiveaux(fullCompetence.getNiveaux());
-
-            // ADD THIS FULLCOMPETENCEREQUIS TO THE LIST
-            dc.add(fullCompetenceRequis);
+        // MARQUEURS
+        if (marqueurs) {
+            fe.setMarqueurs(niveau.getMarqueurs());
+        } else {
+            fe.setMarqueurs(null);
         }
 
-        // CASE 2 : SAVOIR FAIRE
-        if (competence.getType().equals("Savoir-faire") && competences_sf) {
-            fullCompetenceRequis.setName(competence.getName());
-            fullCompetenceRequis.setRequiredNiveau(competence.getNiveauRequis());
-            fullCompetenceRequis.setNiveaux(fullCompetence.getNiveaux());
-
-            // ADD THIS FULLCOMPETENCEREQUIS TO THE LIST
-            sf.add(fullCompetenceRequis);
+        // EXIGENCES
+        if (exigences) {
+            fe.setExigences(niveau.getExigences());
+        } else {
+            fe.setExigences(null);
         }
 
-        // CASE 3 : SAVOIR ETRE
-        if (competence.getType().equals("Savoir-etre") && competences_se) {
-            fullCompetenceRequis.setName(competence.getName());
-            fullCompetenceRequis.setRequiredNiveau(competence.getNiveauRequis());
-            fullCompetenceRequis.setNiveaux(fullCompetence.getNiveaux());
-
-            // ADD THIS FULLCOMPETENCEREQUIS TO THE LIST
-            se.add(fullCompetenceRequis);
+        // RESPONSABILITES
+        if (responsabilites) {
+            fe.setResponsabilites(niveau.getResponsabilites());
+        } else {
+            fe.setResponsabilites(null);
         }
+
+        List<CompetenceRe> niveauCompetencesReq = niveau.getCompetencesRequis();
+
+        // COMPETENCES
+        List<FullCompetenceRequis> dc = new ArrayList<FullCompetenceRequis>();
+        List<FullCompetenceRequis> se = new ArrayList<FullCompetenceRequis>();
+        List<FullCompetenceRequis> sf = new ArrayList<FullCompetenceRequis>();
+
+        for (CompetenceRe competence : niveauCompetencesReq) {
+
+            FullCompetenceRequis fullCompetenceRequis = new FullCompetenceRequis();
+
+            // GET THE FULL COMPETENCE METADATA -> GET DEFINITION OF NIVEAUX
+            Competence fullCompetence = competenceService.getCompetenceByName(competence.getName());
+
+            // CASE 1 : DOMAINNES DE CONNAISSANCE
+            if (competence.getType().equals("Domaines de connaissance") && competences_dc) {
+                fullCompetenceRequis.setName(competence.getName());
+                fullCompetenceRequis.setRequiredNiveau(competence.getNiveauRequis());
+                fullCompetenceRequis.setNiveaux(fullCompetence.getNiveaux());
+
+                // ADD THIS FULLCOMPETENCEREQUIS TO THE LIST
+                dc.add(fullCompetenceRequis);
+            }
+
+            // CASE 2 : SAVOIR FAIRE
+            if (competence.getType().equals("Savoir-faire") && competences_sf) {
+                fullCompetenceRequis.setName(competence.getName());
+                fullCompetenceRequis.setRequiredNiveau(competence.getNiveauRequis());
+                fullCompetenceRequis.setNiveaux(fullCompetence.getNiveaux());
+
+                // ADD THIS FULLCOMPETENCEREQUIS TO THE LIST
+                sf.add(fullCompetenceRequis);
+            }
+
+            // CASE 3 : SAVOIR ETRE
+            if (competence.getType().equals("Savoir-etre") && competences_se) {
+                fullCompetenceRequis.setName(competence.getName());
+                fullCompetenceRequis.setRequiredNiveau(competence.getNiveauRequis());
+                fullCompetenceRequis.setNiveaux(fullCompetence.getNiveaux());
+
+                // ADD THIS FULLCOMPETENCEREQUIS TO THE LIST
+                se.add(fullCompetenceRequis);
+            }
+        }
+
+        // ADD THE LIST TO THE RETURNED INSTANCE
+        fe.setCompetences_dc(dc);
+        fe.setCompetences_sf(sf);
+        fe.setCompetences_se(se);
+
+        return ResponseEntity.status(HttpStatus.OK).body(fe);
     }
 
-    // ADD THE LIST TO THE RETURNED INSTANCE
-    fe.setCompetences_dc(dc);
-    fe.setCompetences_sf(sf);
-    fe.setCompetences_se(se);
-
-
-
-    return ResponseEntity.status(HttpStatus.OK).body(fe);
-}
-    
-    @GetMapping(path ="/manager/{matricule}")
+    @GetMapping(path = "/manager/{matricule}")
     public ResponseEntity<List<FicheEvaluation>> getFichesByManager(@PathVariable String matricule) {
 
         List<FicheEvaluation> fichesEvaluations = new ArrayList<FicheEvaluation>();
         ManagerOne manager1 = managerOneService.getManagerOneByMatricule(matricule);
         ManagerTwo manager2 = managerTwoService.getManagerTwoByMatricule(matricule);
-        // GET THE MANAGER  = 
+        // GET THE MANAGER =
         if (manager1 == null && manager2 == null) {
             throw new CustomErrorException(HttpStatus.NOT_FOUND, "Manager not found");
         } else if (manager1 != null) {
@@ -273,32 +267,30 @@ public class FicheEvaluationController {
     }
 
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<FicheEvaluation> updateFicheEvaluation(@PathVariable Long id, @RequestBody FicheEvaluation updatedFiche) {
+    public ResponseEntity<FicheEvaluation> updateFicheEvaluation(@PathVariable Long id,
+            @RequestBody FicheEvaluation updatedFiche) {
         FicheEvaluation fe = ficheEvaluationService.getFicheEvaluationById(id);
 
         if (fe == null) {
             throw new CustomErrorException(HttpStatus.NOT_FOUND, "Fiche not found");
         }
-        
+
         fe.setScore(updatedFiche.getScore());
         fe.setSousPoints(updatedFiche.getSousPoints());
         fe.setSurPoints(updatedFiche.getSurPoints());
-        
+
         fe.setSectionCompDc(Float.valueOf(updatedFiche.getSectionCompDc()));
         fe.setSectionCompSe(Float.valueOf(updatedFiche.getSectionCompSe()));
         fe.setSectionCompSf(Float.valueOf(updatedFiche.getSectionCompSf()));
         fe.setSectionRes(Float.valueOf(updatedFiche.getSectionRes()));
-        fe.setSectionExi(Float.valueOf(updatedFiche.getSectionMarq()));
+        fe.setSectionExi(Float.valueOf(updatedFiche.getSectionExi()));
         fe.setSectionMarq(Float.valueOf(updatedFiche.getSectionMarq()));
 
-
-        
         fe.setStatus(updatedFiche.getStatus());
         fe.setRe_manager1(updatedFiche.getRe_manager1());
         fe.setRe_manager2(updatedFiche.getRe_manager2());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ficheEvaluationService.saveFicheEvaluation(fe));
-
 
     }
 
