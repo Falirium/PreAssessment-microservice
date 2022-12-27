@@ -1977,7 +1977,7 @@ function addEditEffectToSectionRow(containerWrapper, section, editedValue) {
             targetId = "#responsabilites-table-body";
             break;
     }
-    
+
     let rows = null;
 
     if (containerWrapper === null) {
@@ -1992,15 +1992,18 @@ function addEditEffectToSectionRow(containerWrapper, section, editedValue) {
 
         console.log(section === "responsabilite");
         let rowValue = (section === "responsabilite") ? ($(row).find("td:not([rowspan])").first().text()) : ($(row).find("td").first().text());
-       
+        let selectedTd = (section === "responsabilite") ? ($(row).find("td:not([rowspan])")) : ($(row).find("td"));
 
-        console.log(i, rowValue, targetedRowValue, rowValue === targetedRowValue);
+        // console.log(i, rowValue, targetedRowValue, rowValue === targetedRowValue);
 
         if (rowValue === targetedRowValue) {
             console.log(row);
             console.log(i, rowValue, targetedRowValue, rowValue === targetedRowValue);
-            $(row).addClass("edit-effect");
+            selectedTd.addClass("edit-effect");
             console.log("effect added");
+
+            // REMOVE EDIT EFFECT FROM TE FIRST TD
+
             break;
 
         } else {
