@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DashboardController {
     
 
-    @RequestMapping("/")
+    @RequestMapping(value = {"/contact-us","/contact"})
     public String index() {
-        return "list-assessment";
+        return "contact-us";
     }
 
 

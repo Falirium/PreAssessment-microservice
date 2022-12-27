@@ -1,6 +1,7 @@
 
 
 let fileExcel = document.querySelector("#input-file");
+let fileExcel2 = document.querySelector("#input-file2");
 
 let competenceArray = [];
 let matriceCompetenceJson = {
@@ -34,11 +35,12 @@ parseCompetencesToTable(competenceArray);
 const btnAddGlossaire = document.querySelector("#btn-add-competence");
 // const btnConfirmDeleteNiveau = document.querySelector("#confirm-delete-niveau");
 const btnAddFile = document.querySelector("#btn-add-file");
+const btnAddFile2 = document.querySelector("#btn-re-add-file");
 const btnSaveMatrice = document.querySelector("#btn-competence-save");
 
 
 btnAddFile.addEventListener("click", (e) => {
- 
+
 
     // BEHANVIOUR : ADD A LIST OF COMPETENCE FROM AN EXCEL FILE TO THE LIST ON THE TABLE
 
@@ -56,12 +58,24 @@ btnAddFile.addEventListener("click", (e) => {
     //     showFileInputModal();
     // }
 
-    showFileInputModal();
+    showFileInputModal(1);
 
 })
 
-function showFileInputModal() {
-    var myModal = new bootstrap.Modal(document.getElementById('input-modal'));
+btnAddFile2.addEventListener("click", (e) => {
+    showFileInputModal(2);
+})
+
+
+function showFileInputModal(type) {
+    var myModal = null;
+    if (type === 1) {
+        myModal = new bootstrap.Modal(document.getElementById('input-modal'));
+    } else if (type === 2) {
+        myModal = new bootstrap.Modal(document.getElementById('input-modal2'));
+
+    }
+
     myModal.show();
 }
 
@@ -86,7 +100,7 @@ $(btnSaveMatrice).click(function (e) {
     // STEP 1 : VERIFY IF ALL THE FIELD ARE FILLED
     if (!checkMatriceBasics()) {
         showModal("error", "Action non complétée", "Certains informations concernant la matrice ne sont pas remplis. Essayer de les remplir", "");
-    } else if( !checkForCompetenceArray()) {
+    } else if (!checkForCompetenceArray()) {
 
         showModal("error", "Action non complétée", "La liste des compétences est vide. Essayer d'ajouter des compétences.", "");
 
@@ -297,10 +311,22 @@ fileExcel.addEventListener("change", (e) => {
 
     // POPULATE GLOSSAIRE ARRAY
 
-    parseExcelFile2(fileExcel);
+    parseExcelFile2(fileExcel, false);
 
 
 
+})
+
+fileExcel2.addEventListener("change", (e) => {
+
+    $("#input-modal2").modal('hide');
+
+    // ADD LOADER ON THE PAGE
+    $("#btn-re-add-file").addClass("btn-loading");
+
+    // POPULATE GLOSSAIRE ARRAY
+
+    parseExcelFile2(fileExcel2, true);
 })
 
 // function parseGlossaireToTable(glossaire) {
@@ -478,7 +504,7 @@ fileExcel.addEventListener("change", (e) => {
 // }
 
 // THIS FUNCTION GETS DATA FROM EXCEL FILE AND RETURNS A PROMISE THAT PREPARE FINAL ARRAY HOLDING ALL THE COMPETENCES
-async function parseExcelFile2(inputElement) {
+async function parseExcelFile2(inputElement, addToTheList = false) {
     var files = inputElement.files || [];
     if (!files.length) return;
     var file = files[0];
@@ -565,18 +591,20 @@ async function parseExcelFile2(inputElement) {
                 }
             });
 
+
             competenceNameArray = [...new Set(competenceNameArray)];
             competenceDefArray = [...new Set(competenceDefArray)];
             competenceLevelsDefArray = [...new Set(competenceLevelsDefArray)];
 
 
-            getGlossaireOfCompentence(competenceNameArray, competenceDefArray, competenceLevelsDefArray);
+            getGlossaireOfCompentence(competenceNameArray, competenceDefArray, competenceLevelsDefArray, addToTheList);
 
         })
             .then(function () {
 
                 // //HIDE LOADER
                 $("#btn-add-file").removeClass("btn-loading");
+                $("#btn-re-add-file").removeClass("btn-loading");
 
                 // PARSE COMPETENCE DATA TO THE DATATABLE
                 parseCompetencesToTable(competenceArray);
@@ -596,7 +624,7 @@ async function parseExcelFile2(inputElement) {
                     setTimeout(function () {
                         let currentUrl = window.location.href;
 
-                        window.location.href = extractDomain(currentUrl) + "competence/list";
+                        window.location.href = extractDomain(currentUrl) + "emploi/competence/list";
                     }, 1000);
                 })
 
@@ -608,10 +636,16 @@ async function parseExcelFile2(inputElement) {
 }
 
 // THIS FUNCTION GETS THE FINAL FORMAT OF THE ARRAY HOLDING ALL THE COMPETENCES ----> USED TO POST ARRAYS
-function getGlossaireOfCompentence(names, defs, levels) {
+function getGlossaireOfCompentence(names, defs, levels, mergeIt = false) {
 
     // INITIALIZE THE COMPETENCE ARRAY
-    competenceArray = [];
+    console.log(mergeIt);
+    if (!mergeIt) {
+        competenceArray = [];
+    }
+
+    console.log(competenceArray.length);
+    
     names.map((e, index) => {
         let competenceJson = {
             "name": e,
@@ -690,7 +724,7 @@ function parseCompetencesToTable(dataArr) {
         // console.log($(".glo-table-btn-delete"));
 
         $(".glo-table-btn-delete").each(function (index, deleteBtn) {
-            console.log(index, deleteBtn);
+            // console.log(index, deleteBtn);
 
             // REMOVE PREVIOUS EVENTHANDLER
             $(deleteBtn).off('click');
@@ -763,7 +797,7 @@ function parseCompetencesToTable(dataArr) {
 
 
         $(".glo-table-btn-edit").each(function (index, editBtn) {
-            console.log(index, editBtn);
+            // console.log(index, editBtn);
 
             // REMOVE PREVIOUS EVENTHANDLER
             $(editBtn).off('click');
@@ -1118,7 +1152,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
-    } else if (modalId != "lodaing"){
+    } else if (modalId != "lodaing") {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }
@@ -1146,7 +1180,7 @@ function checkCompetencesLevelsSection() {
     $(".input-level-def").removeClass("is-invalid");
 
     // ENABLE THIS WHEN COMPETENCE IS SET TO BE EDITED BUT NOT COMPELETED
-    if ( $("#input-nom-competence-glossaire").val().trim() === '') {
+    if ($("#input-nom-competence-glossaire").val().trim() === '') {
         return true;
     }
 
@@ -1156,7 +1190,7 @@ function checkCompetencesLevelsSection() {
             isNotNull = false;
         }
 
-        
+
     })
 
     return isNotNull;
@@ -1171,7 +1205,7 @@ function checkMatriceBasics() {
         if ($(element).val().trim() == '') {
             $(element).addClass("is-invalid");
             isNotNull = false;
-        }   
+        }
     })
 
     console.log(isNotNull);

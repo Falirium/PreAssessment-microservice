@@ -37,9 +37,13 @@
                     </div>
                     <div class="card-body">
                         <div class="btn-list btn-list-icon mb-4">
-                            <button type="button" id="btn-add-file" class="btn btn-success" data-bs-toggle="modal"
-                                data-bs-target="" data-bs-whatever="@mdo"><i
-                                    class="fe fe-upload me-2"></i>Télécharger</button>
+                            <button type="button" id="btn-add-file" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="" data-bs-whatever="@mdo"><i class="fe fe-upload me-2"></i>Télécharger
+                                M.C</button>
+
+                            <button type="button" id="btn-re-add-file" class="btn btn-success" data-bs-toggle="modal"
+                                data-bs-target="" data-bs-whatever="@mdo"><i class="fe fe-upload me-2"></i>Ajouter uen
+                                autre M.C</button>
                         </div>
                         <div class="form-group ">
                             <label for="input-name-matrice" class="form-label">Nom de la matrice de compétence <span
@@ -78,13 +82,13 @@
                                 </table>
                             </div>
 
-                            
+
 
                             <div class="form-group form-row">
 
                                 <div class="col-sm-12">
                                     <label for="" class="form-label"> Section d'édition :</label>
-                                   
+
                                 </div>
 
                                 <div class="col-sm-12">
@@ -193,7 +197,8 @@
                         <i class="icon icon-close fs-70 text-danger lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-error-header" class="text-danger">Attention: vous êtes sûr de vouloir supprimer
                             cette entrée!</h4>
-                        <p id="modal-error-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le bouton "oui", vous
+                        <p id="modal-error-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le
+                            bouton "oui", vous
                             ne récupérerez pas ces
                             informations.</p><button aria-label="Close" id="confirm-delete-btn"
                             class="btn btn-danger pd-x-25" data-bs-dismiss="modal">Oui</button>
@@ -204,7 +209,8 @@
 
 
         <!-- MODAL WARNING MESSAGE -->
-        <div class="modal fade" id="warning" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="warning" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered text-center" role="document">
                 <div class="modal-content tx-size-sm">
                     <div class="modal-body text-center p-4 pb-5">
@@ -213,7 +219,8 @@
                         <i class="icon icon-close fs-70 text-warning lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-warning-header" class="text-warning">Attention: vous êtes sûr de vouloir supprimer
                             cette entrée!</h4>
-                        <p id="modal-warning-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le bouton "oui",
+                        <p id="modal-warning-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le
+                            bouton "oui",
                             vous
                             ne récupérerez pas ces
                             informations.</p>
@@ -223,7 +230,8 @@
         </div>
 
         <!-- MODAL SUCCESS MESSAGE -->
-        <div class="modal fade" id="success" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="success" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered text-center " role="document">
                 <div class="modal-content tx-size-sm">
                     <div class="modal-body text-center p-4 pb-5">
@@ -231,7 +239,8 @@
                                 aria-hidden="true">&times;</span></button>
                         <i class="icon icon-check fs-70 text-success lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-success-header" class="text-success tx-semibold">Complété!</h4>
-                        <p id="modal-success-content" class="mg-b-20 text-start px-3 mg-x-20">La liste des compétences a été sauvegardée
+                        <p id="modal-success-content" class="mg-b-20 text-start px-3 mg-x-20">La liste des compétences a
+                            été sauvegardée
                             avec succès. .</p>
                     </div>
                 </div>
@@ -239,7 +248,8 @@
         </div>
 
         <!-- MODAL INFO MESSAGE -->
-        <div class="modal fade" id="info" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="info" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered text-center " role="document">
                 <div class="modal-content tx-size-sm">
                     <div class="modal-body text-center p-4 pb-5">
@@ -247,7 +257,8 @@
                                 aria-hidden="true">&times;</span></button>
                         <i class="icon icon-clock fs-70 text-primary lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-info-header" class="text-primary tx-semibold">Complété!</h4>
-                        <p id="modal-info-content" class="mg-b-20 text-start px-3 mg-x-20">La liste des compétences a été sauvegardée
+                        <p id="modal-info-content" class="mg-b-20 text-start px-3 mg-x-20">La liste des compétences a
+                            été sauvegardée
                             avec succès. .</p>
                     </div>
                 </div>
@@ -255,7 +266,8 @@
         </div>
 
         <!-- MODAL CONFIRM -->
-        <div class="modal fade" id="confirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="confirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered text-center" role="document">
                 <div class="modal-content tx-size-sm">
                     <div class="modal-body text-center p-4 pb-5">
@@ -264,11 +276,12 @@
                         <i class="fe fe-alert-circle fs-70 text-warning lh-1 my-5 d-inline-block"></i>
                         <h4 id="modal-confirm-header" class="text-warning">Attention: vous êtes sûr de vouloir supprimer
                             cette entrée!</h4>
-                        <p id="modal-confirm-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le bouton "oui",
+                        <p id="modal-confirm-content" class="mg-b-20 text-start px-3 mg-x-20">Après avoir appuyé sur le
+                            bouton "oui",
                             vous
                             ne récupérerez pas ces
                             informations.</p>
-                        
+
                     </div>
                 </div>
             </div>
@@ -307,7 +320,7 @@
         <!-- JQUERY JS -->
         <script th:src="@{/assets/js/jquery.min.js}"></script>
 
-        
+
 
         <!-- BOOTSTRAP JS -->
         <script th:src="@{/assets/plugins/bootstrap/js/popper.min.js}"></script>
@@ -319,7 +332,7 @@
         <!-- UPDATE HEADER -->
         <script th:src="@{/assets/custom-js/updateheader.js}"></script>
         <script th:src="@{/assets/js/jquery-ui.min.js}"></script>
-        
+
 
         <!-- INPUT MASK JS-->
         <script th:src="@{/assets/plugins/input-mask/jquery.mask.min.js}"></script>
