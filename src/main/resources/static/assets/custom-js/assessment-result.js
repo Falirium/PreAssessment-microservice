@@ -36,6 +36,11 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
 
     // FILTER LIST OF FICHE EVALUATION BASED ON THE CONNECTED DRH
     let user = (localStorage.getItem("user") != "admin") ? JSON.parse(localStorage.getItem("user")) : ("admin");
+
+
+    // UPDATE BREADCRUMB
+    updateBreadcrumb(user);
+
     if (user.type === "drh") {
 
         // REMOVE SUSPEND AND TERMINATE BTNS
@@ -907,4 +912,15 @@ function removeElements(arrIds) {
         });
     }
 
+}
+
+function updateBreadcrumb(user) {
+    if (user.type === "drh") {
+        $("#breadcrumb-text").text("Consultant DRH");
+
+    } else if (user === "admin") {
+        $("#breadcrumb-text").text("Consultant BCP");
+
+    }
+    
 }

@@ -14,6 +14,11 @@ let assessmentDatatable;
 
 let listAssessments;
 
+// INITIALIZATION 
+
+
+// END INITIALIZATION
+
 // GET LIST OF ASSESSMENTS
 getListOfTempAssessments().then((data) => {
 
@@ -31,6 +36,9 @@ getListOfTempAssessments().then((data) => {
         let user = (localStorage.getItem("user") === "admin") ? "admin" : JSON.parse(localStorage.getItem("user"));
 
         console.log(user);
+
+        // UPDATE BREADCRUMB
+        updateBreadcrumb(user);
 
         // APPEND THE PUBLISHED LIST OF ASSESSMENTS
         listAssessments.push(...temp);
@@ -510,4 +518,15 @@ function filterAssessmentsByBpr(arr, bpr) {
 
     return newArr;
 
+}
+
+function updateBreadcrumb(user) {
+    if (user.type === "drh") {
+        $("#breadcrumb-text").text("Consultant DRH");
+
+    } else if (user === "admin") {
+        $("#breadcrumb-text").text("Consultant BCP");
+
+    }
+    
 }
