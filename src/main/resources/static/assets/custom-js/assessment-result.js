@@ -85,7 +85,14 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
     // INITIALIZE DATATABLE
 
 
+    // COSTUMIZE THE FILE NAME 
     let fileTitle = assessmentJson.name + "_At_" + new Date().toISOString().split("T")[0];
+    if (user.type === "drh") {
+        fileTitle = user.data.tag + "_" + fileTitle;
+    } else {
+        fileTitle = "BCP" + "_" + fileTitle;
+    }
+    
 
     ficheDatatable = $("#tb4").DataTable({
         data: dataSet,
