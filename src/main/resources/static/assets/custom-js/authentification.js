@@ -85,6 +85,10 @@ $("#cnx-btn-bpr").click(function () {
                         {
                             "name": "pv",
                             "id": "#pv"
+                        },
+                        {
+                            "name": "drh",
+                            "id": "#drh"
                         }
                     ],
                     "show": [

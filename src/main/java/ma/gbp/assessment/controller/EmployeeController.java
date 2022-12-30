@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -232,12 +233,29 @@ public class EmployeeController {
 
     }
 
+    @DeleteMapping("/drh/{matricule}")
+    public ResponseEntity<Boolean> deleteDrhByMatricule(@PathVariable String matricule) {
+
+        Drh drh = drhService.getDrhByMatricule(matricule);
+
+        if (drh == null) {
+            throw new CustomErrorException(HttpStatus.NOT_FOUND, "Drh not found");
+        } else {
+            
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        }
+
+        
+
+    }
+
     @GetMapping("/drh")
     public ResponseEntity<List<Drh>> getListDrhs() {
 
         return ResponseEntity.status(HttpStatus.OK).body(drhService.getAllDrh());
 
     }
+    
 
     private boolean doesEmployeeExist(String mFirstName, String mLastName, int mLevel, boolean isDrh) {
 

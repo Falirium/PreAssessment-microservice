@@ -448,6 +448,27 @@ async function postDrhEntity(json) {
     );
 }
 
+async function deteleDrhEntity(json) {
+    let url = "http://localhost:8080/preassessment/api/v1/employee/drh";
+
+    return fetch(url, { // Your POST endpoint
+        method: 'DELETE',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify([json]) // This is your file object
+    }).then(
+        response => response.json() // if the response is a JSON object
+    ).then(
+        success => {
+            console.log(success);
+            return success;
+        }
+    ).catch(
+        error => console.log(error) // Handle the error response object
+    );
+}
+
 function getSelectedValuesFromSelect2(arrObj) {
     let finalArr = [];
     arrObj.map((e, i) => {
