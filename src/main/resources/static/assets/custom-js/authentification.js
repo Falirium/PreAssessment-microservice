@@ -55,7 +55,7 @@ $("#cnx-btn-bpr").click(function () {
         "pwd": password
     }
     console.log(authObj);
-    validateMatriculeDrh(authObj).then((isValid) => {
+    validateMatricule(authObj).then((isValid) => {
 
 
 
@@ -127,7 +127,7 @@ $("#cnx-btn-bpr").click(function () {
                 console.log(error);
 
                 // SHOW ERROR MODAL
-                showModal("error", "Échec", "Un problème interne a interrompu le processus. Veuillez actualiser la page et réessayer.", "");    
+                showModal("error", "Échec", "Un problème interne a interrompu le processus. Veuillez actualiser la page et réessayer.", "");
             })
 
 
@@ -156,101 +156,214 @@ $("#cnx-btn-bpr").click(function () {
 // AUTHENTIFICATION MANAGER
 
 $("#cnx-btn-manager").click(function () {
-    //console.log(typeof(authenticate(matricule)), typeof(authenticate(matricule).then));
 
-    authenticate(matricule).then((manager) => {
-        // console.log(manager, password);
-        // console.log(manager.type, (password === "manager2"));
+    let authObj = {
+        "type": "manager",
+        "matricule": matricule,
+        "pwd": password
+    }
 
-        // SET AUTHORIZATION
-        let auth = {
-            "regex": [
-                '\\/(evaluation)\\/(evaluate|list)\\?*',
+    console.log(authObj);
+    validateMatricule(authObj).then((authRes) => {
 
-            ],
-            "sections": {
-                "hide": [
-                    {
-                        "name": "assessment",
-                        "id": "#assessment"
+        // CHECK RESPONSE
+        if (authRes.hasOwnProperty("code") || authRes.auth === false) {
+            showModal("error", "Erreur", "L'authentification a échoué. Veuillez entrer une combinaison correcte du nom d'utilisateur et du mot de passe.");
+        } else {
+            
+            // SET AUTHORIZATION
+            let auth = {
+                "regex": [
+                    '\\/(evaluation)\\/(evaluate|list)\\?*',
 
-                    },
-                    {
-                        "name": "emploi",
-                        "id": "#emploi"
-                    },
-                    {
-                        "name": "pv",
-                        "id": "#pv"
-                    }
                 ],
-                "show": [
-                    {
-                        "type": "anchor",
-                        "name": "dashboard",
-                        "id": "#dashboard",
-                        "link": "/evaluation/list"
-                    }
-                ]
-            }
-        }
+                "sections": {
+                    "hide": [
+                        {
+                            "name": "assessment",
+                            "id": "#assessment"
 
-        if (manager.type === "1" && password === "manager1") {
-            showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
-
-            // SAVE MANAGER MATRICULE
-            localStorage.setItem("user", JSON.stringify(manager));
-
-            // CHANGE BREADCRUMB TEXT TO MANAGER N+1
-            auth.sections.show.push(
-                {
-                    "type": "text",
-                    "name": "breadcrumb",
-                    "id": "#breadcrumb-text",
-                    "text": "Manager N+1"
+                        },
+                        {
+                            "name": "emploi",
+                            "id": "#emploi"
+                        },
+                        {
+                            "name": "pv",
+                            "id": "#pv"
+                        }
+                    ],
+                    "show": [
+                        {
+                            "type": "anchor",
+                            "name": "dashboard",
+                            "id": "#dashboard",
+                            "link": "/evaluation/list"
+                        }
+                    ]
                 }
-            );
+            }
+            console.log(auth);
 
+            let manager = null;
 
+            if (authRes.type === "1") {
+                manager = authRes.managerOneUser;
+                showModal("success", "Welcome :" + manager.firstName, "Vous avez été connecté avec succès");
 
+                // SAVE MANAGER MATRICULE
+                let user = {
+                    "type": "1",
+                    "data" : manager
 
-        } else if (manager.type == "2" && password === "manager2") {
-            showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
+                }
 
-            // SAVE MANAGER MATRICULE
-            localStorage.setItem("user", JSON.stringify(manager));
+                localStorage.setItem("user", JSON.stringify(user));
+
+                // CHANGE BREADCRUMB TEXT TO MANAGER N+1
+                auth.sections.show.push(
+                    {
+                        "type": "text",
+                        "name": "breadcrumb",
+                        "id": "#breadcrumb-text",
+                        "text": "Manager N+1"
+                    }
+                );
+            } else if (authRes.type === "2") {
+                manager = authRes.managerTwoUser;
+                showModal("success", "Welcome :" + manager.firstName, "Vous avez été connecté avec succès");
+
+                
+                // SAVE MANAGER MATRICULE
+                let user = {
+                    "type": "1",
+                    "data" : manager
+
+                }
+
+                localStorage.setItem("user", JSON.stringify(user));
+
+                // // REDIRECT TO HOMEPAGE
+                // let currentUrl = window.location.href;
+                // window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+
+                // console.log("redirected");
+
+                // CHANGE BREADCRUMB TEXT TO MANAGER N+1
+                auth.sections.show.push(
+                    {
+                        "type": "text",
+                        "name": "breadcrumb",
+                        "id": "#breadcrumb-text",
+                        "text": "Manager N+2"
+                    }
+                );
+            }
+
+            localStorage.setItem("auth", JSON.stringify(auth));
+            // console.log(localStorage.getItem("user"));
+
 
             // // REDIRECT TO HOMEPAGE
-            // let currentUrl = window.location.href;
-            // window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-
-            // console.log("redirected");
-
-            // CHANGE BREADCRUMB TEXT TO MANAGER N+1
-            auth.sections.show.push(
-                {
-                    "type": "text",
-                    "name": "breadcrumb",
-                    "id": "#breadcrumb-text",
-                    "text": "Manager N+2"
-                }
-            );
-
-        } else {
-            showModal("error", "échec", "Le mot de passe est incorrect")
+            let currentUrl = window.location.href;
+            window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+            console.log("redirected");
         }
+    })
+
+    // authenticate(matricule).then((manager) => {
+    //     // console.log(manager, password);
+    //     // console.log(manager.type, (password === "manager2"));
+
+    //     // SET AUTHORIZATION
+    //     let auth = {
+    //         "regex": [
+    //             '\\/(evaluation)\\/(evaluate|list)\\?*',
+
+    //         ],
+    //         "sections": {
+    //             "hide": [
+    //                 {
+    //                     "name": "assessment",
+    //                     "id": "#assessment"
+
+    //                 },
+    //                 {
+    //                     "name": "emploi",
+    //                     "id": "#emploi"
+    //                 },
+    //                 {
+    //                     "name": "pv",
+    //                     "id": "#pv"
+    //                 }
+    //             ],
+    //             "show": [
+    //                 {
+    //                     "type": "anchor",
+    //                     "name": "dashboard",
+    //                     "id": "#dashboard",
+    //                     "link": "/evaluation/list"
+    //                 }
+    //             ]
+    //         }
+    //     }
+
+    //     if (manager.type === "1" && password === "manager1") {
+    //         showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
+
+    //         // SAVE MANAGER MATRICULE
+    //         localStorage.setItem("user", JSON.stringify(manager));
+
+    //         // CHANGE BREADCRUMB TEXT TO MANAGER N+1
+    //         auth.sections.show.push(
+    //             {
+    //                 "type": "text",
+    //                 "name": "breadcrumb",
+    //                 "id": "#breadcrumb-text",
+    //                 "text": "Manager N+1"
+    //             }
+    //         );
 
 
 
-        localStorage.setItem("auth", JSON.stringify(auth));
+
+    //     } else if (manager.type == "2" && password === "manager2") {
+    //         showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
+
+    //         // SAVE MANAGER MATRICULE
+    //         localStorage.setItem("user", JSON.stringify(manager));
+
+    //         // // REDIRECT TO HOMEPAGE
+    //         // let currentUrl = window.location.href;
+    //         // window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+
+    //         // console.log("redirected");
+
+    //         // CHANGE BREADCRUMB TEXT TO MANAGER N+1
+    //         auth.sections.show.push(
+    //             {
+    //                 "type": "text",
+    //                 "name": "breadcrumb",
+    //                 "id": "#breadcrumb-text",
+    //                 "text": "Manager N+2"
+    //             }
+    //         );
+
+    //     } else {
+    //         showModal("error", "échec", "Le mot de passe est incorrect")
+    //     }
 
 
-        // REDIRECT TO HOMEPAGE
-        let currentUrl = window.location.href;
-        window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-        console.log("redirected");
 
-    });
+    //     localStorage.setItem("auth", JSON.stringify(auth));
+
+
+    //     // REDIRECT TO HOMEPAGE
+    //     let currentUrl = window.location.href;
+    //     window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+    //     console.log("redirected");
+
+    // });
 
 
 })
@@ -325,8 +438,52 @@ async function validateMatriculeManagerOne(matricule) {
         })
 }
 
-async function validateMatriculeDrh(json) {
-    let url1 = "http://localhost:8080/preassessment/api/v1/employee/drh/auth";
+async function validateMatricule(json) {
+    let url1 = "http://localhost:8080/preassessment/api/v1/employee/auth";
+
+    return fetch(url1, {
+        method: 'POST',
+        headers: {
+            // Content-Type may need to be completely **omitted**
+            // or you may need something
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(json) // This is your file object
+    }).then(response => response.json())
+        .then((success) => {
+            console.log(success);
+            return success;
+        }).catch((error) => {
+            console.error(error);
+            console.log("error 1");
+            return error;
+        })
+}
+
+async function validateMatriculeManagerOne(json) {
+    let url1 = "http://localhost:8080/preassessment/api/v1/employee/managerOne/auth";
+
+    return fetch(url1, {
+        method: 'POST',
+        headers: {
+            // Content-Type may need to be completely **omitted**
+            // or you may need something
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(json) // This is your file object
+    }).then(response => response.json())
+        .then((success) => {
+            console.log(success);
+            return success;
+        }).catch((error) => {
+            console.error(error);
+            console.log("error 1");
+            return error;
+        })
+}
+
+async function validateMatriculeManagerTwo(json) {
+    let url1 = "http://localhost:8080/preassessment/api/v1/employee/managerTwo/auth";
 
     return fetch(url1, {
         method: 'POST',

@@ -7,6 +7,7 @@ let hiddenSections = []
 let showSections = []
 let defaultHomePage = "";
 if (localStorage.getItem("user") === null) {
+    console.log("can 't have user");
     window.location.replace(extractDomain(currentUrl));
 
 } else {

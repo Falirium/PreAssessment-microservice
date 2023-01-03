@@ -13,12 +13,12 @@
     <div class="main-container target-container container-fluid" layout:fragment="page-content">
         <!-- PAGE-HEADER -->
         <div class="page-header">
-            <h1 class="page-title">DRH</h1>
+            <h1 class="page-title">Manager</h1>
             <div>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Consultant BCP</a></li>
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Employé</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">DRH</li>
+                    <li class="breadcrumb-item active" aria-current="page">Manager</li>
                 </ol>
             </div>
         </div>
@@ -29,12 +29,11 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Liste des collaborateurs DRH</h3>
+                        <h3 class="card-title">Liste des managers</h3>
                     </div>
                     <div class="card-body">
                         <div class="">
-                            <a th:href="@{/employee/drh/add}" class="btn btn-primary mb-4" role="button"
-                                aria-pressed="true">Ajouter un nouveau compte DRH</a>
+                            
                             <table class="table table-bordered border-bottom" id="tbs2">
                                 <thead>
                                     <tr>
@@ -136,7 +135,7 @@
         <script th:src="@{/assets/js/custom.js}"></script>
 
         <!-- LIST ASSESSMENTS -->
-        <script th:src="@{/assets/custom-js/list-drh.js}"></script>
+        <script th:src="@{/assets/custom-js/list-manager.js}"></script>
 
     </th:block>
 

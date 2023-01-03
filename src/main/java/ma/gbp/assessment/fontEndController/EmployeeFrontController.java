@@ -18,9 +18,19 @@ public class EmployeeFrontController {
         return "edit-drh";
     }
 
+    @GetMapping(path = "/manager/edit")
+    public String editManager() {
+        return "edit-manager";
+    }
+
     @GetMapping(value = { "/drh/list", "/drh"})
     public String listDrhs() {
         return "list-drh";
+    }
+
+    @GetMapping(value = { "/manager/list", "/managers"})
+    public String listManagers() {
+        return "list-manager";
     }
     
 }

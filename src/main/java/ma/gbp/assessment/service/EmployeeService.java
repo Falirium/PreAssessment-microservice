@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import ma.gbp.assessment.model.Collaborateur;
+import ma.gbp.assessment.model.Employee;
 import ma.gbp.assessment.model.ManagerOne;
 import ma.gbp.assessment.model.ManagerTwo;
 import ma.gbp.assessment.repository.CollaborateurRepository;
@@ -24,6 +25,7 @@ public class EmployeeService {
 
     @Autowired
     private CollaborateurRepository collaborateurRepository;
+
 
 
     //ManagerOne
@@ -71,5 +73,7 @@ public class EmployeeService {
         return collaborateurRepository.findById(id).get();
     }
 
+    // EMPLOYEE
+    
 
 }

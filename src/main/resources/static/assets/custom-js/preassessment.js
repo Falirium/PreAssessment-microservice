@@ -179,6 +179,9 @@ $(function () {
 
                     } else {
 
+                        // GENERATE HASHED PASSWORDS FOR MANAGERS
+                        generatePasswordsForManagers(requestBodyAssessment.managers1, requestBodyAssessment.managers2);
+
                         //  SEND POST REQUEST TO SAVE ASSESSMENT AND ALL OTHER ENTITIES
                         postAssessment(requestBodyAssessment).then((assessment) => {
 
@@ -2105,7 +2108,7 @@ function categorizePopulation(arr, catArr) {
         let categoryHasBeenSet = false;
 
         if (t !== 0) {
-            let row = copyArr[t];
+            let row = copyArr[t];  // REPRESENT A COLLABORATEUR
 
             // ITERATE OVER CATEGORIES ARR
             for (var j = 0; j < catArr.length; j++) {
@@ -2368,4 +2371,47 @@ function redirectTo(url, timeInMilliseconds) {
         window.location.href = extractDomain(currentUrl) + url;
     }, timeInMilliseconds);
 
+}
+
+function generatePasswordsForManagers(manager1Arr, manager2Arr) {
+
+    let managers1 = [];
+    let managers2 = [];
+
+    if (manager1Arr.length != 0 && manager2Arr.length != 0) {
+        
+        manager1Arr.map((e, i) => {
+            let pwd = generateStrongPwd();
+            e.hashedPwd = pwd;
+
+            managers1.push({
+                "firstName" : e.firstName,
+                "lastName" : e.llastName,
+                "matricule" : e.matricule,
+                "hashedPwd" : pwd
+            });
+        })
+
+        manager2Arr.map((e, i) => {
+            let pwd = generateStrongPwd();
+            e.hashedPwd = pwd;
+
+            managers2.push({
+                "firstName" : e.firstName,
+                "lastName" : e.llastName,
+                "matricule" : e.matricule,
+                "hashedPwd" : pwd
+            });
+        })
+
+    }
+
+    return {
+        "managers1" : managers1,
+        "managers2" : managers2
+    }
+}
+
+function generateStrongPwd() {
+    return Math.random().toString(36).slice(-10);
 }

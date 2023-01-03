@@ -127,12 +127,10 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.OK).body(drhService.saveListOfDrhs(savedDrhs));
     }
 
-    @PostMapping("/drh/auth")
-    public ResponseEntity<Boolean> authenticateDrh(@RequestBody AuthReqBody auth) {
+    @PostMapping("/auth")
+    public ResponseEntity<AuthReqBody> authenticateDrh(@RequestBody AuthReqBody auth) {
 
         boolean isAuth = false;
-
-        
 
         switch (auth.getType()) {
             case "drh":
@@ -141,11 +139,62 @@ public class EmployeeController {
                 if (targetedUser == null) {
                     throw new CustomErrorException(HttpStatus.NOT_FOUND, "Matricule not found");
                 }
-        
-                isAuth = BCrypt.checkpw(auth.getPwd(), targetedUser.getHashedPwd());
+
+                auth.setAuth(BCrypt.checkpw(auth.getPwd(), targetedUser.getHashedPwd()));
+
+                if (BCrypt.checkpw(auth.getPwd(), targetedUser.getHashedPwd())) {
+                    auth.setDthUser(targetedUser);
+                }
+
                 break;
+            case "managerOne":
+
+                ManagerOne targetedManager1 = managerOneService.getManagerOneByMatricule(auth.getMatricule());
+                if (targetedManager1 == null) {
+                    throw new CustomErrorException(HttpStatus.NOT_FOUND, "Matricule not found");
+                }
+
+                isAuth = BCrypt.checkpw(auth.getPwd(), targetedManager1.getHashedPwd());
+                break;
+
             case "manager":
 
+                ManagerOne targetedManagerOne = managerOneService.getManagerOneByMatricule(auth.getMatricule());
+                ManagerTwo targetedManagerTwo = managerTwoService.getManagerTwoByMatricule(auth.getMatricule());
+
+                if (targetedManagerOne == null && targetedManagerTwo == null) {
+                    throw new CustomErrorException(HttpStatus.NOT_FOUND, "Matricule not found");
+
+                } else if (targetedManagerOne != null){
+
+                    auth.setType("1");
+                    auth.setAuth(BCrypt.checkpw(auth.getPwd(), targetedManagerOne.getHashedPwd()));
+
+                    if (BCrypt.checkpw(auth.getPwd(), targetedManagerOne.getHashedPwd())) {
+                        auth.setManagerOneUser(targetedManagerOne);
+                    }
+
+                }  else if (targetedManagerTwo != null){
+
+                    auth.setType("2");
+                    auth.setAuth(BCrypt.checkpw(auth.getPwd(), targetedManagerTwo.getHashedPwd()));
+                    if (BCrypt.checkpw(auth.getPwd(), targetedManagerTwo.getHashedPwd())) {
+                        auth.setManagerTwoUser(targetedManagerTwo);
+                    }
+
+                }
+
+               
+                break;
+
+            case "managerTwo":
+
+                ManagerTwo targetedManager2 = managerTwoService.getManagerTwoByMatricule(auth.getMatricule());
+                if (targetedManager2 == null) {
+                    throw new CustomErrorException(HttpStatus.NOT_FOUND, "Matricule not found");
+                }
+
+                isAuth = BCrypt.checkpw(auth.getPwd(), targetedManager2.getHashedPwd());
                 break;
             case "admin":
 
@@ -153,8 +202,7 @@ public class EmployeeController {
 
         }
 
-        
-        return ResponseEntity.status(HttpStatus.OK).body(isAuth);
+        return ResponseEntity.status(HttpStatus.OK).body(auth);
     }
 
     @PutMapping("/drh/update")
@@ -192,6 +240,36 @@ public class EmployeeController {
         targetedDrh.setHashedPwd(BCrypt.hashpw(drh.getHashedPwd(), BCrypt.gensalt()));
 
         return ResponseEntity.status(HttpStatus.OK).body(drhService.saveDrh(targetedDrh));
+    }
+
+    @PatchMapping("/manager/pwd")
+    public ResponseEntity<Employee> changeManagerPwd(@RequestBody Employee manager) {
+
+        Employee targetedEmployee = managerOneService.getManagerOneByMatricule(manager.getMatricule());
+
+        if (targetedEmployee == null) {
+            targetedEmployee = managerTwoService.getManagerTwoByMatricule(manager.getMatricule());
+
+            if (targetedEmployee == null) {
+                throw new CustomErrorException(HttpStatus.NOT_FOUND, "Manager not found");
+
+            } else {
+
+                targetedEmployee.setHashedPwd(BCrypt.hashpw(manager.getHashedPwd(), BCrypt.gensalt()));
+                ManagerTwo targetedManagaer = (ManagerTwo) targetedEmployee;
+
+                return ResponseEntity.status(HttpStatus.OK).body(managerTwoService.saveManager(targetedManagaer));
+            }
+
+        } else {
+
+            targetedEmployee.setHashedPwd(BCrypt.hashpw(manager.getHashedPwd(), BCrypt.gensalt()));
+            ManagerOne targetedManager = (ManagerOne) targetedEmployee;
+
+            return ResponseEntity.status(HttpStatus.OK).body(managerOneService.saveManager(targetedManager));
+
+        }
+
     }
 
     @GetMapping("/managerOne/{matricule}")
@@ -241,11 +319,9 @@ public class EmployeeController {
         if (drh == null) {
             throw new CustomErrorException(HttpStatus.NOT_FOUND, "Drh not found");
         } else {
-            
+
             return ResponseEntity.status(HttpStatus.OK).body(true);
         }
-
-        
 
     }
 
@@ -255,7 +331,20 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.OK).body(drhService.getAllDrh());
 
     }
-    
+
+    @GetMapping("/managers")
+    public ResponseEntity<List<Employee>> getListManagaers() {
+
+        List<Employee> managers1 = new ArrayList<>(managerOneService.getAllManagersOne());
+        List<Employee> managers2 = new ArrayList<>(managerTwoService.getAllManagersTwo());
+
+        if (managers1.addAll(managers2)) {
+            return ResponseEntity.status(HttpStatus.OK).body(managers1);
+        } else {
+            throw new CustomErrorException(HttpStatus.EXPECTATION_FAILED, "Internal error occured");
+        }
+
+    }
 
     private boolean doesEmployeeExist(String mFirstName, String mLastName, int mLevel, boolean isDrh) {
 

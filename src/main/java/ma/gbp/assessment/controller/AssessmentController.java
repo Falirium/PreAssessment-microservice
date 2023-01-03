@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.P
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -134,10 +135,16 @@ public class AssessmentController {
                         } else {
 
                                 // SAVE IT AS A NEW ENTITY
-                                savedManager2 = managerTwoService.saveManager(new ManagerTwo(
+                                savedManager2 = new ManagerTwo(
                                                 manager2.getFirstName(),
                                                 manager2.getLastName(),
-                                                manager2.getMatricule()));
+                                                manager2.getMatricule());
+
+                                // SET MANAGER HASHED PASSWORD
+                                savedManager2.setHashedPwd(BCrypt.hashpw(manager2.getHashedPwd(), BCrypt.gensalt()));
+
+                                // SAVE MANAGER TO DB
+                                savedManager2 = managerTwoService.saveManager(savedManager2);
 
                         }
 
@@ -156,17 +163,22 @@ public class AssessmentController {
                                 savedManager1 = managerOneService.getManagerOneByMatricule(manager1.getMatricule());
                         } else {
 
-                                savedManager1 = managerOneService.saveManager(new ManagerOne(
+                                savedManager1 = new ManagerOne(
                                                 manager1.getFirstName(),
                                                 manager1.getLastName(),
-                                                manager1.getMatricule()));
+                                                manager1.getMatricule());
+
+                                // SET MANAGER HASHED PASSWORD
+                                savedManager1.setHashedPwd(BCrypt.hashpw(manager1.getHashedPwd(), BCrypt.gensalt()));
+
+                                // SAVE MANAGER TO DB
+                                savedManager1 = managerOneService.saveManager(savedManager1);
 
                                 ManagerTwo associatedManagerTwo = managerTwoService.getManagerByFirstAndLastName(
                                                 manager1.getManager().getFirstName(),
                                                 manager1.getManager().getLastName());
 
                                 // SET THE RELATIONSHIP
-
                                 savedManager1.setManager(associatedManagerTwo);
 
                                 savedManager1 = managerOneService.saveManager(savedManager1);

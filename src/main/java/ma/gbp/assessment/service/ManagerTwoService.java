@@ -14,7 +14,7 @@ public class ManagerTwoService {
     @Autowired
     private ManagerTwoRepository managerTwoRepository;
 
-    public List<ManagerTwo> getAllManagersOne() {
+    public List<ManagerTwo> getAllManagersTwo() {
         return managerTwoRepository.findAll();
     }
 

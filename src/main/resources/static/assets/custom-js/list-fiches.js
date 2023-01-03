@@ -1,4 +1,3 @@
-
 console.log("list-fiches.js")
 const extractRootDomain = (url) => {
 
@@ -534,6 +533,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
 
     var myModal = new bootstrap.Modal(document.getElementById(modalId));
+    $(modalId).attr("data-bs-backdrop", "static");
 
     $(modalHeaderId).text(header);
     $(modalContentId).html(content);

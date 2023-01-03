@@ -459,6 +459,8 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
 
     var myModal = new bootstrap.Modal(document.getElementById(modalId));
+    // data-bs-backdrop="static"
+    $(modalId).attr("data-bs-backdrop", "static");
 
     if (modalId != "loading") {
         // SET HEADER
