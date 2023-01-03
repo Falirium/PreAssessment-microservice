@@ -1,0 +1,65 @@
+<div class="app-sidebar__overlay" data-bs-toggle="sidebar"></div>
+<div class="app-sidebar">
+    <div class="side-header">
+        <a class="header-brand1" >
+            <img th:src="@{/assets/images/brand/logo.png}" class="header-brand-img desktop-logo" alt="logo">
+            <img th:src="@{/assets/images/brand/logo-1.png}" class="header-brand-img toggle-logo" alt="logo">
+            <img th:src="@{/assets/images/brand/logo-2.png}" class="header-brand-img light-logo" alt="logo">
+            <img th:src="@{/assets/images/brand/logo-3.png}" class="header-brand-img light-logo1" alt="logo">
+        </a>
+        <!-- LOGO -->
+    </div>
+    <div class="main-sidemenu">
+        <div class="slide-left disabled" id="slide-left"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"
+                width="24" height="24" viewBox="0 0 24 24">
+                <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" />
+            </svg></div>
+        <ul class="side-menu">
+            <li class="sub-category">
+                <h3>Principal</h3>
+            </li>
+            <li class="slide" id="dashboard">
+                <a class="side-menu__item has-link" th:href="@{/assessment/list}" data-bs-toggle="slide" ><i
+                        class="side-menu__icon fe fe-home"></i><span class="side-menu__label">Dashboard</span></a>
+            </li>
+            <li class="sub-category">
+                <h3>Général</h3>
+            </li>
+
+            <li class="slide" id="assessment">
+                <a class="side-menu__item" data-bs-toggle="slide" ><i
+                        class="side-menu__icon fe fe-slack"></i><span class="side-menu__label">Assessment</span><i
+                        class="angle fe fe-chevron-right"></i></a>
+                <ul class="slide-menu">
+                    <li class="side-menu-label1"><a >Assessment</a></li>
+                    <li><a th:href="@{/assessment/list}" target="_self" class="slide-item"> Liste des assessments</a></li>
+                    <!-- <li><a href="javascript:void(0)" target="_self" class="slide-item"> Catégorie</a></li> -->
+                    <li id="manager"><a th:href="@{/employee/manager/list}" target="_self" class="slide-item"> Managers</a></li>
+                    <li id="drh"><a th:href="@{/employee/drh/list}" target="_self" class="slide-item"> DRH</a></li>
+                    
+                </ul>
+            </li>
+            <li class="slide" id="emploi">
+                <a class="side-menu__item has-link" data-bs-toggle="slide" th:href="@{/pv}"><i
+                        class="side-menu__icon fe fe-file-text"></i><span class="side-menu__label">Emploi</span><i
+                        class="angle fe fe-chevron-right"></i></a>
+                <ul class="slide-menu">
+                    <li class="side-menu-label1"><a >Emploi</a></li>
+                    <li><a th:href="@{/emploi/list}" target="_self" class="slide-item"> Liste des emplois</a></li>
+                    <li><a th:href="@{/emploi/competence/list}" target="_self" class="slide-item"> Compétences</a></li>
+                    
+                </ul>
+            </li>
+            <li class="slide" id="pv">
+                <a class="side-menu__item has-link" data-bs-toggle="slide" th:href="@{/pv}"><i
+                        class="side-menu__icon fe fe-save"></i><span class="side-menu__label">PV</span><span
+                        class="badge bg-yellow br-5 side-badge blink-text pb-1">New</span></a>
+            </li>
+
+        </ul>
+        <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24"
+                height="24" viewBox="0 0 24 24">
+                <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z" />
+            </svg></div>
+    </div>
+</div>

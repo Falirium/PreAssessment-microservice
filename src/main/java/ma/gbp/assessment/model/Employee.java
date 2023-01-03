@@ -8,13 +8,16 @@ import javax.persistence.MappedSuperclass;
 
 import org.springframework.stereotype.Component;
 
+import groovy.transform.ToString;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @MappedSuperclass
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class Employee {
     
@@ -24,6 +27,32 @@ public class Employee {
     private String topDirection;
     private String direction;
     private String role;
+    private String phoneNumber;
+    private String workEmail;
+
+    private String hashedPwd;
+
+    public Employee(String firstName, String lastName, String matricule) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.matricule = matricule;
+        
+    }
+
+    public Employee(String firstName, String lastName, String matricule, String topDirection, String direction,
+            String role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.matricule = matricule;
+        this.topDirection = topDirection;
+        this.direction = direction;
+        this.role = role;
+    }
+
+    
+
+
+    
 
     
 }

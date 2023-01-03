@@ -34,11 +34,11 @@ public class CategoryController {
         //TODO: process POST request
 
         List<Category> savedCategories = new ArrayList<Category>();
-        for ( Category category : categories) {
-            savedCategories.add(categoryService.save(category));
-        }
+        // for ( Category category : categories) {
+        //     savedCategories.add(categoryService.save(category));
+        // }
 
-        return ResponseEntity.status(HttpStatus.OK).body(savedCategories);
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.saveListOfCategory(categories));
         
     }
 
@@ -47,9 +47,9 @@ public class CategoryController {
         return  ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllCategories()) ;
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Category> getCategory (@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategory(id));
+    @GetMapping(value = "/{name}")
+    public ResponseEntity<Category> getCategory (@PathVariable String name) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoryByName(name));
     }
 
 

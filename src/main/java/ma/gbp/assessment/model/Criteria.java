@@ -12,4 +12,5 @@ public class Criteria implements Serializable{
     private String name;
     private double min;
     private double max;
+    private String value;
 }

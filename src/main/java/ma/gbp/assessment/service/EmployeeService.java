@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import ma.gbp.assessment.model.Collaborateur;
+import ma.gbp.assessment.model.Employee;
 import ma.gbp.assessment.model.ManagerOne;
 import ma.gbp.assessment.model.ManagerTwo;
 import ma.gbp.assessment.repository.CollaborateurRepository;
@@ -26,6 +27,7 @@ public class EmployeeService {
     private CollaborateurRepository collaborateurRepository;
 
 
+
     //ManagerOne
     public ManagerOne saveManagerOne(ManagerOne managerOne) {
         return managerOneRepository.save(managerOne);
@@ -38,6 +40,8 @@ public class EmployeeService {
     public ManagerOne getManagerOne(Long id) {
         return managerOneRepository.findById(id).get();
     }
+
+    
 
 
     //ManagerTwo
@@ -53,6 +57,8 @@ public class EmployeeService {
         return managerTwoRepository.findById(id).get();
     }
 
+    
+
 
     //Collaborateur
     public Collaborateur savCollaborateur(Collaborateur collaborateur) {
@@ -67,5 +73,7 @@ public class EmployeeService {
         return collaborateurRepository.findById(id).get();
     }
 
+    // EMPLOYEE
+    
 
 }
