@@ -857,7 +857,7 @@ function parseCompetenceToTable(competences, niveauContainer) {
             // SCROLL DOWN TO EDIT COMPETENCE AREA
             $('html, body').animate({
                 scrollTop: $(editWrapperElement).offset().top - 400
-            }, 500);
+            }, 300);
 
             let competenceIndex = [...allEditCatBtns].indexOf(aElement);
             console.log(competenceIndex, competencesArray[competenceIndex]);

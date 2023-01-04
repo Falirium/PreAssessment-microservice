@@ -99,13 +99,13 @@ $(btnSaveMatrice).click(function (e) {
 
     // STEP 1 : VERIFY IF ALL THE FIELD ARE FILLED
     if (!checkMatriceBasics()) {
-        showModal("error", "Action non complétée", "Certains informations concernant la matrice ne sont pas remplis. Essayer de les remplir", "");
+        showModal("error", "Erreur", "Certains informations concernant la matrice ne sont pas remplis. Essayer de les remplir", "");
     } else if (!checkForCompetenceArray()) {
 
-        showModal("error", "Action non complétée", "La liste des compétences est vide. Essayer d'ajouter des compétences.", "");
+        showModal("error", "Erreur", "La liste des compétences est vide. Essayer d'ajouter des compétences.", "");
 
     } else if (!checkCompetencesLevelsSection()) {
-        showModal("error", "Action non complétée", "Les définitions de chaque niveau ne doivent pas être vide. Essayer de les remplir.", "");
+        showModal("error", "Erreur", "Les définitions de chaque niveau ne doivent pas être vide. Essayer de les remplir.", "");
 
     } else {  // STEP 2 : SAVE NEW LISTS OF COMPETENCES
 
@@ -131,7 +131,7 @@ $(btnSaveMatrice).click(function (e) {
 
                 console.log(success);
                 // SHOW SUCCESS MODEL        
-                showModal("success", "La liste des compétences a été modifiée avec succès", "Les modifications sur la liste des compétences ont été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi", "", {
+                showModal("success", "Succès", "Les modifications sur la liste des compétences ont été sauvegardée avec succès, vous pouvez trouver les compétences lors de la création d'un emploi", "", {
                     "text": "Revenir à l'acceuil",
                     "color": "success",
                     "id": "ld1"
@@ -161,7 +161,7 @@ $(btnSaveMatrice).click(function (e) {
                 deleteLoaderToBtn("#btn-competence-save");
 
                 // SHOW SUCCESS MODEL        
-                showModal("success", "La liste des compétences a été sauvegardée avec succès", "La nouvelle liste de compétences a été sauvegardée dans la base de données avec succès, vous pouvez trouver les compétences lors de la création d'un emploi", "", {
+                showModal("success", "Succès", "La nouvelle liste de compétences a été sauvegardée avec succès, vous pouvez trouver les compétences lors de la création d'un emploi", "", {
                     "text": "Revenir à l'acceuil",
                     "color": "success",
                     "id": "lds1"
@@ -192,7 +192,7 @@ btnAddGlossaire.addEventListener("click", (e) => {
     if (!checkCompetencesLevelsSection()) {
 
         // SHOW ERROR
-        showModal("error", "Action non complétée", "Les définitions de chaque niveau ne doivent pas être vide. Essayer de les remplir.", "");
+        showModal("error", "Erreur", "Les définitions de chaque niveau ne doivent pas être vide. Essayer de les remplir.", "");
 
     } else {
 
@@ -615,7 +615,7 @@ async function parseExcelFile2(inputElement, addToTheList = false) {
             .catch(error => {
                 // SHOW MODAL ERROR
                 console.error(error);
-                showModal("error", "Erreur d'éxecution", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard. Si le problème persiste, veuillez contacter votre consultant DRH.", "", {
+                showModal("error", "Erreur de syntaxe", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard. Si le problème persiste, veuillez contacter votre consultant DRH.", "", {
                     "text": "Revenir à l'acceuil",
                     "color": "danger",
                     "id": "sdq1"
@@ -645,7 +645,7 @@ function getGlossaireOfCompentence(names, defs, levels, mergeIt = false) {
     }
 
     console.log(competenceArray.length);
-    
+
     names.map((e, index) => {
         let competenceJson = {
             "name": e,
@@ -666,7 +666,7 @@ function fieldsAreChecked() {
 
     if ($("#input-name-matrice").val().trim() === "" || $("#input-create-date").val() === "" || competenceArray.length === 0) {
 
-        showModal("error", "Action non terminée", "Certains champs ne sont pas remplis et sont nécessaires pour compléter l'enregistrement de la matrice.");
+        showModal("error", "Erreur", "Certains champs ne sont pas remplis et sont nécessaires pour compléter l'enregistrement de la matrice.");
 
         // HIGHLIGHT THE EMPTY FIELDS
         if ($("#input-name-matrice").val().trim() === "") {
@@ -762,8 +762,8 @@ function parseCompetencesToTable(dataArr) {
 
 
 
-                showModal("error", "Vous voulez supprimer cette compétence ?", 'Confirmez votre décision de supprimer cette compétence, en cliquant sur le bouton "Oui".', "competence", {
-                    "text": "Oui",
+                showModal("error", "Confirmation", 'Confirmez la suppression de cette compétence, en cliquant sur le bouton "Supprimer la compétence".', "competence", {
+                    "text": "Supprimer la compétence",
                     "color": "danger",
                     "id": "dsl1",
                     "hasFermerBtn": true
@@ -829,6 +829,11 @@ function parseCompetencesToTable(dataArr) {
                 $("#input-def-competence-m").val(compFromArr.competence.niveaux[1]["definition"]);
                 $("#input-def-competence-a").val(compFromArr.competence.niveaux[2]["definition"]);
                 $("#input-def-competence-x").val(compFromArr.competence.niveaux[3]["definition"]);
+
+                // SCROLL DOWN TO EDIT COMPETENCE AREA
+                $('html, body').animate({
+                    scrollTop: $("#input-nom-competence-glossaire").offset().top - 150
+                }, 300);
 
 
                 competenceEditIndex = compFromArr.index;
@@ -1023,8 +1028,8 @@ async function postMatriceCompetences(json) {
         error => {
             console.log(error);
 
-            showModal("error", "Action non complétée", "L'enregistrement de cette matrice de compétences a été échouée. Essayer de refaire vos modifications.", "", {
-                "text": "REvenir à l'acceuil",
+            showModal("error", "Erreur", "L'enregistrement de cette matrice de compétences a été échouée. Essayer de refaire vos modifications.", "", {
+                "text": "Revenir à l'acceuil",
                 "color": "danger",
                 "id": "dsds1"
             }, function () {
@@ -1062,7 +1067,7 @@ async function updateMatriceCompetence(json) {
     ).catch(
         error => {
             console.log(error);
-            showModal("error", "Action non complétée", "Les modifications sur cette matrice de compétences ne sont pas enregistrées. Essayer de refaire vos modifications.", "", {
+            showModal("error", "Erreur", "Les modifications sur cette matrice de compétences ne sont pas enregistrées. Essayer de refaire vos modifications.", "", {
                 "text": "Revenir à l'acceuil",
                 "color": "danger",
                 "id": "dsds1"
