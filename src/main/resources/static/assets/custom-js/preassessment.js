@@ -143,7 +143,7 @@ $(function () {
             // DELETE LOADER TO BTN
             deleteLoaderToBtn("#btn-assessment-lanch");
 
-            showModal("warning", "Vous ne pouvez pas sauvegarder cette évaluation", "Certains employés ne sont pas catégorisés ; veuillez retourner à la phase de catégorisation et les inclure", "")
+            showModal("warning", "Attention", "Vous ne pouvez pas sauvegarder cette évaluation. Certains employés ne sont pas catégorisés, veuillez retourner à la phase de catégorisation et les inclure", "")
         } else {
 
             //SAVE NEW CATEGORIES TO DB  then SAVE ASSESSMENT-CATEGORIES
@@ -189,7 +189,7 @@ $(function () {
                             deleteLoaderToBtn("#btn-assessment-lanch");
 
                             // SHOW SUCCESS MODAL
-                            showModal("success", "Assessment est lancée ", "L'assessment a été lancé avec succès.", "", {
+                            showModal("success", "Succès", "L'assessment a été lancé avec succès. Les managers peuvent maintenant commencer leur validation", "", {
                                 "text": "Retour à l'accueil",
                                 "color": "success",
                                 "id": "btn-save"
@@ -265,7 +265,7 @@ $(function () {
                 removeAssessmentFromStorage();
 
                 // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
-                showModal("success", "Assessment est bien modifié", "Les modifications ont été sauvegardé avec succès. Vous pouvez éditer et modifier cette assessment plus tard à partir de la liste des assessments sur le tableau de bord.", "",
+                showModal("success", "Succès", "Les modifications ont été sauvegardé avec succès. Vous pouvez éditer et modifier cette assessment plus tard à partir de la liste des assessments sur le tableau de bord.", "",
                     {
                         "text": "Retour à l'accueil",
                         "color": "success",
@@ -301,7 +301,7 @@ $(function () {
                 removeAssessmentFromStorage();
 
                 // SHOW SUCCESS THAT THE ASSESSMENT IS SAVED
-                showModal("success", "Assessment est bien enregitré", "L'assessment a été enregitré avec succès. Vous pouvez éditer et modifier cette assessment plus tard à partir de la liste des assessments sur le tableau de bord.", "",
+                showModal("success", "Succès", "L'assessment a été enregitré avec succès. Vous pouvez éditer et modifier cette assessment plus tard à partir de la liste des assessments sur le tableau de bord.", "",
                     {
                         "text": "Retour à l'accueil",
                         "color": "success",
@@ -617,7 +617,7 @@ inputFileUploader.addEventListener('change', (e) => {
 
                 console.log(listStr);
                 // SHOW ERROR MODAL
-                showModal("error", "VOUS NE POUVEZ PAS CONTINUER", "La liste suivantes des emplois avec leurs niveaux de séniorité n'est pas enregistrées : " + listStr + "Veuillez les ajouter  à la base de données puis créer un assessment.", "", {
+                showModal("error", "Erreur", "La liste suivantes des emplois avec leurs niveaux de séniorité n'est pas trouvées dans la plateforme: " + listStr + "Veuillez les ajouter  dans la section des fiches d'emploi, puis créer un assessment.", "", {
                     "text": "Revenir à l'acceuil",
                     "color": "danger",
                     "id": "dfe1"
@@ -682,7 +682,7 @@ inputFileUploader.addEventListener('change', (e) => {
         console.log(error);
 
         // SHOW ERROR MODAL
-        showModal("error", "Mauvais format de fichier", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard.", "");
+        showModal("error", "Erreur de syntaxe", "Vérifiez que vous avez téléchargé le bon fichier de compétence et assurez-vous qu'il respecte le format de fichier standard.", "");
     });
 
     postExcelFile(file);
@@ -872,7 +872,7 @@ $("#btn-categorize").click(function (e) {
 
 
         // SHOW SUCCESS MODAL 
-        showModal("success", "Population classifiée", "La liste de la population a été classifiée avec succès sur la base des catégories créées. Allez à l'étape 3 pour voir le résultat", "");
+        showModal("success", "Succès", "La liste de la population a été classifiée avec succès. Allez à l'étape 3 pour voir le résultat", "");
     }
 
 

@@ -221,6 +221,8 @@ btnAddGlossaire.addEventListener("click", (e) => {
             // INITIALIZE THE INDEX
             competenceEditIndex = -1;
 
+            // SHOW ALERT NOTIFICATION
+            showNotification("<b>succès :</b> compétence editée", "success", "right");
 
         } else {
 
@@ -243,6 +245,9 @@ btnAddGlossaire.addEventListener("click", (e) => {
 
             competenceArray.push(competenceGlassaireJson);
 
+            // SHOW ALERT NOTIFICATION
+            showNotification("<b>succès :</b> compétence ajoutée", "success", "center");
+
         }
 
 
@@ -255,6 +260,8 @@ btnAddGlossaire.addEventListener("click", (e) => {
 
         // PARSE THE DATA TO THE TABLE
         parseCompetencesToTable(competenceArray);
+
+
 
         // ELIMINATE DISBALE PROPERTY
         $("#input-nom-competence-glossaire").prop('disabled', false);
@@ -767,6 +774,7 @@ function parseCompetencesToTable(dataArr) {
                     "color": "danger",
                     "id": "dsl1",
                     "hasFermerBtn": true
+                    
                 }, function (e) {
 
                     console.log(competenceDeleteIndex);
@@ -782,6 +790,9 @@ function parseCompetencesToTable(dataArr) {
 
                         // PARSE THE UPDATED DATA TO THE TABLE
                         parseCompetencesToTable(competenceArray);
+
+                        // SHOW ALERT NOTIFICATION
+                        showNotification("<b>succès :</b> compétence supprimée", "success", "right");
                     } else {
 
 
@@ -1236,5 +1247,14 @@ function deleteLoaderToBtn(btnId) {
 
     // REMOVE LOADER HTML ELEMENT
     $(btnId).find("span").remove();
+}
+
+function showNotification(msg, type, position) {
+
+    notif({
+        "msg": msg,
+        "type": type,
+        "position": position
+    });
 }
 

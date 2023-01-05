@@ -116,6 +116,7 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
             {
                 extend: 'excelHtml5',
                 title: fileTitle,
+                text : "Télécharger les données sous Excel",
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
                 },
@@ -510,7 +511,7 @@ function buildURL(prefix, params) {
 $("#btn-assessment-sus").click(function (e) {
 
     // ADD LOADER TO BTN
-    addLoaderToBtn("#btn-assessment-sus");
+    // addLoaderToBtn("#btn-assessment-sus");
 
     if (assessmentJson.status === "SUSPENDED") {
 
@@ -535,7 +536,7 @@ $("#btn-assessment-sus").click(function (e) {
                 if (success.hasOwnProperty("message")) {
 
                     // SHOW ERROR MODAL
-                    showModal("error", "Action échouée", success.message, "", {
+                    showModal("error", "Erreur", success.message, "", {
                         "text": "Revenir à l'acceuil",
                         "color": "danger",
                         "id": "dqz1"
@@ -548,7 +549,7 @@ $("#btn-assessment-sus").click(function (e) {
                 } else {
 
                     // SHOW SUCCESS MDOAL
-                    showModal("success", "Action complétée", "L'assessment est maintenant repris. Tous les managers peuvent compléter leurs évaluations", "", {
+                    showModal("success", "Succès", "La campagne d'assessment est maintenant repris. Tous les managers peuvent compléter leurs évaluations", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "success",
                         "id": "dqz1"
@@ -603,7 +604,7 @@ $("#btn-assessment-sus").click(function (e) {
                 if (success.hasOwnProperty("message")) {
 
                     // SHOW ERROR MODAL
-                    showModal("error", "Action échouée", success.message, "", {
+                    showModal("error", "Erreur", success.message, "", {
                         "text": "Revenir à l'acceuil",
                         "color": "error",
                         "id": "dqz1"
@@ -616,7 +617,7 @@ $("#btn-assessment-sus").click(function (e) {
                 } else {
 
                     // SHOW SUCCESS MDOAL
-                    showModal("success", "Action complétée", "L'assessment est maintenant suspendu avec succès. Tous les résultats sont enregistrés dans la base de données", "", {
+                    showModal("success", "Succès", "La campagne d'assessment est maintenant suspendu. Tous les résultats sont enregistrés avec succès", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "success",
                         "id": "dqz1"
@@ -644,7 +645,7 @@ $("#btn-assessment-sus").click(function (e) {
 $("#btn-assessment-terminate").click(function (e) {
 
     // ADD LOADER TO BTN
-    addLoaderToBtn("#btn-assessment-terminate");
+    // addLoaderToBtn("#btn-assessment-terminate");
 
     // SHOW CONFIRM TERMINATE MODAL
     showModal("confirm", "Confirmer l'action", `
@@ -661,7 +662,7 @@ $("#btn-assessment-terminate").click(function (e) {
      
     `, "", {
         "text": "Terminer l'assessment",
-        "color": "warning",
+        "color": "danger",
         "id": "dqz1",
         "hasFermerBtn": true
     }, function () {
@@ -680,7 +681,7 @@ $("#btn-assessment-terminate").click(function (e) {
             if (success.hasOwnProperty("message")) {
 
                 // SHOW ERROR MODAL
-                showModal("error", "Action échouée", success.message, "", {
+                showModal("error", "Erreur", success.message, "", {
                     "text": "Revenir à l'acceuil",
                     "color": "error",
                     "id": "dqz1"
@@ -693,7 +694,7 @@ $("#btn-assessment-terminate").click(function (e) {
             } else {
 
                 // SHOW SUCCESS MDOAL
-                showModal("success", "Action complétée", "L'assessment est maintenant terminé avec succès. Tous les résultats sont enregistrés dans la base de données", "", {
+                showModal("success", "Succès", "La campagne d'assessment est maintenant terminé avec succès. Les résultats des fiches d'évaluations sont disponibles en bas.", "", {
                     "text": "Revenir à l'acceuil",
                     "color": "success",
                     "id": "dqz1"
@@ -721,6 +722,8 @@ $("#btn-assessment-inform").click(function (e) {
 function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
+
+
 
 
 

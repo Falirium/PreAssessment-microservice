@@ -257,7 +257,7 @@ $("#btn-emploi-save").click(function () {
             updateEmploi(generateEmploiJson(emploiJSON)).then((success) => {
 
                 if (success.hasOwnProperty("message")) {
-                    showModal("error", "Action échouée", success.message + "", "", {
+                    showModal("error", "Erreur", success.message + "", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "danger",
                         "id": "sdq1"
@@ -275,7 +275,7 @@ $("#btn-emploi-save").click(function () {
                     localStorage.removeItem("emploi");
 
                     console.log(success);
-                    showModal("success", "Action complétée", "la fiche d'emploi avec ces niveaux de sénioritées a été ajouté avec succès à la base de données. ", "", {
+                    showModal("success", "Succès", "la fiche d'emploi avec ces niveaux de sénioritées a été ajouté avec succès à la base de données. ", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "success",
                         "id": "sdq1"
@@ -301,7 +301,7 @@ $("#btn-emploi-save").click(function () {
             postEmploi(generateEmploiJson(emploiJSON)).then((success) => {
 
                 if (success.hasOwnProperty("message")) {
-                    showModal("error", "Action échouée", success.message + " Veuillez remplir une nouvelle fiche d'emploi avec un nom différent", "", {
+                    showModal("error", "Erreur", success.message + " Veuillez remplir une nouvelle fiche d'emploi avec un nom différent", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "danger",
                         "id": "sdq1"
@@ -314,7 +314,7 @@ $("#btn-emploi-save").click(function () {
                         }, 1000);
                     });
                 } else {
-                    showModal("success", "Action complétée", "la fiche d'emploi avec ces niveaux de sénioritées a été ajouté avec succès à la base de données. ", "", {
+                    showModal("success", "Succès", "La fiche d'emploi avec ces niveaux de sénioritées a été enregistrée avec succès. ", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "success",
                         "id": "sdq1"
@@ -1493,7 +1493,7 @@ function addNewNiveauHTML(niveauCounter) {
                             </div>
 
                             <a class="btn btn-primary mt-4 mb-0 " id="btn-add-niveau" role="button"
-                                aria-pressed="true">Ajouter un autre niveau</a>
+                                aria-pressed="true"><i class="fe fe-plus me-2"></i> Ajouter un autre niveau</a>
 
                         </form>
                     </div>
@@ -1566,6 +1566,11 @@ function disableInputsFor(niveauContainer) {
     Array.from(selects).forEach((select) => {
         select.setAttribute("disabled", "");
     })
+}
+function disableButtonsFor(niveauContainer) {
+
+    // FOR BUTTONS
+    $(niveauContainer).find("button").attr("disabled","disabled");
 }
 
 function clearDisableFromInputsFor(niveauContainer) {

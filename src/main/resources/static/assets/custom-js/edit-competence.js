@@ -57,3 +57,4 @@ async function updateMatriceCompetence(json) {
         error => console.log(error) // Handle the error response object
     );
 }
+
