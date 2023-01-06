@@ -192,7 +192,8 @@ $("#btn-fiche-send").click({
 function disableModificationForAdminAndDrh() {
 
     // DISABLE ACTIONS BTN || DELETE THEM 
-    $(".action-btn").prop('disabled', true);
+    // $(".action-btn").prop('disabled', true);
+    $(".action-btn").remove();
 
     // DISABLE ALL TOGGLE BTN
     $("input[type=radio]").attr('disabled', true);
