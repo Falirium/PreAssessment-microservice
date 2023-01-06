@@ -67,7 +67,7 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
     if (assessmentJson.status === "SUSPENDED") {
 
         // CHANGE THE CONTENT OF SUSPEND BTN
-        $("#btn-assessment-sus").addClass("btn-info").removeClass("btn-warning").text("Reprendre l'assessment");
+        $("#btn-assessment-sus").addClass("btn-info").removeClass("btn-warning").html('<i class="fe fe-play me-2"></i>Reprendre l\'assessment');
 
     } else if (assessmentJson.status === "ENDED") {
 

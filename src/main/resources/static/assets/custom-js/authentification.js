@@ -240,7 +240,7 @@ $("#cnx-btn-manager").click(function () {
                 
                 // SAVE MANAGER MATRICULE
                 let user = {
-                    "type": "1",
+                    "type": "2",
                     "data" : manager
 
                 }
