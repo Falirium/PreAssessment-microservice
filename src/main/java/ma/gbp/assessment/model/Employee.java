@@ -29,6 +29,7 @@ public class Employee {
     private String role;
     private String phoneNumber;
     private String workEmail;
+    private String affectationCode;
 
     private String hashedPwd;
 
@@ -40,13 +41,14 @@ public class Employee {
     }
 
     public Employee(String firstName, String lastName, String matricule, String topDirection, String direction,
-            String role) {
+            String role, String affectationCode) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.matricule = matricule;
         this.topDirection = topDirection;
         this.direction = direction;
         this.role = role;
+        this.affectationCode = affectationCode;
     }
 
     

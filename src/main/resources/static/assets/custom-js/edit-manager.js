@@ -93,7 +93,7 @@ $("#update-pwd-btn").click(function (e) {
             // DELETE LOADER
             deleteLoaderToBtn("#update-pwd-btn");
 
-            showModal("success", "Complété", `
+            showModal("success", "Succès", `
                 Le mot de passe a été généré avec succès. Envoyez le nouveau mot de passe à le manager :
                     <h2 class="text-center text-red">${managerJson["hashedPwd"]}</h2>
                     `, "",

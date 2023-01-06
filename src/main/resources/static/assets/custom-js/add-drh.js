@@ -114,7 +114,7 @@ $("#save-btn").click(function (e) {
                 } else {
                     console.log(response);
 
-                    showModal("success", "Complété", `
+                    showModal("success", "Succès", `
                     Un nouveau compte DRH a été créé avec succès. Le mot de passe généré pour ce compte est :
                         <h2 class="text-center text-red">${drhJson["hashedPwd"]}</h2>
                     `, "",
@@ -156,7 +156,7 @@ $("#save-btn").click(function (e) {
                 } else {
                     console.log(response);
 
-                    showModal("success", "Complété", `
+                    showModal("success", "Succès", `
                     Les informations du compte DRH ont été modifiées avec succès.
                     `, "",
                         {
@@ -255,7 +255,7 @@ $("#update-pwd-btn").click(function (e) {
             // DELETE LOADER
             deleteLoaderToBtn("#update-pwd-btn");
 
-            showModal("success", "Complété", `
+            showModal("success", "Succès", `
                 Le mot de passe a été changé avec succès. Envoyez le nouveau mot de passe à l'utilisateur DRH :
                     <h2 class="text-center text-red">${drhJson["hashedPwd"]}</h2>
                     `, "",

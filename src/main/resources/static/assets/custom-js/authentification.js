@@ -91,6 +91,10 @@ $("#cnx-btn-bpr").click(function () {
                             "id": "#drh"
                         },
                         {
+                            "name": "manager",
+                            "id": "#manager"
+                        },
+                        {
                             "name" : "add assessment",
                             "id" : "#btn-add-assessment"
                         }

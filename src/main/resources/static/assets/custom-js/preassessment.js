@@ -2218,6 +2218,8 @@ function generateCollaborateur(arr) {
     let indexOfNom = getIndexOfColumn(categorizedPopulationArr[0], "NOM");
     let indexOfDirection = getIndexOfColumn(categorizedPopulationArr[0], "affectation (Code)");
     let indexOfRole = getIndexOfColumn(categorizedPopulationArr[0], "Fonction (Libelle)");
+    let indexOfCodeAffectation = getIndexOfColumn(categorizedPopulationArr[0], "affectation (Code)");
+
 
     let collaborateurJson = {
         "firstName": arr[indexOfNom],
@@ -2226,6 +2228,7 @@ function generateCollaborateur(arr) {
         "role": arr[indexOfRole],
         "direction": arr[indexOfDirection],
         "topDirection": "",
+        "affectationCode" : arr[indexOfCodeAffectation],
         "managerOne": generateManager1(arr)
     }
 
