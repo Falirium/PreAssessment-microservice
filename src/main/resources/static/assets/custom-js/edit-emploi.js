@@ -63,8 +63,9 @@ function lanchEditScript() {
                 // marqueursArray = [];
                 // competencesArray = [];
 
-                // DISABLE INPUTS FOR THE PREVIOUS NIVEAU
+                // DISABLE INPUTS-BUTTONS FOR THE PREVIOUS NIVEAU
                 disableInputsFor(container);
+                disableButtonsFor(container);
 
 
                 // CREATE A  NEW CONTAINER 

@@ -205,7 +205,8 @@ public class AssessmentController {
                                                 coll.getMatricule(),
                                                 coll.getTopDirection(),
                                                 coll.getDirection(),
-                                                coll.getRole()));
+                                                coll.getRole(), 
+                                                coll.getAffectationCode()));
 
                         }
 

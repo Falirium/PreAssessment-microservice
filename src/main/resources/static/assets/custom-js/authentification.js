@@ -55,11 +55,11 @@ $("#cnx-btn-bpr").click(function () {
         "pwd": password
     }
     console.log(authObj);
-    validateMatricule(authObj).then((isValid) => {
+    validateMatricule(authObj).then((authRes) => {
 
 
 
-        if (isValid.code === 404) {
+        if (authRes.code === 404) {
 
             console.log("error 2");
 
@@ -67,7 +67,7 @@ $("#cnx-btn-bpr").click(function () {
             showModal("error", "Échec", "L'authentification a échoué, car la matrice et/ou les données sont incorrectes. Veuillez réessayer avec des informations d'identification valides.", "");
 
 
-        } else if (isValid == true) {
+        } else if (authRes.auth == true) {
 
             // SET AUTHORIZATION
             let auth = {
@@ -89,6 +89,14 @@ $("#cnx-btn-bpr").click(function () {
                         {
                             "name": "drh",
                             "id": "#drh"
+                        },
+                        {
+                            "name": "manager",
+                            "id": "#manager"
+                        },
+                        {
+                            "name" : "add assessment",
+                            "id" : "#btn-add-assessment"
                         }
                     ],
                     "show": [
@@ -110,7 +118,7 @@ $("#cnx-btn-bpr").click(function () {
                 // SET USER INFO
                 let user = {
                     "type": "drh",
-                    "data": drh
+                    "data": authRes.dthUser
                 };
 
 
@@ -236,7 +244,7 @@ $("#cnx-btn-manager").click(function () {
                 
                 // SAVE MANAGER MATRICULE
                 let user = {
-                    "type": "1",
+                    "type": "2",
                     "data" : manager
 
                 }
@@ -244,10 +252,10 @@ $("#cnx-btn-manager").click(function () {
                 localStorage.setItem("user", JSON.stringify(user));
 
                 // // REDIRECT TO HOMEPAGE
-                // let currentUrl = window.location.href;
-                // window.location.replace(extractDomain(currentUrl) + "evaluation/list");
+                let currentUrl = window.location.href;
+                window.location.replace(extractDomain(currentUrl) + "evaluation/list");
 
-                // console.log("redirected");
+                console.log("redirected");
 
                 // CHANGE BREADCRUMB TEXT TO MANAGER N+1
                 auth.sections.show.push(

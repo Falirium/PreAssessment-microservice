@@ -192,7 +192,8 @@ $("#btn-fiche-send").click({
 function disableModificationForAdminAndDrh() {
 
     // DISABLE ACTIONS BTN || DELETE THEM 
-    $(".action-btn").prop('disabled', true);
+    // $(".action-btn").prop('disabled', true);
+    $(".action-btn").remove();
 
     // DISABLE ALL TOGGLE BTN
     $("input[type=radio]").attr('disabled', true);
@@ -446,7 +447,7 @@ function processSavingFicheEvaluation(e) {
         deleteLoaderToBtn("#" + e.target.id);
 
         // SHOW ERROR MESSAGE
-        showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette fiche d'évaluation. Parce que les administrateurs ont suspendu cette évaluation. Veuillez les contacter directement pour résoudre ce problème.", "", {
+        showModal("error", "Erreur", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette fiche d'évaluation. Parce que les administrateurs ont suspendu cette évaluation. Veuillez les contacter directement pour résoudre ce problème.", "", {
             "text": "Revenir à l'accueil",
             "color": "danger",
             "id": "dje1"
@@ -464,7 +465,7 @@ function processSavingFicheEvaluation(e) {
         deleteLoaderToBtn("#" + e.target.id);
 
         // SHOW ERROR MESSAGE
-        showModal("error", "Action échouée", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette assessment, car cette évaluation a été terminée. ", "", {
+        showModal("error", "Erreur", "Malheureusement, vous ne pouvez pas sauvegarder le résultat de cette assessment, car cette évaluation a été terminée. ", "", {
             "text": "Revenir à l'accueil",
             "color": "danger",
             "id": "dje1"
@@ -490,12 +491,12 @@ function processSavingFicheEvaluation(e) {
             let modalHeader;
             let modalBody;
             if (ficheEvaluation.status.includes("1")) {
-                modalHeader = "Action complétée";
-                modalBody = "La fiche a été envoyée avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
+                modalHeader = "Succès";
+                modalBody = "La fiche a été envoyée avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers les autres fiches pour continuer l'évaluation.";
             } else {
 
-                modalHeader = "Action complétée";
-                modalBody = "La fiche a été enregistré avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers la liste des fichiers pour continuer l'évaluation.";
+                modalHeader = "Succès";
+                modalBody = "La fiche a été enregistré avec succès. Cliquer sur le boutton pour se rediriger automatiquement vers les autres fiches pour continuer l'évaluation.";
             }
             showModal("success", modalHeader, modalBody, "", {
                 "text": "Revenir à l'accueil",
@@ -3584,7 +3585,7 @@ async function getFicheEvaluation(id) {
 function addLoaderToBtn(btnId) {
 
     // ADD LOADER HTML ELEMENT
-    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`)
+    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`);
 }
 
 function deleteLoaderToBtn(btnId) {
@@ -3721,6 +3722,8 @@ function calculateCompletionOfAllSections() {
         })
         // console.log(Number((compDcCounter / compDcSize) * 100).toFixed(1));
         percentagePerSection.section_dc = Number((compDcCounter / compDcSize) * 100).toFixed(1);
+    } else {
+        percentagePerSection.section_dc = "NaN";
     }
 
     // SECTION : COMPETENCES-SE
@@ -3810,7 +3813,10 @@ function calculateCompletionOfAllSections() {
 
         })
         // console.log(Number((compSeCounter / compSeSize) * 100).toFixed(1))
+        console.log(compSeCounter, compSeSize, Number((compSeCounter / compSeSize) * 100).toFixed(1));
         percentagePerSection.section_se = Number((compSeCounter / compSeSize) * 100).toFixed(1);
+    } else {
+        percentagePerSection.section_se = "NaN";
     }
 
     // SECTION : COMPETENCES-SF
@@ -3900,6 +3906,8 @@ function calculateCompletionOfAllSections() {
         });
         // console.log(Number((compSfCounter / compSfSize) * 100).toFixed(1));
         percentagePerSection.section_sf = Number((compSfCounter / compSfSize) * 100).toFixed(1);
+    } else {
+        percentagePerSection.section_sf = "NaN";
     }
 
     console.log(percentagePerSection);

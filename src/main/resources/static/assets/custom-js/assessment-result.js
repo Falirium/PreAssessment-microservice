@@ -6,7 +6,7 @@ console.log(idParam);
 
 // THIS VARIABLE DEFINED THE SHOWN COLUMN ON THE TABLE
 
-let authorizedCol = ["id", "collaborateur", "evaluateurOne", "evaluateurTwo", "emploi", "niveau", "Score", "% Res", "% Exi", "% Marq", "% D.C", "% S.E", "% S.F", "status"];
+let authorizedCol = ["id", "collaborateur", "code affectation", "evaluateurOne", "evaluateurTwo", "emploi", "niveau", "Score", "% Res", "% Exi", "% Marq", "% D.C", "% S.E", "% S.F", "status"];
 
 
 let assessmentJson;
@@ -67,7 +67,7 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
     if (assessmentJson.status === "SUSPENDED") {
 
         // CHANGE THE CONTENT OF SUSPEND BTN
-        $("#btn-assessment-sus").addClass("btn-info").removeClass("btn-warning").text("Reprendre l'assessment");
+        $("#btn-assessment-sus").addClass("btn-info").removeClass("btn-warning").html('<i class="fe fe-play me-2"></i>Reprendre l\'assessment');
 
     } else if (assessmentJson.status === "ENDED") {
 
@@ -97,15 +97,15 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
     } else {
         fileTitle = "BCP" + "_" + fileTitle;
     }
-    
+
 
     ficheDatatable = $("#tb4").DataTable({
         data: dataSet,
         columns: col,
         columnDefs: [
-            { "width": "6%", "targets": 2 },
-            { "className": "success-light-cell", "targets": 9 },
-            { "className": "default-light-cell ", "targets": [10, 11, 12, 13, 14, 15] }
+            { "width": "6%", "targets": 3 },
+            { "className": "success-light-cell", "targets": 10 },
+            { "className": "default-light-cell ", "targets": [11, 12, 13, 14, 15,16] }
 
         ],
         autoWidth: false,
@@ -116,8 +116,9 @@ getFicheEvaluationsByAssessment(idParam).then((fiches) => {
             {
                 extend: 'excelHtml5',
                 title: fileTitle,
+                text: "Télécharger les données sous Excel",
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
                 },
                 autoFilter: true,
                 sheetName: assessmentJson.name
@@ -310,6 +311,9 @@ function getFichesColumnFromJson(json, authorizedCol) {
                 case "id":
                     value = "id";
                     break;
+                case "code affectation":
+                    value = "code affectation";
+                    break;
                 case "emploi":
                     value = "emploi ciblé"
                     break;
@@ -401,6 +405,7 @@ function getFichesDataFromJson(arrJson) {
         arr.push(e.id);
         arr.push(e.collaborateur.matricule);
         arr.push(e.collaborateur.firstName + " " + e.collaborateur.lastName);
+        arr.push(e.collaborateur.affectationCode);
         arr.push(e.evaluateurOne.matricule);
         arr.push(e.evaluateurOne.firstName + " " + e.evaluateurOne.lastName);
         arr.push(e.evaluateurTwo.matricule);
@@ -510,7 +515,7 @@ function buildURL(prefix, params) {
 $("#btn-assessment-sus").click(function (e) {
 
     // ADD LOADER TO BTN
-    addLoaderToBtn("#btn-assessment-sus");
+    // addLoaderToBtn("#btn-assessment-sus");
 
     if (assessmentJson.status === "SUSPENDED") {
 
@@ -535,7 +540,7 @@ $("#btn-assessment-sus").click(function (e) {
                 if (success.hasOwnProperty("message")) {
 
                     // SHOW ERROR MODAL
-                    showModal("error", "Action échouée", success.message, "", {
+                    showModal("error", "Erreur", success.message, "", {
                         "text": "Revenir à l'acceuil",
                         "color": "danger",
                         "id": "dqz1"
@@ -548,7 +553,7 @@ $("#btn-assessment-sus").click(function (e) {
                 } else {
 
                     // SHOW SUCCESS MDOAL
-                    showModal("success", "Action complétée", "L'assessment est maintenant repris. Tous les managers peuvent compléter leurs évaluations", "", {
+                    showModal("success", "Succès", "La campagne d'assessment est maintenant repris. Tous les managers peuvent compléter leurs évaluations", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "success",
                         "id": "dqz1"
@@ -603,7 +608,7 @@ $("#btn-assessment-sus").click(function (e) {
                 if (success.hasOwnProperty("message")) {
 
                     // SHOW ERROR MODAL
-                    showModal("error", "Action échouée", success.message, "", {
+                    showModal("error", "Erreur", success.message, "", {
                         "text": "Revenir à l'acceuil",
                         "color": "error",
                         "id": "dqz1"
@@ -616,7 +621,7 @@ $("#btn-assessment-sus").click(function (e) {
                 } else {
 
                     // SHOW SUCCESS MDOAL
-                    showModal("success", "Action complétée", "L'assessment est maintenant suspendu avec succès. Tous les résultats sont enregistrés dans la base de données", "", {
+                    showModal("success", "Succès", "La campagne d'assessment est maintenant suspendu. Tous les résultats sont enregistrés avec succès", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "success",
                         "id": "dqz1"
@@ -644,7 +649,7 @@ $("#btn-assessment-sus").click(function (e) {
 $("#btn-assessment-terminate").click(function (e) {
 
     // ADD LOADER TO BTN
-    addLoaderToBtn("#btn-assessment-terminate");
+    // addLoaderToBtn("#btn-assessment-terminate");
 
     // SHOW CONFIRM TERMINATE MODAL
     showModal("confirm", "Confirmer l'action", `
@@ -661,7 +666,7 @@ $("#btn-assessment-terminate").click(function (e) {
      
     `, "", {
         "text": "Terminer l'assessment",
-        "color": "warning",
+        "color": "danger",
         "id": "dqz1",
         "hasFermerBtn": true
     }, function () {
@@ -680,7 +685,7 @@ $("#btn-assessment-terminate").click(function (e) {
             if (success.hasOwnProperty("message")) {
 
                 // SHOW ERROR MODAL
-                showModal("error", "Action échouée", success.message, "", {
+                showModal("error", "Erreur", success.message, "", {
                     "text": "Revenir à l'acceuil",
                     "color": "error",
                     "id": "dqz1"
@@ -693,7 +698,7 @@ $("#btn-assessment-terminate").click(function (e) {
             } else {
 
                 // SHOW SUCCESS MDOAL
-                showModal("success", "Action complétée", "L'assessment est maintenant terminé avec succès. Tous les résultats sont enregistrés dans la base de données", "", {
+                showModal("success", "Succès", "La campagne d'assessment est maintenant terminé avec succès. Les résultats des fiches d'évaluations sont disponibles en bas.", "", {
                     "text": "Revenir à l'acceuil",
                     "color": "success",
                     "id": "dqz1"
@@ -721,6 +726,8 @@ $("#btn-assessment-inform").click(function (e) {
 function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
+
+
 
 
 
@@ -856,7 +863,7 @@ function filterCollorateursByBpr(list, prefix, suffix) {
 
     finalArr = list.filter((fiche, index) => {
 
-        let mat = fiche.collaborateur.matricule;
+        let affectationCode = fiche.collaborateur.affectationCode;
 
         // console.log("Matricule : " + mat);
 
@@ -865,15 +872,15 @@ function filterCollorateursByBpr(list, prefix, suffix) {
             for (var i = 0; i < prefix.length; i++) {
                 let code = prefix[i] + "";
 
-                // console.log("Code : " + code );
+                console.log("Code : " + code );
 
                 // ITERATE OVER CODE
                 let counter = 0;
                 for (var j = 0; j < code.length; j++) {
 
-                    // console.log(mat[j],code[j], mat[j] == code[j])
+                    console.log(affectationCode[j],code[j], affectationCode[j] == code[j])
 
-                    if (mat[j] == code[j] && j < mat.length) {
+                    if (affectationCode[j] == code[j] && j < affectationCode.length) {
                         counter++;
                     } else {
 
@@ -922,5 +929,5 @@ function updateBreadcrumb(user) {
         $("#breadcrumb-text").text("Consultant BCP");
 
     }
-    
+
 }

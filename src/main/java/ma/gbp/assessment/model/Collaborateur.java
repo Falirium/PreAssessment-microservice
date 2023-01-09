@@ -45,8 +45,8 @@ public class Collaborateur extends Employee{
     private List<FicheEvaluation> fichesEvaluations;
 
     public Collaborateur(String firstName, String lastName, String matricule, String topDirection, String direction,
-            String role) {
-        super(firstName, lastName, matricule, topDirection, direction, role);
+            String role, String affectationCode) {
+        super(firstName, lastName, matricule, topDirection, direction, role, affectationCode);
     }
 
     

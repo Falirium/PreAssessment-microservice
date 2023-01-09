@@ -257,7 +257,7 @@ $("#btn-emploi-save").click(function () {
             updateEmploi(generateEmploiJson(emploiJSON)).then((success) => {
 
                 if (success.hasOwnProperty("message")) {
-                    showModal("error", "Action échouée", success.message + "", "", {
+                    showModal("error", "Erreur", success.message + "", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "danger",
                         "id": "sdq1"
@@ -275,7 +275,7 @@ $("#btn-emploi-save").click(function () {
                     localStorage.removeItem("emploi");
 
                     console.log(success);
-                    showModal("success", "Action complétée", "la fiche d'emploi avec ces niveaux de sénioritées a été ajouté avec succès à la base de données. ", "", {
+                    showModal("success", "Succès", "la fiche d'emploi avec ces niveaux de sénioritées a été enregistrée avec succès. ", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "success",
                         "id": "sdq1"
@@ -301,7 +301,7 @@ $("#btn-emploi-save").click(function () {
             postEmploi(generateEmploiJson(emploiJSON)).then((success) => {
 
                 if (success.hasOwnProperty("message")) {
-                    showModal("error", "Action échouée", success.message + " Veuillez remplir une nouvelle fiche d'emploi avec un nom différent", "", {
+                    showModal("error", "Erreur", success.message + " Veuillez remplir une nouvelle fiche d'emploi avec un nom différent", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "danger",
                         "id": "sdq1"
@@ -314,7 +314,7 @@ $("#btn-emploi-save").click(function () {
                         }, 1000);
                     });
                 } else {
-                    showModal("success", "Action complétée", "la fiche d'emploi avec ces niveaux de sénioritées a été ajouté avec succès à la base de données. ", "", {
+                    showModal("success", "Succès", "La fiche d'emploi avec ces niveaux de sénioritées a été enregistrée avec succès. ", "", {
                         "text": "Revenir à l'acceuil",
                         "color": "success",
                         "id": "sdq1"
@@ -857,7 +857,7 @@ function parseCompetenceToTable(competences, niveauContainer) {
             // SCROLL DOWN TO EDIT COMPETENCE AREA
             $('html, body').animate({
                 scrollTop: $(editWrapperElement).offset().top - 400
-            }, 500);
+            }, 300);
 
             let competenceIndex = [...allEditCatBtns].indexOf(aElement);
             console.log(competenceIndex, competencesArray[competenceIndex]);
@@ -970,7 +970,7 @@ function addListenersToNewNiveau(container) {
 
 
 
-                let niveauJsclickedNiveauIndexon = {
+                let niveauJson = {
                     "level": niveauCounter,
                     "exigences": exigencesArray,
                     "marqueurs": marqueursArray,
@@ -999,12 +999,14 @@ function addListenersToNewNiveau(container) {
             console.log(exigencesArray, marqueursArray, competencesArray);
 
 
-            // CLEAR DISABLED-READONLY FROM INPUTS
+            // CLEAR DISABLED-READONLY FROM INPUTS-BUTTONS-ANCHORS
             clearDisableFromInputsFor(container);
+            clearDisableFromButtonsFor(container);
 
-            // DISABLE INPUTS-SELECTS FOR THE PREVIOUS NIVEAU CONTAINER
+            // DISABLE INPUTS-SELECTS-BUTTONS-ANCHORS FOR THE PREVIOUS NIVEAU CONTAINER
             let previousNiveau = Array.from(document.querySelectorAll(".niveau-container"))[currentNiveauIndex];
             disableInputsFor(previousNiveau);
+            disableButtonsFor(previousNiveau);
 
 
             // CHANGE CURRENT TO CLICKED
@@ -1087,6 +1089,7 @@ function addListenersToNewNiveau(container) {
 
                 // REMOVE DISABLE EFFECT ON THE LAST NIVEAU CONTAINER
                 clearDisableFromInputsFor(focusedNiveauContainer);
+                clearDisableFromButtonsFor(focusedNiveauContainer);
 
 
             }
@@ -1327,9 +1330,11 @@ function addListenersToNewNiveau(container) {
         marqueursArray = [...niveauxArray[niveauCounter - 1].marqueurs];
         competencesArray = [...niveauxArray[niveauCounter - 1].competences];
 
-        // DISABLE INPUTS FOR THE PREVIOUS NIVEAU
+        // DISABLE INPUTS-BUTTONS-ANCHORS FOR THE PREVIOUS NIVEAU
         disableInputsFor(container);
+        disableButtonsFor(container);
 
+        // DELETE ADD NIVEAU BTN
 
         // CREATE A  NEW CONTAINER 
         let niveauContainer = document.querySelector(".niveau-container");
@@ -1492,8 +1497,8 @@ function addNewNiveauHTML(niveauCounter) {
                                 </div>
                             </div>
 
-                            <a class="btn btn-primary mt-4 mb-0 " id="btn-add-niveau" role="button"
-                                aria-pressed="true">Ajouter un autre niveau</a>
+                            <button class="btn btn-primary mt-4 mb-0 " id="btn-add-niveau" role="button"
+                                aria-pressed="true"><i class="fe fe-plus me-2"></i> Ajouter un autre niveau</button>
 
                         </form>
                     </div>
@@ -1567,6 +1572,25 @@ function disableInputsFor(niveauContainer) {
         select.setAttribute("disabled", "");
     })
 }
+function disableButtonsFor(niveauContainer) {
+
+    console.log("diable for btns");
+
+    // FOR BUTTONS
+    // $(niveauContainer).find("button").attr("disabled","disabled");
+    $(niveauContainer).find("button").each(function(index, element) {
+
+        if (element.id === "btn-delete-niveau" || element.id === "btn-edit-niveau") {
+
+        } else {
+            $(element).attr("disabled","disabled");
+        }
+    });
+
+
+    // FOR ANCHOR ELEMENT
+    $(niveauContainer).find("a").attr("disabled","disabled");
+}
 
 function clearDisableFromInputsFor(niveauContainer) {
     let inputs = niveauContainer.querySelectorAll("input");
@@ -1580,6 +1604,16 @@ function clearDisableFromInputsFor(niveauContainer) {
         select.removeAttribute("disabled");
     })
 }
+
+function clearDisableFromButtonsFor(niveauContainer) {
+    
+    // FOR BUTTONS
+    $(niveauContainer).find("button").prop("disabled", false);
+
+    // FOR ANCHORS
+    $(niveauContainer).find("a").prop("disabled", false);
+}
+
 
 
 function checkInputsConstraints() {
