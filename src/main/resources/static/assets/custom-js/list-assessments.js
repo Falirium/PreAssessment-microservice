@@ -322,6 +322,14 @@ function getAssessmentsDataFromJson(arrJson, isDrh = false) {
             </div>
                 `)
             }
+
+            arr.push(`
+            <div class="g-2">
+                <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
+                        data-bs-original-title="Voir les résultas"><span
+                            class="fe fe-eye fs-14"></span></a>
+            </div>
+            `);
         } else {
             let assessmentTempContent = JSON.parse(e.content);
             arr.push(e.id);
@@ -333,36 +341,47 @@ function getAssessmentsDataFromJson(arrJson, isDrh = false) {
             <div class="mt-sm-1 d-block">
              <span class="tag tag-radius tag-round tag-outline-info">Enregistré</span>
             </div>
-                `)
+                `);
 
-
-        }
-
-
-
-
-
-        // ACTION COL
-        if (isDrh) {
-            arr.push(`
-            <div class="g-2">
-                <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
-                        data-bs-original-title="Voir les résultas"><span
-                            class="fe fe-eye fs-14"></span></a>
-            </div>
-            `);
-        } else {
             arr.push(`
             <div class="g-2">
                 <a class="btn text-primary btn-sm edit-btn" data-bs-toggle="tooltip"
                     data-bs-original-title="Éditer l'assessment"><span
                         class="fe fe-edit fs-14"></span></a>
-                <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
-                        data-bs-original-title="Voir les résultas"><span
-                            class="fe fe-eye fs-14"></span></a>
             </div>
             `);
+
+
+
+
+
         }
+
+
+
+
+
+        // // ACTION COL
+        // if (isDrh) {
+        //     arr.push(`
+        //     <div class="g-2">
+        //         <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
+        //                 data-bs-original-title="Voir les résultas"><span
+        //                     class="fe fe-eye fs-14"></span></a>
+        //     </div>
+        //     `);
+        // } else {
+        //     arr.push(`
+        //     <div class="g-2">
+        //         <a class="btn text-primary btn-sm edit-btn" data-bs-toggle="tooltip"
+        //             data-bs-original-title="Éditer l'assessment"><span
+        //                 class="fe fe-edit fs-14"></span></a>
+        //         <a class="btn text-primary btn-sm view-btn" data-bs-toggle="tooltip"
+        //                 data-bs-original-title="Voir les résultas"><span
+        //                     class="fe fe-eye fs-14"></span></a>
+        //     </div>
+        //     `);
+        // }
 
 
 
@@ -530,5 +549,5 @@ function updateBreadcrumb(user) {
         $("#breadcrumb-text").text("Consultant BCP");
 
     }
-    
+
 }
