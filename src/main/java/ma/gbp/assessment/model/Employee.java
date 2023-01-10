@@ -30,6 +30,7 @@ public class Employee {
     private String phoneNumber;
     private String workEmail;
     private String affectationCode;
+    private String[] roles;
 
     private String hashedPwd;
 
