@@ -15,33 +15,33 @@ $(".pwd-input").change(function (e) {
 })
 
 // AUTHENTIFICATION BCP
-$("#cnx-btn").click(function () {
-    //console.log(typeof(authenticate(matricule)), typeof(authenticate(matricule).then));
-    if (validateMatriculeConsultant(matricule, password)) {
+// $("#cnx-btn").click(function () {
+//     //console.log(typeof(authenticate(matricule)), typeof(authenticate(matricule).then));
+//     if (validateMatriculeConsultant(matricule, password)) {
 
-        // SAVE MANAGER MATRICULE
-        localStorage.setItem("user", "admin");
+//         // SAVE MANAGER MATRICULE
+//         localStorage.setItem("user", "admin");
 
-        // SET AUTHORIZATION : 
-        let auth = {
-            "regex": [
-                '(\\/\\w*)(\\/\\w*)\\?*'
-            ],
-            "sections": {
-                "hide": [],
-                "show": []
-            }
-        }
+//         // SET AUTHORIZATION : 
+//         let auth = {
+//             "regex": [
+//                 '(\\/\\w*)(\\/\\w*)\\?*'
+//             ],
+//             "sections": {
+//                 "hide": [],
+//                 "show": []
+//             }
+//         }
 
-        localStorage.setItem("auth", JSON.stringify(auth));
+//         localStorage.setItem("auth", JSON.stringify(auth));
 
-        // REDIRECT TO HOMEPAGE
-        let currentUrl = window.location.href;
-        window.location.replace(extractDomain(currentUrl) + "assessment/list");
+//         // REDIRECT TO HOMEPAGE
+//         let currentUrl = window.location.href;
+//         window.location.replace(extractDomain(currentUrl) + "assessment/list");
 
-    }
+//     }
 
-})
+// })
 
 
 
@@ -454,9 +454,9 @@ async function validateMatriculeManagerTwo(json) {
 }
 
 async function authenticateUser(json) {
-    let authUrl = "http://localhost:8080/preassessment/api/v1/employee/login";
+    let authUrl = "http://localhost:8080/login";
 
-    return fetch(url1, {
+    return fetch(authUrl, {
         method: 'POST',
         headers: {
             // Content-Type may need to be completely **omitted**
@@ -506,6 +506,8 @@ async function getDrhInfo(matricule) {
 }
 
 function validateMatriculeConsultant(matricule, pwd) {
+
+    console.log("triggered");
 
     if (matricule === "admin" && pwd === "admin123") {
 

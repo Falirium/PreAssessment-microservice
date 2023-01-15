@@ -75,48 +75,48 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.OK).body(savedManagersOne);
     }
 
-    @PostMapping("/login") 
-    public ResponseEntity<AuthentificationRes> authetificateUser(@RequestBody Employee user) {
+    // @PostMapping("/login") 
+    // public ResponseEntity<AuthentificationRes> authetificateUser(@RequestBody Employee user) {
 
-        AuthentificationRes authUser = new AuthentificationRes();
+    //     AuthentificationRes authUser = new AuthentificationRes();
 
-        ManagerOne userManagerOne = managerOneService.getManagerOneByMatricule(user.getMatricule());
-        ManagerTwo userManagerTwo = managerTwoService.getManagerTwoByMatricule(user.getMatricule());
-        Drh userDrh = drhService.getDrhByMatricule(user.getMatricule());
+    //     ManagerOne userManagerOne = managerOneService.getManagerOneByMatricule(user.getMatricule());
+    //     ManagerTwo userManagerTwo = managerTwoService.getManagerTwoByMatricule(user.getMatricule());
+    //     Drh userDrh = drhService.getDrhByMatricule(user.getMatricule());
 
-        if (userManagerOne != null || userManagerTwo != null) {
-            authUser.setAuth(true);
-            authUser.setRole("manager");
-            authUser = new AuthentificationRes("manager",
-                 true, 
-                 (userManagerOne == null) ? (userManagerTwo.getFirstName()) : (userManagerOne.getFirstName()),
-                 (userManagerOne == null) ? (userManagerTwo.getLastName()) : (userManagerOne.getLastName()),
-                 (userManagerOne == null) ? (userManagerTwo.getMatricule()) : (userManagerOne.getMatricule()));
+    //     if (userManagerOne != null || userManagerTwo != null) {
+    //         authUser.setAuth(true);
+    //         authUser.setRole("manager");
+    //         authUser = new AuthentificationRes("manager",
+    //              true, 
+    //              (userManagerOne == null) ? (userManagerTwo.getFirstName()) : (userManagerOne.getFirstName()),
+    //              (userManagerOne == null) ? (userManagerTwo.getLastName()) : (userManagerOne.getLastName()),
+    //              (userManagerOne == null) ? (userManagerTwo.getMatricule()) : (userManagerOne.getMatricule()));
 
 
-        } else if (userDrh != null) {
-            // authUser.setAuth(true);
-            // authUser.setRole("drh");
-            authUser = new AuthentificationRes("drh",
-                true,
-                userDrh.getFirstName(),
-                userDrh.getLastName(),
-                userDrh.getMatricule());
+    //     } else if (userDrh != null) {
+    //         // authUser.setAuth(true);
+    //         // authUser.setRole("drh");
+    //         authUser = new AuthentificationRes("drh",
+    //             true,
+    //             userDrh.getFirstName(),
+    //             userDrh.getLastName(),
+    //             userDrh.getMatricule());
 
-        } else {
-            // authUser.setAuth(true);
-            // authUser.setRole("admin");
-            authUser = new AuthentificationRes(
-                "admin",
-                true,
-                "Consultant BCP",
-                "",
-                ""
-            );
-        }
+    //     } else {
+    //         // authUser.setAuth(true);
+    //         // authUser.setRole("admin");
+    //         authUser = new AuthentificationRes(
+    //             "admin",
+    //             true,
+    //             "Consultant BCP",
+    //             "",
+    //             ""
+    //         );
+    //     }
 
-        return ResponseEntity.status(HttpStatus.OK).body(authUser);
-    }
+    //     return ResponseEntity.status(HttpStatus.OK).body(authUser);
+    // }
 
     @PostMapping("/managerTwo")
     public ResponseEntity<List<ManagerTwo>> saveManagersTwo(@RequestBody List<ManagerTwo> managersTwo) {
