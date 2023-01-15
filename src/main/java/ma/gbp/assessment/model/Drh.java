@@ -4,7 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import groovy.transform.ToString;
 import lombok.Data;
@@ -32,6 +35,10 @@ public class Drh extends Employee{
 
     private int[] codePrefix;
     private int[] codeSuffix;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "associatedDrh")
+    private User user;
 
 
 }

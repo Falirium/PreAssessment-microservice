@@ -45,6 +45,7 @@ import ma.gbp.assessment.service.FicheEvaluationService;
 import ma.gbp.assessment.service.ManagerOneService;
 import ma.gbp.assessment.service.ManagerTwoService;
 import ma.gbp.assessment.service.NiveauService;
+import ma.gbp.assessment.service.UserService;
 
 import org.apache.catalina.connector.Response;
 import org.hibernate.annotations.Type;
@@ -94,6 +95,9 @@ public class AssessmentController {
 
         @Autowired
         private AssessmentTempService assessmentTempService;
+
+        @Autowired
+        private UserService userService;
 
         @GetMapping("/")
         public ResponseEntity<List<Assessment>> getAssessments() {
@@ -146,6 +150,9 @@ public class AssessmentController {
                                 // SAVE MANAGER TO DB
                                 savedManager2 = managerTwoService.saveManager(savedManager2);
 
+                                // CREATE A USER ACCOUNT FOR THE MANAGER
+                                userService.createUserAccFor(savedManager2);
+
                         }
 
                         // ADD DIRECTLY TO THE LIST
@@ -182,6 +189,10 @@ public class AssessmentController {
                                 savedManager1.setManager(associatedManagerTwo);
 
                                 savedManager1 = managerOneService.saveManager(savedManager1);
+
+
+                                // CREATE A USER ACCOUNT FOR THE MANAGER
+                                userService.createUserAccFor(savedManager1);
                         }
 
                         // ADD DIRECTLY TO THE LIST

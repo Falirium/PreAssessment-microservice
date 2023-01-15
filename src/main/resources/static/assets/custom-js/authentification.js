@@ -95,8 +95,8 @@ $("#cnx-btn-bpr").click(function () {
                             "id": "#manager"
                         },
                         {
-                            "name" : "add assessment",
-                            "id" : "#btn-add-assessment"
+                            "name": "add assessment",
+                            "id": "#btn-add-assessment"
                         }
                     ],
                     "show": [
@@ -178,7 +178,7 @@ $("#cnx-btn-manager").click(function () {
         if (authRes.hasOwnProperty("code") || authRes.auth === false) {
             showModal("error", "Erreur", "L'authentification a échoué. Veuillez entrer une combinaison correcte du nom d'utilisateur et du mot de passe.");
         } else {
-            
+
             // SET AUTHORIZATION
             let auth = {
                 "regex": [
@@ -222,7 +222,7 @@ $("#cnx-btn-manager").click(function () {
                 // SAVE MANAGER MATRICULE
                 let user = {
                     "type": "1",
-                    "data" : manager
+                    "data": manager
 
                 }
 
@@ -241,11 +241,11 @@ $("#cnx-btn-manager").click(function () {
                 manager = authRes.managerTwoUser;
                 showModal("success", "Welcome :" + manager.firstName, "Vous avez été connecté avec succès");
 
-                
+
                 // SAVE MANAGER MATRICULE
                 let user = {
                     "type": "2",
-                    "data" : manager
+                    "data": manager
 
                 }
 
@@ -279,102 +279,43 @@ $("#cnx-btn-manager").click(function () {
         }
     })
 
-    // authenticate(matricule).then((manager) => {
-    //     // console.log(manager, password);
-    //     // console.log(manager.type, (password === "manager2"));
-
-    //     // SET AUTHORIZATION
-    //     let auth = {
-    //         "regex": [
-    //             '\\/(evaluation)\\/(evaluate|list)\\?*',
-
-    //         ],
-    //         "sections": {
-    //             "hide": [
-    //                 {
-    //                     "name": "assessment",
-    //                     "id": "#assessment"
-
-    //                 },
-    //                 {
-    //                     "name": "emploi",
-    //                     "id": "#emploi"
-    //                 },
-    //                 {
-    //                     "name": "pv",
-    //                     "id": "#pv"
-    //                 }
-    //             ],
-    //             "show": [
-    //                 {
-    //                     "type": "anchor",
-    //                     "name": "dashboard",
-    //                     "id": "#dashboard",
-    //                     "link": "/evaluation/list"
-    //                 }
-    //             ]
-    //         }
-    //     }
-
-    //     if (manager.type === "1" && password === "manager1") {
-    //         showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
-
-    //         // SAVE MANAGER MATRICULE
-    //         localStorage.setItem("user", JSON.stringify(manager));
-
-    //         // CHANGE BREADCRUMB TEXT TO MANAGER N+1
-    //         auth.sections.show.push(
-    //             {
-    //                 "type": "text",
-    //                 "name": "breadcrumb",
-    //                 "id": "#breadcrumb-text",
-    //                 "text": "Manager N+1"
-    //             }
-    //         );
-
-
-
-
-    //     } else if (manager.type == "2" && password === "manager2") {
-    //         showModal("success", "Welcome :" + manager.data.firstName, "Vous avez été connecté avec succès");
-
-    //         // SAVE MANAGER MATRICULE
-    //         localStorage.setItem("user", JSON.stringify(manager));
-
-    //         // // REDIRECT TO HOMEPAGE
-    //         // let currentUrl = window.location.href;
-    //         // window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-
-    //         // console.log("redirected");
-
-    //         // CHANGE BREADCRUMB TEXT TO MANAGER N+1
-    //         auth.sections.show.push(
-    //             {
-    //                 "type": "text",
-    //                 "name": "breadcrumb",
-    //                 "id": "#breadcrumb-text",
-    //                 "text": "Manager N+2"
-    //             }
-    //         );
-
-    //     } else {
-    //         showModal("error", "échec", "Le mot de passe est incorrect")
-    //     }
-
-
-
-    //     localStorage.setItem("auth", JSON.stringify(auth));
-
-
-    //     // REDIRECT TO HOMEPAGE
-    //     let currentUrl = window.location.href;
-    //     window.location.replace(extractDomain(currentUrl) + "evaluation/list");
-    //     console.log("redirected");
-
-    // });
 
 
 })
+
+$("#cnx-btn").click(function () {
+
+    let authObj = {
+        "username": matricule,
+        "password": password
+    }
+
+    authenticateUser(authObj).then((res) => {
+        if (res.hasOwnProperty("code")) {
+
+            console.error(res.message);
+        } else {
+
+            console.log("Authenticated");
+            
+            // 3 SENARIOS : ADMIN - MANAGER - DRH
+            switch (res.role) {
+                case "admin":
+                    console.log("admin");
+                    break;
+                case "drh":
+                    console.log("drh");
+                    break;
+                case "manager":
+                    console.log("manager");
+                    break;
+            }
+        }
+    })
+
+
+})
+
 const extractDomain = (url) => {
     const elems = url.split("/");
     return elems[0] + "//" + elems[2] + "/";
@@ -508,6 +449,28 @@ async function validateMatriculeManagerTwo(json) {
         }).catch((error) => {
             console.error(error);
             console.log("error 1");
+            return error;
+        })
+}
+
+async function authenticateUser(json) {
+    let authUrl = "http://localhost:8080/preassessment/api/v1/employee/login";
+
+    return fetch(url1, {
+        method: 'POST',
+        headers: {
+            // Content-Type may need to be completely **omitted**
+            // or you may need something
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(json) // This is your file object
+    }).then(response => response.json())
+        .then((success) => {
+            console.log(success);
+            return success;
+        }).catch((error) => {
+            console.error(error);
+            console.log("error de signin");
             return error;
         })
 }

@@ -5,8 +5,11 @@ import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
 
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import groovy.transform.ToString;
 import lombok.Data;
@@ -30,9 +33,11 @@ public class Employee {
     private String phoneNumber;
     private String workEmail;
     private String affectationCode;
-    private String[] roles;
+    // private String[] roles;
 
     private String hashedPwd;
+
+    
 
     public Employee(String firstName, String lastName, String matricule) {
         this.firstName = firstName;
@@ -51,11 +56,6 @@ public class Employee {
         this.role = role;
         this.affectationCode = affectationCode;
     }
-
-    
-
-
-    
 
     
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ma.gbp.assessment.exception.CustomErrorException;
+import ma.gbp.assessment.message.AuthentificationRes;
 import ma.gbp.assessment.model.Collaborateur;
 import ma.gbp.assessment.model.Drh;
 import ma.gbp.assessment.model.Employee;
@@ -27,6 +28,7 @@ import ma.gbp.assessment.service.DrhService;
 import ma.gbp.assessment.service.EmployeeService;
 import ma.gbp.assessment.service.ManagerOneService;
 import ma.gbp.assessment.service.ManagerTwoService;
+import ma.gbp.assessment.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,9 @@ public class EmployeeController {
     @Autowired
     private DrhService drhService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/managerOne")
     public ResponseEntity<List<ManagerOne>> saveManagersOne(@RequestBody List<ManagerOne> managersOne) {
         List<ManagerOne> savedManagersOne = new ArrayList<ManagerOne>();
@@ -68,6 +73,49 @@ public class EmployeeController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(savedManagersOne);
+    }
+
+    @PostMapping("/login") 
+    public ResponseEntity<AuthentificationRes> authetificateUser(@RequestBody Employee user) {
+
+        AuthentificationRes authUser = new AuthentificationRes();
+
+        ManagerOne userManagerOne = managerOneService.getManagerOneByMatricule(user.getMatricule());
+        ManagerTwo userManagerTwo = managerTwoService.getManagerTwoByMatricule(user.getMatricule());
+        Drh userDrh = drhService.getDrhByMatricule(user.getMatricule());
+
+        if (userManagerOne != null || userManagerTwo != null) {
+            authUser.setAuth(true);
+            authUser.setRole("manager");
+            authUser = new AuthentificationRes("manager",
+                 true, 
+                 (userManagerOne == null) ? (userManagerTwo.getFirstName()) : (userManagerOne.getFirstName()),
+                 (userManagerOne == null) ? (userManagerTwo.getLastName()) : (userManagerOne.getLastName()),
+                 (userManagerOne == null) ? (userManagerTwo.getMatricule()) : (userManagerOne.getMatricule()));
+
+
+        } else if (userDrh != null) {
+            // authUser.setAuth(true);
+            // authUser.setRole("drh");
+            authUser = new AuthentificationRes("drh",
+                true,
+                userDrh.getFirstName(),
+                userDrh.getLastName(),
+                userDrh.getMatricule());
+
+        } else {
+            // authUser.setAuth(true);
+            // authUser.setRole("admin");
+            authUser = new AuthentificationRes(
+                "admin",
+                true,
+                "Consultant BCP",
+                "",
+                ""
+            );
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(authUser);
     }
 
     @PostMapping("/managerTwo")
@@ -121,7 +169,12 @@ public class EmployeeController {
             } else {
                 drh.setHashedPwd(BCrypt.hashpw(drh.getHashedPwd(), BCrypt.gensalt()));
 
-                savedDrhs.add(drhService.saveDrh(drh));
+                Drh savedDrh = drhService.saveDrh(drh);
+
+                savedDrhs.add(savedDrh);
+
+                // CREATE A USER ACCOUNT FOR THE MANAGER
+                userService.createUserAccFor(savedDrh);
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(drhService.saveListOfDrhs(savedDrhs));

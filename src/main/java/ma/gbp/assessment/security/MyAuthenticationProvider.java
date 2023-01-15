@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 
 import ma.gbp.assessment.service.MyUserDetailsService;        
@@ -26,7 +27,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        if (userDetails == null || !userDetails.getPassword().equals(password)) {
+        if (userDetails == null || !BCrypt.checkpw(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid username or password");
         }
 

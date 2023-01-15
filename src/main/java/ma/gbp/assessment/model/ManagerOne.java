@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Target;
@@ -52,6 +53,10 @@ public class ManagerOne extends Employee {
     @OneToMany(mappedBy = "evaluateurOne")
     @JsonIgnore
     private List<FicheEvaluation> fichesEvaluations;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "associatedManagerOne")
+    private User user;
 
     public ManagerOne(String firstName, String lastName, String matricule) {
         super(firstName, lastName, matricule);

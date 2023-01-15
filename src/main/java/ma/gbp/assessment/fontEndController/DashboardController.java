@@ -12,5 +12,10 @@ public class DashboardController {
         return "contact-us";
     }
 
+    @RequestMapping(value = {"/"})
+    public String mainPage() {
+        return "list-assessments.html";
+    }
+
 
 }
