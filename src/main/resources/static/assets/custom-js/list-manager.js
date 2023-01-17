@@ -20,8 +20,12 @@ getListOfManagers().then((data) => {
         listManagers = data;
         // ATRIBUTE TOP-DIRECTION TO EACH MANAGER
         listManagers = listManagers.map((e, i) => {
-             e.topDirection = attributeBprByMatt(e.matricule);
-             return e;
+            if (e.affectationCode == null) {
+                e.topDirection = "*** Non spécifié ***"
+            } else {
+                e.topDirection = attributeBprByAffectationCode(e.matricule);
+            }
+            return e;
         })
     }
 
@@ -145,7 +149,7 @@ function getManagerColumnFromJson(json, authorizedCol) {
 function getDrhsDataFromJson(arrJson) {
     let finalArr = [];
 
-    console.log(arrJson , arrJson.length)
+    console.log(arrJson, arrJson.length)
 
     if (arrJson.length == 0) {
         return finalArr;
@@ -253,16 +257,17 @@ function displayFullBpr(tag) {
             break;
         case null:
         case "":
-            bpr = "undefined"
+        case "*** Non spécifié ***":
+            bpr = "*** Non spécifié ***"
             break;
     }
 
     return bpr;
 }
 
-function attributeBprByMatt(mat) {
-    let codeBase2 = mat.slice(0, 2);
-    let codeBase1 = mat.slice(0, 1);
+function attributeBprByAffectationCode(affectatioCode) {
+    let codeBase2 = affectatioCode.slice(0, 2);
+    let codeBase1 = affectatioCode.slice(0, 1);
     let tag = "";
     switch (codeBase2) {
         case "64":
