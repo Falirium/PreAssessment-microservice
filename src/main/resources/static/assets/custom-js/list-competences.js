@@ -34,9 +34,16 @@ getListOfMatricesCompetences().then((data) => {
         lengthMenu: [4, 8, 16, 20, 24, 'All']
     });
 
-    // ADD EVENTLISTENERS TO TABLE BTNS : EDIT DELETE
-
     addEventListenersToTableBtns();
+    
+    matriceCompetenceDatatable.on('draw.dt', function () {
+
+        // ADD EVENTLISTENERS TO TABLE BTNS : EDIT DELETE
+
+        addEventListenersToTableBtns();
+    });
+
+
 
     // $(".view-btn").click(function (e) {
 
@@ -274,7 +281,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
         // ADD EVENT LISTENER TO THE BTN
         $("#" + btnJson.id).click(function (e) { eventHandler(e) });
-    } else if (modalId != "lodaing"){
+    } else if (modalId != "lodaing") {
         $(modalHeaderId).parent().append(`<button aria-label="Close" class="btn mx-4 btn-${color} pd-x-25"
         data-bs-dismiss="modal">Fermer</button>`);
     }

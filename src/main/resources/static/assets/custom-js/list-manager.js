@@ -18,6 +18,7 @@ getListOfManagers().then((data) => {
         listManagers = [];
     } else {
         listManagers = data;
+
         // ATRIBUTE TOP-DIRECTION TO EACH MANAGER
         listManagers = listManagers.map((e, i) => {
             if (e.affectationCode == null) {
@@ -41,6 +42,17 @@ getListOfManagers().then((data) => {
         // columns: col
     })
 
+    addListenersToBtns();
+
+    managerDataTable.on('draw.dt', function () {
+        addListenersToBtns();
+    })
+
+
+
+})
+
+function addListenersToBtns() {
     // ADD EVENTLISTENERS TO VIEW BTN
 
     $(".view-btn").click(function (e) {
@@ -54,7 +66,7 @@ getListOfManagers().then((data) => {
 
 
         let managerMatricule = $(aElement).parents("td").siblings().slice(1, 2).text();
-        console.log(managerMatricule);
+        // console.log(managerMatricule);
 
         let managerObj = getManagerInfoFromArr(managerMatricule).manager;
         console.log(managerObj);
@@ -69,8 +81,7 @@ getListOfManagers().then((data) => {
 
 
     })
-
-})
+}
 
 function buildURL(prefix, params) {
 

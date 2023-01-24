@@ -62,99 +62,110 @@ getListOfTempAssessments().then((data) => {
             data: dataSet
         })
 
-        // ADD EVENTLISTENERS TO VIEW BTN
-        $(".edit-btn").click(function (e) {
+        addListenersToActionBtns();
 
-            let aElement;
-            if (e.target.tagName === "SPAN") {
-                aElement = e.target.parentElement;
-            } else {
-                aElement = e.target;
-            }
-
-            let assessmentName = $(aElement).parents("td").siblings().slice(1, 2).text();
-            console.log(assessmentName);
-
-            let assessment = getAssessmentInfoFromArr(assessmentName).assessment;
-            console.log(assessment);
-
-            // CHECK IF THE ASSESSMENT IS LANCHED OR NOT
-            if (assessment.hasOwnProperty('status')) {
-
-                // SHOW ERROR MESSAGE 
-                showModal("error", "Accès refusé", "Vous ne pouvez pas modifier l'assessment après son lancement.");
-
-            } else {
-
-                //SAVE ASSESSMENT ON LOCAL SESSION
-                localStorage.setItem("assessmentId", assessment.id);
-
-                // REDIRECT TO THE ASSESSMENT PAGE 
-                // let url = buildURL("evaluation/evaluate", urlParams);
-                let currentUrl = window.location.href;
-
-                window.location.href = extractDomain(currentUrl) + "assessment/edit";
-                // console.log(extractDomain(currentUrl) + "assessment/add");
-                // console.log(localStorage.getItem("assessmentId"));
-            }
-
-
+        assessmentDatatable.on('draw.dt', function () {
+            addListenersToActionBtns();
         })
 
 
-        // ADD EVENT LINTENER TO CONSULTER BTN
-        $(".view-btn").click(function (e) {
-
-            // let aElement;
-            // if (e.target.tagName === "SPAN") {
-            //     aElement = e.target.parentElement;
-            // } else {
-            //     aElement = e.target;
-            // }
-
-            // let btns = $(".view-btn").get();
-            // let indexOfAssessment = btns.indexOf(aElement);
-
-            // // GET THE ASSOCIATED ASSESSMENT
-            // let assessment = listAssessments[indexOfAssessment];
-            // console.log(assessment);
-
-
-            let aElement;
-            if (e.target.tagName === "SPAN") {
-                aElement = e.target.parentElement;
-            } else {
-                aElement = e.target;
-            }
-
-            let assessmentName = $(aElement).parents("td").siblings().slice(1, 2).text();
-            console.log(assessmentName);
-
-            let assessment = getAssessmentInfoFromArr(assessmentName).assessment;
-            console.log(assessment)
-
-            if (!assessment.hasOwnProperty('status')) {
-
-                // SHOW ERROR MESSAGE
-                showModal("error", "Accès refusé", "Vous ne pouvez pas voir les résultats d'un assessment qui n'est pas encore lancée.");
-
-            } else {
-
-                //SAVE ASSESSMENT ON LOCAL SESSION
-                localStorage.setItem("assessmentId", assessment.id);
-
-                // REDIRECT TO THE ASSESSMENT PAGE 
-                // let url = buildURL("evaluation/evaluate", urlParams);
-                let currentUrl = window.location.href;
-
-                window.location.href = extractDomain(currentUrl) + "assessment/" + assessment.id;
-                // console.log(extractDomain(currentUrl) + "assessment/add");
-                // console.log(localStorage.getItem("assessmentId"));
-            }
-        })
 
     })
 })
+
+function addListenersToActionBtns() {
+    console.log("draw");
+    // ADD EVENTLISTENERS TO VIEW BTN
+    $(".edit-btn").click(function (e) {
+
+        let aElement;
+        if (e.target.tagName === "SPAN") {
+            aElement = e.target.parentElement;
+        } else {
+            aElement = e.target;
+        }
+
+        let assessmentName = $(aElement).parents("td").siblings().slice(1, 2).text();
+        console.log(assessmentName);
+
+        let assessment = getAssessmentInfoFromArr(assessmentName).assessment;
+        console.log(assessment);
+
+        // CHECK IF THE ASSESSMENT IS LANCHED OR NOT
+        if (assessment.hasOwnProperty('status')) {
+
+            // SHOW ERROR MESSAGE 
+            showModal("error", "Accès refusé", "Vous ne pouvez pas modifier l'assessment après son lancement.");
+
+        } else {
+
+            //SAVE ASSESSMENT ON LOCAL SESSION
+            localStorage.setItem("assessmentId", assessment.id);
+
+            // REDIRECT TO THE ASSESSMENT PAGE 
+            // let url = buildURL("evaluation/evaluate", urlParams);
+            let currentUrl = window.location.href;
+
+            window.location.href = extractDomain(currentUrl) + "assessment/edit";
+            // console.log(extractDomain(currentUrl) + "assessment/add");
+            // console.log(localStorage.getItem("assessmentId"));
+        }
+
+
+    })
+
+
+    // ADD EVENT LINTENER TO CONSULTER BTN
+    $(".view-btn").click(function (e) {
+
+        // let aElement;
+        // if (e.target.tagName === "SPAN") {
+        //     aElement = e.target.parentElement;
+        // } else {
+        //     aElement = e.target;
+        // }
+
+        // let btns = $(".view-btn").get();
+        // let indexOfAssessment = btns.indexOf(aElement);
+
+        // // GET THE ASSOCIATED ASSESSMENT
+        // let assessment = listAssessments[indexOfAssessment];
+        // console.log(assessment);
+
+
+        let aElement;
+        if (e.target.tagName === "SPAN") {
+            aElement = e.target.parentElement;
+        } else {
+            aElement = e.target;
+        }
+
+        let assessmentName = $(aElement).parents("td").siblings().slice(1, 2).text();
+        console.log(assessmentName);
+
+        let assessment = getAssessmentInfoFromArr(assessmentName).assessment;
+        console.log(assessment)
+
+        if (!assessment.hasOwnProperty('status')) {
+
+            // SHOW ERROR MESSAGE
+            showModal("error", "Accès refusé", "Vous ne pouvez pas voir les résultats d'un assessment qui n'est pas encore lancée.");
+
+        } else {
+
+            //SAVE ASSESSMENT ON LOCAL SESSION
+            localStorage.setItem("assessmentId", assessment.id);
+
+            // REDIRECT TO THE ASSESSMENT PAGE 
+            // let url = buildURL("evaluation/evaluate", urlParams);
+            let currentUrl = window.location.href;
+
+            window.location.href = extractDomain(currentUrl) + "assessment/" + assessment.id;
+            // console.log(extractDomain(currentUrl) + "assessment/add");
+            // console.log(localStorage.getItem("assessmentId"));
+        }
+    })
+}
 
 function buildURL(prefix, params) {
 

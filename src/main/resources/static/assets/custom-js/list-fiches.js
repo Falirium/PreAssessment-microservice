@@ -57,6 +57,17 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
         ordering: false
     })
 
+    addListenersToActionBtns();
+
+
+    ficheDatatable.on('draw.dt', function () {
+        addListenersToActionBtns();
+    })
+
+
+})
+
+function addListenersToActionBtns() {
     // ADD EVENTLISTENERS TO VIEW BTN
     $(".view-btn").click(function (e) {
 
@@ -202,9 +213,7 @@ let fichesJson = getListOfFichesByMatricule(managerMatricule).then((data) => {
 
 
     })
-
-})
-
+}
 function buildURL(prefix, params) {
 
     let url = prefix + "?";
@@ -356,7 +365,7 @@ function getFichesDataFromJson(arrJson, authorizedCol) {
                                 </button>
                                 `
                             );
-                            
+
                             break;
                         case "FINISHED":
                             arr.push(
@@ -463,7 +472,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 
     let modalId, modalHeaderId, modalContentId, color;
 
-  
+
     switch (type) {
         case "success":
             modalId = "success";

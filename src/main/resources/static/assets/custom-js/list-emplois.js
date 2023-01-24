@@ -27,6 +27,17 @@ getListOfEmplois().then((data) => {
         // columns: col
     })
 
+    addListenersToActionBtns();
+
+    emploiDatatable.on('draw.dt', function () {
+        addListenersToActionBtns();
+    })
+
+
+
+})
+
+function addListenersToActionBtns() {
     // ADD EVENTLISTENERS TO VIEW BTN
 
     $(".view-btn").click(function (e) {
@@ -71,8 +82,7 @@ getListOfEmplois().then((data) => {
 
 
     })
-
-})
+}
 
 function buildURL(prefix, params) {
 

@@ -130,7 +130,7 @@ $(function () {
     // EVENT LISTENER WHEN WE SAVE AN ASSESSMENT
     $("#btn-assessment-lanch").one('click', function (e) {
 
-    
+
         // ADD LODAER TO BTN
         addLoaderToBtn("#btn-assessment-lanch");
 
@@ -224,7 +224,7 @@ $(function () {
     // EVENT LISTENER TO SAVE THE ASSESSMENT 
     $("#btn-assessment-save").one('click', function (e) {
 
-        
+
 
         // ADD LOADER TO BTN
         addLoaderToBtn("#btn-assessment-save");
@@ -296,7 +296,7 @@ $(function () {
 
                 // DELETE LOADER TO BTN
                 deleteLoaderToBtn("#btn-assessment-save");
-                
+
                 // REMOVE ANY ASSESSMENT-ID
                 removeAssessmentFromStorage();
 
@@ -668,9 +668,9 @@ inputFileUploader.addEventListener('change', (e) => {
             });
 
         }
-        
 
-        
+
+
 
 
         classificationColumns = getClassificationColumn(excelData[0]);
@@ -1215,63 +1215,64 @@ function parseExcelPopulation(excelFile) {
                 console.timeEnd();
                 // var result = ''
                 try {
-                    workbook.eachSheet(function (worksheet, sheetId) {
 
-                        let index = 1;
-                        while (worksheet.getRow(index).values.length !== 0) {
-                            let rowValues = worksheet.getRow(index).values;
-                            let rowArr = [];
+                    // GET THE FIRST WORKSHEET
+                    const worksheet = workbook.getWorksheet("Déjà dans l'emploi");
+                    let index = 1;
+                    while (worksheet.getRow(index).values.length !== 0) {
+                        let rowValues = worksheet.getRow(index).values;
+                        let rowArr = [];
 
-                            rowValues.forEach((cell, index) => {
-                                //console.log(cell, Object.prototype.toString.call(cell))
+                        rowValues.forEach((cell, index) => {
+                            //console.log(cell, Object.prototype.toString.call(cell))
 
-                                // FILTER OUT THE FOLLOWING TYPES : STRING, NULBER, DATE, JSON OBJECT
-                                if (Object.prototype.toString.call(cell) === '[object Date]') {
-                                    //console.log(index, cell, typeof(cell));
-                                    rowArr.push(cell.toLocaleDateString())
-                                    //console.log(cell.toLocaleDateString());
-                                } else if (Object.prototype.toString.call(cell) === '[object Object]') {
-                                    rowArr.push(cell.result);
-                                } else {
-                                    rowArr.push(cell);
-                                }
-
-                            })
-
-                            excelData.push(rowArr);
-
-                            index++;
-                        }
-
-                        // GET EMPLOI COLUMN INDEX
-                        let indexOfEmploiCol = excelData[0].indexOf("EMPLOIS_CIBLES");
-                        //let indexOfSenioriteEmploi = excelData[0].indexOf("NIVEAU_SENIORITÉ");
-                        let emploiCol = worksheet.getColumn(indexOfEmploiCol + 1).values;
-                        //let senioriteCol = worksheet.getColumn(indexOfSenioriteEmploi + 1).values;
-
-                        listOfEmplois = emploiCol.map((e, i) => {
-                            if (typeof (e) === 'undefined' || i === 0) {
-                                return null;
+                            // FILTER OUT THE FOLLOWING TYPES : STRING, NULBER, DATE, JSON OBJECT
+                            if (Object.prototype.toString.call(cell) === '[object Date]') {
+                                //console.log(index, cell, typeof(cell));
+                                rowArr.push(cell.toLocaleDateString())
+                                //console.log(cell.toLocaleDateString());
+                            } else if (Object.prototype.toString.call(cell) === '[object Object]') {
+                                rowArr.push(cell.result);
                             } else {
-                                return e;
+                                rowArr.push(cell);
                             }
 
                         })
 
-                        listOfEmplois = [...new Set(listOfEmplois)].filter((e) => {
-                            if (typeof (e) === 'undefined' || e === "EMPLOIS_CIBLES") {
-                                return false;
-                            } else {
+                        excelData.push(rowArr);
 
-                                return true;
-                            }
-                        });
+                        index++;
+                    }
 
+                    // GET EMPLOI COLUMN INDEX
+                    let indexOfEmploiCol = excelData[0].indexOf("EMPLOIS_CIBLES");
+                    //let indexOfSenioriteEmploi = excelData[0].indexOf("NIVEAU_SENIORITÉ");
+                    let emploiCol = worksheet.getColumn(indexOfEmploiCol + 1).values;
+                    //let senioriteCol = worksheet.getColumn(indexOfSenioriteEmploi + 1).values;
 
-                        // START POPULATE THE 
+                    listOfEmplois = emploiCol.map((e, i) => {
+                        if (typeof (e) === 'undefined' || i === 0) {
+                            return null;
+                        } else {
+                            return e;
+                        }
 
+                    })
 
+                    listOfEmplois = [...new Set(listOfEmplois)].filter((e) => {
+                        if (typeof (e) === 'undefined' || e === "EMPLOIS_CIBLES") {
+                            return false;
+                        } else {
+
+                            return true;
+                        }
                     });
+
+
+                    // START POPULATE THE 
+
+
+
                 } catch (error) {
                     console.error(error);
                     throw error;
@@ -2228,7 +2229,7 @@ function generateCollaborateur(arr) {
         "role": arr[indexOfRole],
         "direction": arr[indexOfDirection],
         "topDirection": "",
-        "affectationCode" : arr[indexOfCodeAffectation],
+        "affectationCode": arr[indexOfCodeAffectation],
         "managerOne": generateManager1(arr)
     }
 
@@ -2382,16 +2383,16 @@ function generatePasswordsForManagers(manager1Arr, manager2Arr) {
     let managers2 = [];
 
     if (manager1Arr.length != 0 && manager2Arr.length != 0) {
-        
+
         manager1Arr.map((e, i) => {
             let pwd = generateStrongPwd();
             e.hashedPwd = pwd;
 
             managers1.push({
-                "firstName" : e.firstName,
-                "lastName" : e.llastName,
-                "matricule" : e.matricule,
-                "hashedPwd" : pwd
+                "firstName": e.firstName,
+                "lastName": e.llastName,
+                "matricule": e.matricule,
+                "hashedPwd": pwd
             });
         })
 
@@ -2400,18 +2401,18 @@ function generatePasswordsForManagers(manager1Arr, manager2Arr) {
             e.hashedPwd = pwd;
 
             managers2.push({
-                "firstName" : e.firstName,
-                "lastName" : e.llastName,
-                "matricule" : e.matricule,
-                "hashedPwd" : pwd
+                "firstName": e.firstName,
+                "lastName": e.llastName,
+                "matricule": e.matricule,
+                "hashedPwd": pwd
             });
         })
 
     }
 
     return {
-        "managers1" : managers1,
-        "managers2" : managers2
+        "managers1": managers1,
+        "managers2": managers2
     }
 }
 

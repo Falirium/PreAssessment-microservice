@@ -216,7 +216,7 @@ public class FicheEvaluationController {
             }
 
             // CASE 3 : SAVOIR ETRE
-            if (competence.getType().equals("Savoir-etre") && competences_se) {
+            if (competence.getType().equals("Savoir-être") && competences_se) {
                 fullCompetenceRequis.setName(competence.getName());
                 fullCompetenceRequis.setRequiredNiveau(competence.getNiveauRequis());
                 fullCompetenceRequis.setNiveaux(fullCompetence.getNiveaux());

@@ -1898,7 +1898,7 @@ function showModal(type, header, content, action, btnJson, eventHandler) {
 function addLoaderToBtn(btnId) {
 
     // ADD LOADER HTML ELEMENT
-    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`)
+    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>  `)
 }
 
 function deleteLoaderToBtn(btnId) {

@@ -314,7 +314,8 @@ fileExcel.addEventListener("change", (e) => {
     $("#input-modal").modal('hide');
 
     // ADD LOADER ON THE PAGE
-    $("#btn-add-file").addClass("btn-loading");
+    // $("#btn-add-file").addClass("btn-loading");
+    addLoaderToBtn("#btn-add-file");
 
     // POPULATE GLOSSAIRE ARRAY
 
@@ -329,7 +330,8 @@ fileExcel2.addEventListener("change", (e) => {
     $("#input-modal2").modal('hide');
 
     // ADD LOADER ON THE PAGE
-    $("#btn-re-add-file").addClass("btn-loading");
+    // $("#btn-re-add-file").addClass("btn-loading");
+    addLoaderToBtn("#btn-re-add-file");
 
     // POPULATE GLOSSAIRE ARRAY
 
@@ -610,8 +612,10 @@ async function parseExcelFile2(inputElement, addToTheList = false) {
             .then(function () {
 
                 // //HIDE LOADER
-                $("#btn-add-file").removeClass("btn-loading");
-                $("#btn-re-add-file").removeClass("btn-loading");
+                // $("#btn-add-file").removeClass("btn-loading");
+                deleteLoaderToBtn("#btn-add-file");
+                // $("#btn-re-add-file").removeClass("btn-loading");
+                deleteLoaderToBtn("#btn-re-add-file");
 
                 // PARSE COMPETENCE DATA TO THE DATATABLE
                 parseCompetencesToTable(competenceArray);
@@ -636,7 +640,8 @@ async function parseExcelFile2(inputElement, addToTheList = false) {
                 })
 
                 // //HIDE LOADER
-                $("#btn-add-file").removeClass("btn-loading");
+                // $("#btn-add-file").removeClass("btn-loading");
+                deleteLoaderToBtn("#btn-add-file");
             });
     };
     reader.readAsArrayBuffer(file);
@@ -1240,7 +1245,7 @@ function checkForCompetenceArray() {
 function addLoaderToBtn(btnId) {
 
     // ADD LOADER HTML ELEMENT
-    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`)
+    $(btnId).prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> `)
 }
 
 function deleteLoaderToBtn(btnId) {

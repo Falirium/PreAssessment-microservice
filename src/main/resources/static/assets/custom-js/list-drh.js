@@ -26,7 +26,20 @@ getListOfDrhs().then((data) => {
         data: dataSet,
         // columns: col
     })
+    
+    addListenersToActionBtns();
 
+
+    drhDataTable.on('draw.dt', function () {
+        addListenersToActionBtns();
+
+    })
+
+
+
+})
+
+function addListenersToActionBtns() {
     // ADD EVENTLISTENERS TO VIEW BTN
 
     $(".view-btn").click(function (e) {
@@ -55,8 +68,7 @@ getListOfDrhs().then((data) => {
 
 
     })
-
-})
+}
 
 function buildURL(prefix, params) {
 
